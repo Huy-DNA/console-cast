@@ -12,11 +12,14 @@ export enum TColor {
   EMERALD = 'emerald',
 }
 
+// A word is a sequence of non-space tokens and also includes all preceding spaces
 export interface TWord {
   readonly content: string;
   readonly color: TColor;
 }
 
+// A line is a sequence of words
 export type TLine = TWord[];
 
+// A content is a sequence of lines
 export type TContent = TLine[];

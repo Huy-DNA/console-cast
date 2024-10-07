@@ -1,4 +1,4 @@
-# LabSynchro
+# ConsoleCast
 
 ## Techstack
 

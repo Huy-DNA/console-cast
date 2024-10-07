@@ -4,7 +4,7 @@
 <template>
   <main class="terminal w-[100vw] h-[100vh] bg-black text-white pt-5 pl-3">
     <TerminalHeader />
-    <TerminalContent />
+    <TerminalBody />
   </main>
 </template>
 

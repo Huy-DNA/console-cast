@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "*/**/*.ts"
+      - "*/**/*.js"
+      - "*/**/*.sql"
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-22.04
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: labsyncro
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5 
+    steps:
+        - name: Checkout repository
+          uses: actions/checkout@v3
+        - name: Setup bun
+          uses: oven-sh/setup-bun@v2
+        - name: Create .env
+          run: |
+            echo "DATABASE_URL=postgresql://admin:secret@localhost:5432/labsyncro?sslmode=disable" >> .env
+        - name: Install deps
+          run: bun install
+        - name: Migrate db
+          run: bun db:migrate
+        - name: Build
+          run: bun run build
+        - name: Lint
+          run: bun run lint
+  validate-pg:
+    name: validate pg scripts
+    runs-on: ubuntu-22.04
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install deps
+        run: bun install
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 2
+          done
+      - name: Run PG validation script
+        run: |
+          echo "Running PG validation script..."
+          bun ./bin/validate_pg.ts
+        env:
+          DATABASE_URL: postgres://postgres:@localhost:5432/postgres

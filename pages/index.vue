@@ -2,6 +2,6 @@
 </script>
 
 <template>
-  <div>
-  </div>
+  <main class="w-[100vw] h-[100vh] bg-background text-white">
+  </main>
 </template>

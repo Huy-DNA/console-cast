@@ -33,7 +33,7 @@ module.exports = {
         "teal": "#1f8da3",
         "purple": "#8637ee",
         "white": "#cfdaf7",
-        "background": "#24273a",
+        "black": "#24273a",
         "emerald": "#3d952a",
       },
     },

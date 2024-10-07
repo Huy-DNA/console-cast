@@ -12,7 +12,7 @@ export default defineNuxtConfig({
   ],
   eslint: {},
   css: [
-    '~/assets/css/fonts.css',
+    // '~/assets/css/fonts.css',
     '~/assets/css/main.css',
   ],
   postcss: {

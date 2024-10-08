@@ -7,8 +7,6 @@
     input: [word: string];
   }>();
 
-  const inputRef = useTemplateRef('input');
-
   function onInput (e: InputEvent) {
     emits('input', (e.target as any).innerText);
     (e.target as any).innerText = '';
@@ -20,7 +18,6 @@
     v-if="props.editable || false"
     :class="`text-${props.word.color} outline-none`"
     contenteditable
-    ref="input"
     @input="onInput"
   >
     {{ props.word.content }}

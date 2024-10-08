@@ -14,7 +14,7 @@
   <input
     v-if="props.editable || false"
     :size="props.word.content.length || 1"
-    :class="`text-${props.word.color} outline-none bg-black p-0 m-0 caret-transparent`"
+    :class="`text-${props.word.color} outline-none bg-black p-0 m-0 caret-white`"
     :value="props.word.content"
     spellcheck="false"
     aria-hidden="false"

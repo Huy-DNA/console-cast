@@ -6,26 +6,21 @@
   }>();
 
   async function onInput (e: InputEvent) {
-    await emits('input', (e.target as any).innerText);
-    (e.target as any).innerText = props.word.content;
+    await emits('input', (e.target as any).value);
   }
 </script>
 
 <template>
-  <span
+  <input
     v-if="props.editable || false"
-    :class="`text-${props.word.color} outline-none`"
+    :class="`text-${props.word.color} outline-none bg-black`"
+    :value="props.word.content"
     spellcheck="false"
-    contenteditable
     @input="onInput"
   >
-    {{ props.word.content }}
-  </span>
-  <span
+  <input
     v-else
-    :class="`text-${props.word.color}`"
-    contenteditable
+    :class="`text-${props.word.color} bg-black`"
+    :value="props.word.content"
   >
-    {{ props.word.content }}
-  </span>
 </template>

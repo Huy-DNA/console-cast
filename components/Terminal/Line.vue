@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import { type TLine, TColor } from '@/core/types';
-
   const props = defineProps<{ line: TLine; editable?: boolean }>();
   const wordCount = computed(() => props.line.length);
 

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-  import { type TContent, type TLine, TColor } from '@/core/types';
-  import { isSpace } from '@/core/utils';
-
   const content: Ref<TContent> = ref([]);
   const currentLine: Ref<TLine> = ref([]);
 

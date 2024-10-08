@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import { type TWord } from '@/core/types.ts';
-
   const props = defineProps<{ word: TWord; editable?: boolean }>();
 
   const emits = defineEmits<{

@@ -44,12 +44,18 @@
     }
     const firstWord = word.slice(0, splitPos);
     const secondWord = word.slice(splitPos);
-    currentLine.value[index].content = firstWord;
-    if (secondWord.trim() === secondWord) {
+    if (firstWord.trim() === firstWord && index > 0) {
+      currentLine.value[index - 1].content += firstWord;
+      currentLine.value[index].content = secondWord;
+      return;
+    }
+    if (secondWord.trim()) {
+      currentLine.value[index].content = firstWord;
       currentLine.value.splice(index + 1, 0, { content: secondWord, color: TColor.WHITE });
       return;
     }
     if (index < currentLine.value.length - 1) {
+      currentLine.value[index].content = firstWord;
       currentLine.value[index + 1].content = secondWord + currentLine.value[index + 1].content;
       return;
     }

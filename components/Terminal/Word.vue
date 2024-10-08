@@ -37,6 +37,30 @@
     nextWordNode.setSelectionRange(0, 0);
     e.stopPropagation();
   }
+
+  function onDeleteOrBackspace (e: KeyboardEvent) {
+    if (e.key === 'Delete') return onDelete(e);
+    return onBackspace(e);
+  }
+
+  function onDelete (e: KeyboardEvent) {
+    /* TODO: Implement later */
+  }
+
+  function onBackspace (e: KeyboardEvent) {
+    const cursorPos = inputRef.value.selectionStart;
+    if (cursorPos > 1) return;
+
+    const terminalWordNodes = [...document.querySelectorAll('.terminal-input-word')];
+    if (terminalWordNodes[0] === inputRef.value) return;
+    const curIndex = terminalWordNodes.indexOf(inputRef.value);
+    const prevWordNode = terminalWordNodes[curIndex - 1] as HTMLInputElement;
+    const prevWordLen = prevWordNode.value.length;
+    setTimeout(() => {
+      prevWordNode.focus();
+      prevWordNode.setSelectionRange(prevWordLen, prevWordLen);
+    }, 0);
+  }
 </script>
 
 <template>
@@ -53,6 +77,7 @@
     @input="onInput"
     @keydown.left="onKeyLeft"
     @keydown.right="onKeyRight"
+    @keydown.delete="onDeleteOrBackspace"
   >
   <input
     v-else

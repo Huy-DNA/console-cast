@@ -45,7 +45,7 @@
     const firstWord = word.slice(0, splitPos);
     const secondWord = word.slice(splitPos);
     currentLine.value[index].content = firstWord;
-    if (secondWord.trim()) {
+    if (secondWord.trim() === secondWord) {
       currentLine.value.splice(index + 1, 0, { content: secondWord, color: TColor.WHITE });
       return;
     }

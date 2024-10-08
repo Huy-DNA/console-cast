@@ -13,7 +13,14 @@
 </script>
 
 <template>
-  <span :class="`text-${props.word.color} outline-none`" :contenteditable="props.editable || false" @input="onInput">
+  <span
+    v-if="props.editable || false"
+    :class="`text-${props.word.color} outline-none`" contenteditable @input="onInput">
+    {{ props.word.content }}
+  </span>
+  <span
+    v-else
+    :class="`text-${props.word.color}`" contenteditable>
     {{ props.word.content }}
   </span>
 </template>

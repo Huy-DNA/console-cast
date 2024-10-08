@@ -17,10 +17,16 @@
     :class="`text-${props.word.color} outline-none bg-black p-0 m-0`"
     :value="props.word.content"
     spellcheck="false"
+    aria-hidden="false"
+    role="hidden"
+    tabindex="-1"
     @input="onInput"
   >
   <input
     v-else
+    aria-hidden="false"
+    role="hidden"
+    tabindex="-1"
     :size="props.word.content.length"
     :class="`text-${props.word.color} bg-black p-0 m-0`"
     :value="props.word.content"

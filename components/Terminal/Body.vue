@@ -12,7 +12,7 @@
       if (isNonSpaceEncountered && isSpace(c)) {
         return i;
       }
-      isNonSpaceEncountered ||= isSpace(c);
+      isNonSpaceEncountered ||= !isSpace(c);
     }
     return -1;
   }
@@ -34,7 +34,7 @@
     const firstWord = word.slice(0, splitPos);
     const secondWord = word.slice(splitPos);
     currentLine.value[index].content = firstWord;
-    currentLine.value.splice(index, 0, { content: secondWord, color: TColor.WHITE });
+    currentLine.value.splice(index + 1, 0, { content: secondWord, color: TColor.WHITE });
   }
 </script>
 

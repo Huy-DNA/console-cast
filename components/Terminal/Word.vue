@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { type TWord } from '@/core/printer/types.ts';
+  import { type TWord } from '@/core/types.ts';
 
   const props = defineProps<{ word: TWord }>();
 </script>

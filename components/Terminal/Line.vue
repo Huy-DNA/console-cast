@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { type TLine } from '@/core/printer/types.ts';
+  import { type TLine } from '@/core/types.ts';
 
   const props = defineProps<{ line: TLine }>();
 </script>

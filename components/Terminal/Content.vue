@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { type TContent } from '@/core/printer/types.ts';
+  import { type TContent } from '@/core/types.ts';
 
   const props = defineProps<{ content: TContent }>();
 </script>

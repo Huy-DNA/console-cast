@@ -9,7 +9,6 @@
 
   function onInput (e: InputEvent) {
     emits('input', (e.target as any).innerText);
-    (e.target as any).innerText = '';
   }
 </script>
 

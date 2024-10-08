@@ -13,14 +13,16 @@
 <template>
   <input
     v-if="props.editable || false"
-    :class="`text-${props.word.color} outline-none bg-black`"
+    :size="props.word.content.length"
+    :class="`text-${props.word.color} outline-none bg-black p-0 m-0`"
     :value="props.word.content"
     spellcheck="false"
     @input="onInput"
   >
   <input
     v-else
-    :class="`text-${props.word.color} bg-black`"
+    :size="props.word.content.length"
+    :class="`text-${props.word.color} bg-black p-0 m-0`"
     :value="props.word.content"
   >
 </template>

@@ -1,17 +1,13 @@
 <script setup lang="ts">
-  import { type TContent } from '@/core/types';
+  import { type TContent, type TLine, TColor } from '@/core/types';
 
-  type Word = string;
-  type Line = Word[];
-  type Content = Line[];
-
-  const content: Content = [];
-  const tcontent: TContent = [];
+  const content: Ref<TContent> = ref([]);
+  const currentLine: Ref<TLine> = ref([]);
 </script>
 
 <template>
   <div>
-    <TerminalContent />
-    <TerminalLine />
+    <TerminalContent :content="content" />
+    <TerminalLine :line="currentLine" />
   </div>
 </template>

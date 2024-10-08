@@ -6,6 +6,6 @@
 
 <template>
   <div>
-    <TerminalLine v-for="(index, line) in props.content" :key="index" :line="{ line }" />
+    <TerminalLine v-for="(line, index) in props.content" :key="index" :line="line" />
   </div>
 </template>

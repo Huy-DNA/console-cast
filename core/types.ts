@@ -14,8 +14,8 @@ export enum TColor {
 
 // A word is a sequence of non-space tokens and also includes all preceding spaces
 export interface TWord {
-  readonly content: string;
-  readonly color: TColor;
+  content: string;
+  color: TColor;
 }
 
 // A line is a sequence of words

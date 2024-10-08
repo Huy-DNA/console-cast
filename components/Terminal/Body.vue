@@ -20,7 +20,7 @@
   function onInput ({ word, index }: { word: string; index: number }) {
     // if the word is appended at the end
     if (index === currentLine.value.length) {
-      currentLine.value.push({ content: word, color: TColor.WHITE});
+      currentLine.value.push({ content: word, color: TColor.WHITE });
     } else {
       // otherwise an existing word is modified
       currentLine.value[index].content = word;

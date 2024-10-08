@@ -5,7 +5,7 @@
 </script>
 
 <template>
-  <span :class="`text-${props.word.color}`" :contenteditable="props.editable || false">
+  <span :class="`text-${props.word.color} outline-none`" :contenteditable="props.editable || false">
     {{ props.word.content }}
   </span>
 </template>

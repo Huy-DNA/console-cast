@@ -10,7 +10,7 @@
 </script>
 
 <template>
-  <p role="text" class="flex justify-start gap-0">
+  <p role="text" class="flex justify-start gap-0 w-[100%]">
     <TerminalWord
       v-for="(word, index) in props.line"
       :key="index"

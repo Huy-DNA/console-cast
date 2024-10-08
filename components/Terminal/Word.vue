@@ -17,6 +17,7 @@
   <span
     v-if="props.editable || false"
     :class="`text-${props.word.color} outline-none`"
+    spellcheck="false"
     contenteditable
     @input="onInput"
   >

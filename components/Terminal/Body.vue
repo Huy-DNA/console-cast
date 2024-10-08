@@ -55,7 +55,7 @@
 </script>
 
 <template>
-  <div>
+  <div class="pl-2">
     <TerminalContent :content="content" />
     <TerminalLine :line="currentLine" editable @input="onInput" />
   </div>

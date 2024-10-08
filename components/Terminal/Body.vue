@@ -2,18 +2,6 @@
   const content: Ref<TContent> = ref([]);
   const currentLine: Ref<TLine> = ref([]);
 
-  function splitWordPosition (word: string): number {
-    let isNonSpaceEncountered = false;
-    for (let i = 0; i < word.length; ++i) {
-      const c = word[i];
-      if (isNonSpaceEncountered && isSpace(c)) {
-        return i;
-      }
-      isNonSpaceEncountered ||= !isSpace(c);
-    }
-    return -1;
-  }
-
   function onInput ({ word, index }: { word: string; index: number }) {
     // if the word is appended at the end
     if (index === currentLine.value.length) {
@@ -22,43 +10,12 @@
       // otherwise an existing word is modified
       currentLine.value[index].content = word;
     }
-
-    const splitPos = splitWordPosition(word);
-    if (splitPos === -1) {
-      if (word.trim() === word && index > 0) {
-        currentLine.value[index - 1].content += word;
-        currentLine.value.splice(index, 1);
-        return;
-      }
-      if (!word.trim() && index < currentLine.value.length - 1) {
-        currentLine.value[index + 1].content = word + currentLine.value[index + 1].content;
-        currentLine.value.splice(index, 1);
-        return;
-      }
-      if (!word.trim() && index > 0 && !currentLine.value[index - 1].content.trim()) {
-        currentLine.value[index - 1].content += word;
-        currentLine.value.splice(index, 1);
-        return;
-      }
-      return;
-    }
-    const firstWord = word.slice(0, splitPos);
-    const secondWord = word.slice(splitPos);
-    if (firstWord.trim() === firstWord && index > 0) {
-      currentLine.value[index - 1].content += firstWord;
-      currentLine.value[index].content = secondWord;
-      return;
-    }
-    if (secondWord.trim()) {
-      currentLine.value[index].content = firstWord;
-      currentLine.value.splice(index + 1, 0, { content: secondWord, color: TColor.WHITE });
-      return;
-    }
-    if (index < currentLine.value.length - 1) {
-      currentLine.value[index].content = firstWord;
-      currentLine.value[index + 1].content = secondWord + currentLine.value[index + 1].content;
-      return;
-    }
+    const line = currentLine.value.map(({ content }) => content).join('');
+    const chunks = line.split(/(\s+)/);
+    if (chunks[0] === '') chunks.shift();
+    if (chunks[chunks.length - 1] === '') chunks.pop();
+    
+    currentLine.value = chunks.map((chunk) => ({ content: chunk, color: TColor.WHITE }));
   }
 </script>
 

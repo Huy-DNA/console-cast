@@ -13,8 +13,8 @@
 <template>
   <input
     v-if="props.editable || false"
-    :size="props.word.content.length"
-    :class="`text-${props.word.color} outline-none bg-black p-0 m-0`"
+    :size="props.word.content.length || 1"
+    :class="`text-${props.word.color} outline-none bg-black p-0 m-0 caret-transparent`"
     :value="props.word.content"
     spellcheck="false"
     aria-hidden="false"

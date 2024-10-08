@@ -7,9 +7,9 @@
     input: [word: string];
   }>();
 
-  function onInput (e: InputEvent) {
-    emits('input', (e.target as any).innerText);
-    (e.target as any).innerText = '';
+  async function onInput (e: InputEvent) {
+    await emits('input', (e.target as any).innerText);
+    (e.target as any).innerText = props.word.content;
   }
 </script>
 

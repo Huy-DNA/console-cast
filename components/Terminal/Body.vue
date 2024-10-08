@@ -18,23 +18,39 @@
   }
 
   function onInput ({ word, index }: { word: string; index: number }) {
-    if (!isSpace(word[0]) && index === currentLine.value.length && index > 0) {
-      currentLine.value[currentLine.value.length - 1].content += word;
-      return;
-    }
+    // if the word is appended at the end
     if (index === currentLine.value.length) {
-      currentLine.value.push({ content: word, color: TColor.WHITE });
-      return;
+      currentLine.value.push({ content: word, color: TColor.WHITE});
+    } else {
+      // otherwise an existing word is modified
+      currentLine.value[index].content = word;
     }
+
     const splitPos = splitWordPosition(word);
     if (splitPos === -1) {
-      currentLine.value[index].content = word;
+      if (word.trim() && index > 0) {
+        currentLine.value[index - 1].content += word;
+        currentLine.value.splice(index, 1);
+        return;
+      }
+      if (index < currentLine.value.length - 1) {
+        currentLine.value[index + 1].content = word + currentLine.value[index + 1].content;
+        currentLine.value.splice(index, 1);
+        return;
+      }
       return;
     }
     const firstWord = word.slice(0, splitPos);
     const secondWord = word.slice(splitPos);
     currentLine.value[index].content = firstWord;
-    currentLine.value.splice(index + 1, 0, { content: secondWord, color: TColor.WHITE });
+    if (secondWord.trim()) {
+      currentLine.value.splice(index + 1, 0, { content: secondWord, color: TColor.WHITE });
+      return;
+    }
+    if (index < currentLine.value.length - 1) {
+      currentLine.value[index + 1].content = secondWord + currentLine.value[index + 1].content;
+      return;
+    }
   }
 </script>
 

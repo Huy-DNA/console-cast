@@ -8,6 +8,6 @@
 <template>
   <div>
     <TerminalContent :content="content" />
-    <TerminalLine :line="currentLine" />
+    <TerminalLine :line="currentLine" editable />
   </div>
 </template>

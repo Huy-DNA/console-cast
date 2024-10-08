@@ -35,6 +35,11 @@
         currentLine.value.splice(index, 1);
         return;
       }
+      if (!word.trim() && index > 0 && !currentLine.value[index - 1].content.trim()) {
+        currentLine.value[index - 1].content += word;
+        currentLine.value.splice(index, 1);
+        return;
+      }
       return;
     }
     const firstWord = word.slice(0, splitPos);

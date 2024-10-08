@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { getCaret } from '@/utils';
   const props = defineProps<{ word: TWord; editable?: boolean }>();
 
   const emits = defineEmits<{

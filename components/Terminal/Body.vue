@@ -28,12 +28,12 @@
 
     const splitPos = splitWordPosition(word);
     if (splitPos === -1) {
-      if (word.trim() && index > 0) {
+      if (word.trim() === word && index > 0) {
         currentLine.value[index - 1].content += word;
         currentLine.value.splice(index, 1);
         return;
       }
-      if (index < currentLine.value.length - 1) {
+      if (!word.trim() && index < currentLine.value.length - 1) {
         currentLine.value[index + 1].content = word + currentLine.value[index + 1].content;
         currentLine.value.splice(index, 1);
         return;

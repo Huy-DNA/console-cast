@@ -34,6 +34,10 @@
   }
 
   onMounted(() => inputBox.value.focus());
+  
+  defineExpose({
+    root: inputBox,
+  });
 </script>
 
 <template>

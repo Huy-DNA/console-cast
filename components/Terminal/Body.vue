@@ -41,8 +41,26 @@
   };
 
   function onKeydown ({ key }: { key: string }) {
-    currentLine.value += key;
-    cursorPosition.value.offset += 1;
+    const { line, offset } = cursorPosition.value;
+    switch (key) {
+      case 'ArrowLeft':
+        if (offset === 0) return;
+        cursorPosition.value.offset -= 1;
+        return;
+      case 'ArrowRight':
+        const curLength = lineNodes.value[line].innerText.length - 4;
+        if (offset === curLength) return;
+        cursorPosition.value.offset += 1;
+        return;
+      case 'ArrowUp':
+        return;
+      case 'ArrowDown':
+        return;
+      default:
+        if (line !== lineCount.value - 1) return;
+        currentLine.value = currentLine.value.slice(0, offset) + key + currentLine.value.slice(offset);
+        cursorPosition.value.offset += 1;
+    }
   }
 </script>
 

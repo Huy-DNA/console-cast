@@ -23,7 +23,7 @@
   function getCharPosition (element: Element, offset: number): { top: number, left: number } {
     let characterCount = 0;
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
-    let node;
+    let node: Node | null = null;
     while (node = walker.nextNode()) {
       const textLength = node.textContent!.length;
       if (characterCount + textLength > offset) {
@@ -31,7 +31,6 @@
         const range = new Range();
         range.setStart(node, charIndex);
         range.setEnd(node, charIndex + 1);
-
         const rect = range.getBoundingClientRect(); 
         return { top: rect.top, left: rect.left };
       }
@@ -42,7 +41,7 @@
 
   function onKeydown ({ key }: { key: string }) {
     const { line, offset } = cursorPosition.value;
-    const curLength = lineNodes.value[line].innerText.length - 4;
+    const curLength = lineNodes.value[line].innerText.length;
     switch (key) {
       case 'ArrowLeft':
         if (offset === 0) return;
@@ -75,13 +74,20 @@
         cursorPosition.value.offset += 1;
     }
   }
+
+  async function onEnter ({ line }: { line: TLine }) {
+    content.value.push(line);
+    currentLine.value = '';
+    cursorPosition.value.offset = 0;
+    cursorPosition.value.line += 1;
+  }
 </script>
 
 <template>
   <div class="pl-2 caret-transparent">
     <div class="w-2 h-[22px] absolute bg-white z-50" id="cursor" />
     <TerminalLine v-for="(line, index) in content" :key="index" :line="line" ref="nonEditableLines" @keydown="onKeydown" />
-    <TerminalEditableLine :content="currentLine" ref="editableLine" @keydown="onKeydown" />
+    <TerminalEditableLine :content="currentLine" ref="editableLine" @keydown="onKeydown" @enter="onEnter" />
   </div>
 </template>
 

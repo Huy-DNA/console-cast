@@ -4,6 +4,7 @@
   const emits = defineEmits<{
     keydown: [{ key: string }],
     click: [{ offset: number }],
+    enter: [{ line: TLine }],
   }>();
 
   const words = computed(() => {
@@ -19,7 +20,12 @@
 
   const inputBox = useTemplateRef('input-box');
 
+  function onEnter () {
+    emits('enter', { line: coloredWords.value });
+  }
+
   function onKeydown (e: KeyboardEvent) {
+    if (e.key === 'Enter') return onEnter();
     emits('keydown', { key: e.key });
   }
 

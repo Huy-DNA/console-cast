@@ -48,3 +48,20 @@
     <TerminalEditableLine :content="currentLine" ref="editableLine" />
   </div>
 </template>
+
+<style scoped>
+  @keyframes blink {
+    0%, 20%, 80%, 100% {
+      opacity: 0.7;
+    }
+    
+    
+    30%, 60% {
+      opacity: 0;
+    }
+  }
+
+  #cursor {
+    animation: blink 1s infinite;
+  }
+</style>

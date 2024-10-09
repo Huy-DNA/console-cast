@@ -18,7 +18,7 @@
     const cursor = document.getElementById('cursor');
     cursor!.style.top = `${position.top}px`;
     cursor!.style.left = `${position.left}px`;
-  });
+  }, { deep: true });
  
   function getCharPosition (element: Element, offset: number): { top: number, left: number } {
     let characterCount = 0;
@@ -39,13 +39,18 @@
     }
     return { top: 0, left: 0 };
   };
+
+  function onKeydown ({ key }: { key: string }) {
+    currentLine.value += key;
+    cursorPosition.value.offset += 1;
+  }
 </script>
 
 <template>
   <div class="pl-2 caret-transparent">
     <div class="w-2 h-[22px] absolute bg-white z-50" id="cursor" />
-    <TerminalLine v-for="(line, index) in content" :key="index" :line="line" ref="nonEditableLines" />
-    <TerminalEditableLine :content="currentLine" ref="editableLine" />
+    <TerminalLine v-for="(line, index) in content" :key="index" :line="line" ref="nonEditableLines" @keydown="onKeydown" />
+    <TerminalEditableLine :content="currentLine" ref="editableLine" @keydown="onKeydown" />
   </div>
 </template>
 

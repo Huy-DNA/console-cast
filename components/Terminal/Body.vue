@@ -5,7 +5,7 @@
 </script>
 
 <template>
-  <div class="pl-2">
+  <div class="pl-2 caret-transparent">
     <TerminalLine v-for="(line, index) in content" :key="index" :line="line" />
     <TerminalEditableLine :content="currentLine" />
   </div>

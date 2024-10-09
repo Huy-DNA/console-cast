@@ -32,12 +32,14 @@
     const caretOffset = document.caretPositionFromPoint(e.clientX, e.clientY).offset;
     emits('click', { offset: caretOffset });
   }
+
+  onMounted(() => inputBox.value.focus());
 </script>
 
 <template>
   <p
     role="text"
-    class="flex justify-start gap-0 w-[100%]"
+    class="flex justify-start gap-0 w-[100%] outline-none"
     tabindex="0"
     @keydown="onKeydown"
     @click="onClick"

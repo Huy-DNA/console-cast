@@ -3,6 +3,7 @@
 
   const emits = defineEmits<{
     keydown: [{ key: string }],
+    click: [{ offset: number }],
   }>();
 
   const words = computed(() => {
@@ -21,6 +22,16 @@
   function onKeydown (e: KeyboardEvent) {
     emits('keydown', { key: e.key });
   }
+
+  function onClick (e: MouseEvent) {
+    const range = document.createRange();
+
+    range.setStart(inputBox.value, 0);
+    range.setEnd(inputBox.value, inputBox.value.childNodes.length);
+
+    const caretOffset = document.caretPositionFromPoint(e.clientX, e.clientY).offset;
+    emits('click', { offset: caretOffset });
+  }
 </script>
 
 <template>
@@ -29,6 +40,7 @@
     class="flex justify-start gap-0 w-[100%]"
     tabindex="0"
     @keydown="onKeydown"
+    @click="onClick"
     ref="input-box"
   >
     <TerminalWord v-for="(word, index) in coloredWords" :key="index" :word="word" />

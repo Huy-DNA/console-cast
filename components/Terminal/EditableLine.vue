@@ -1,5 +1,9 @@
 <script setup lang="ts">
   const props = defineProps<{ content: string }>();
+
+  const emits = defineEmits<{
+    keypress: [key: string, offset: number],
+  }>();
 </script>
 
 <template>

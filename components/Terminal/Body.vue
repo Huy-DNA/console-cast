@@ -1,6 +1,7 @@
 <script setup lang="ts">
   const content: Ref<TContent> = ref([]);
   const currentLine: Ref<string> = ref('');
+  const cursorPosition: Ref<TCursorPosition> = ref({ line: 0, offset: 0 });
 </script>
 
 <template>

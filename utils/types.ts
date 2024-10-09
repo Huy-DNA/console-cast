@@ -23,3 +23,9 @@ export type TLine = TWord[];
 
 // A content is a sequence of lines
 export type TContent = TLine[];
+
+// Cursor position
+export interface TCursorPosition {
+  line: number;
+  offset: number;
+}

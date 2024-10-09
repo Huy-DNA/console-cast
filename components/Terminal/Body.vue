@@ -52,12 +52,8 @@
         cursorPosition.value.offset += 1;
         return;
       case 'ArrowUp':
-        if (line === 0) return;
-        cursorPosition.value.line -= 1;
         return;
       case 'ArrowDown':
-        if (line === lineCount.value - 1) return;
-        cursorPosition.value.line += 1;
         return;
       case 'Backspace':
         if (offset === 0) return;

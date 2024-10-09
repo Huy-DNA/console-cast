@@ -6,7 +6,7 @@
 
 <template>
   <div class="pl-2">
-    <TerminalContent :content="content" />
+    <TerminalLine v-for="(line, index) in content" :key="index" :line="line" />
     <TerminalEditableLine :content="currentLine" />
   </div>
 </template>

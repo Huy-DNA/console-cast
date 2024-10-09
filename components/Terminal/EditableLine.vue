@@ -2,7 +2,7 @@
   const props = defineProps<{ content: string }>();
 
   const emits = defineEmits<{
-    keypress: [key: string, offset: number],
+    keydown: [{ key: string }],
   }>();
 
   const words = computed(() => {
@@ -15,10 +15,23 @@
       color: TColor.WHITE,
     }));
   });
+
+  const inputBox = useTemplateRef('input-box');
+
+  function onKeydown (e: KeyboardEvent) {
+    emits('keydown', { key: e.key });
+  }
 </script>
 
 <template>
-  <p role="text" class="flex justify-start gap-0 w-[100%]">
+  <p
+    role="text"
+    class="flex justify-start gap-0 w-[100%]"
+    tabindex="0"
+    @keydown="onKeydown"
+    ref="input-box"
+  >
     <TerminalWord v-for="(word, index) in coloredWords" :key="index" :word="word" />
+    &nbsp;
   </p>
 </template>

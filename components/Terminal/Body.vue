@@ -61,7 +61,7 @@
         cursorPosition.value.line += 1;
         return;
       default:
-        if (line !== lineCount.value - 1) return;
+        if (line !== lineCount.value - 1 || key.length !== 1) return;
         currentLine.value = currentLine.value.slice(0, offset) + key + currentLine.value.slice(offset);
         cursorPosition.value.offset += 1;
     }

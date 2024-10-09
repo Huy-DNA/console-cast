@@ -42,13 +42,13 @@
 
   function onKeydown ({ key }: { key: string }) {
     const { line, offset } = cursorPosition.value;
+    const curLength = lineNodes.value[line].innerText.length - 4;
     switch (key) {
       case 'ArrowLeft':
         if (offset === 0) return;
         cursorPosition.value.offset -= 1;
         return;
       case 'ArrowRight':
-        const curLength = lineNodes.value[line].innerText.length - 4;
         if (offset === curLength) return;
         cursorPosition.value.offset += 1;
         return;
@@ -59,6 +59,15 @@
       case 'ArrowDown':
         if (line === lineCount.value - 1) return;
         cursorPosition.value.line += 1;
+        return;
+      case 'Backspace':
+        if (offset === 0) return;
+        currentLine.value = currentLine.value.slice(0, offset - 1) + currentLine.value.slice(offset);
+        cursorPosition.value.offset -= 1;
+        return;
+      case 'Delete':
+        if (offset === curLength) return;
+        currentLine.value = currentLine.value.slice(0, offset) + currentLine.value.slice(offset + 1);
         return;
       default:
         if (line !== lineCount.value - 1 || key.length !== 1) return;

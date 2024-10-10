@@ -67,9 +67,11 @@
         return;
       case 'ArrowUp':
         cursorPosition.value.offset = 0;
+        setTimeout(() => inputBox.value.focus(), 50);
         return;
       case 'ArrowDown':
         cursorPosition.value.offset = 0;
+        setTimeout(() => inputBox.value.focus(), 50);
         return;
       case 'Backspace':
         if (offset === 0) return;

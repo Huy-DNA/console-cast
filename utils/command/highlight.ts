@@ -12,7 +12,7 @@ export function highlight (args: string[]): TWord[] {
       return { content: arg, color: TColor.CYAN };
     }
     if (nonspaceArgIndex === 1) {
-      return { content: arg, color: TColor.GREEN };
+      return { content: arg, color: Object.values(TCommandName).includes(arg as any) ? TColor.GREEN : TColor.RED };
     }
     return { content: arg, color: TColor.WHITE };
   });

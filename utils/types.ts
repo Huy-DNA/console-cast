@@ -26,6 +26,5 @@ export type TContent = TLine[];
 
 // Cursor position
 export interface TCursorPosition {
-  line: number;
   offset: number;
 }

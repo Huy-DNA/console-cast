@@ -25,6 +25,7 @@
   }
 
   function onKeydown (e: KeyboardEvent) {
+    inputBox.value.scrollIntoView();
     if (e.key === 'Enter') return onEnter();
     emits('keydown', { key: e.key });
   }

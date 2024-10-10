@@ -41,14 +41,13 @@
 
   function onKeydown ({ key }: { key: string }) {
     const { line, offset } = cursorPosition.value;
-    const curLength = lineNodes.value[line].innerText.length;
     switch (key) {
       case 'ArrowLeft':
         if (offset === 0) return;
         cursorPosition.value.offset -= 1;
         return;
       case 'ArrowRight':
-        if (offset === curLength) return;
+        if (offset === currentLine.value.length) return;
         cursorPosition.value.offset += 1;
         return;
       case 'ArrowUp':
@@ -61,7 +60,7 @@
         cursorPosition.value.offset -= 1;
         return;
       case 'Delete':
-        if (offset === curLength) return;
+        if (offset === currentLine.value.length) return;
         currentLine.value = currentLine.value.slice(0, offset) + currentLine.value.slice(offset + 1);
         return;
       default:
@@ -82,7 +81,7 @@
 <template>
   <div class="pl-2 caret-transparent">
     <div class="w-2.5 h-[22px] absolute bg-white z-50" id="cursor" />
-    <TerminalLine v-for="(line, index) in content" :key="index" :line="line" ref="nonEditableLines" @keydown="onKeydown" />
+    <TerminalLine v-for="(line, index) in content" :key="index" :line="line" ref="nonEditableLines" />
     <TerminalEditableLine :content="currentLine" ref="editableLine" @keydown="onKeydown" @enter="onEnter" />
   </div>
 </template>

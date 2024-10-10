@@ -66,8 +66,10 @@
         cursorPosition.value.offset += 1;
         return;
       case 'ArrowUp':
+        cursorPosition.value.offset = 0;
         return;
       case 'ArrowDown':
+        cursorPosition.value.offset = 0;
         return;
       case 'Backspace':
         if (offset === 0) return;
@@ -92,7 +94,11 @@
     range.setEnd(inputBox.value, inputBox.value.childNodes.length);
 
     const caretOffset = document.caretPositionFromPoint(e.clientX, e.clientY).offset;
-    cursorPosition.value.offset = caretOffset;
+    if (caretOffset > content.value.length) {
+      cursorPosition.value.offset = content.value.length;
+    } else {
+      cursorPosition.value.offset = caretOffset;
+    }
   }
 
   defineExpose({

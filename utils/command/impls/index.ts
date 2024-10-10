@@ -3,7 +3,7 @@ import { TCommandName } from './types';
 
 export * from './types';
 
-export async function execute (args: string[] & { 0: TCommandName }): Promise<TLine[]> {
+export async function execute (...args: string[] & { 0: TCommandName }): Promise<TLine[]> {
   if (!args[0].trim()) {
     args.shift();
   }

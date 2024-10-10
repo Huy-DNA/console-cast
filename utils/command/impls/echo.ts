@@ -14,6 +14,7 @@ const colorCodes = {
 export const echo: TCommand = function (...args) {
   args.shift();
   return [args.flatMap((arg) => {
+    if (!arg.trim()) return [];
     const chunks = arg.split(/(\u001b\[[0-9]*m)/);
     const res = [{ content: chunks.shift()!, color: TColor.WHITE }];
     while (chunks.length) {

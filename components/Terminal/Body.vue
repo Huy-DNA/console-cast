@@ -16,7 +16,7 @@
     currentLine.value = '';
     if (line.length > 1 || line[0].content.trim()) historyCommands.value.push(line);
     previousLines.value.push(line);
-    const executeResult = await execute(line.map(({ content }) => content));
+    const executeResult = await execute(...line.map(({ content }) => content));
     previousLines.value.push(...executeResult);
     curCommandIndex.value = commandCount.value - 1;
     await nextTick();
@@ -46,6 +46,9 @@
       currentLine.value = historyCommands.value[curCommandIndex.value].map(({ content }) => content).join('');
     }
   }
+
+  onMounted(async () => {
+  });
 </script>
 
 <template>

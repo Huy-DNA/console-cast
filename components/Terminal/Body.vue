@@ -70,16 +70,20 @@
     }
   }
 
-  async function onEnter ({ line }: { line: TLine }) {
+  function onEnter ({ line }: { line: TLine }) {
     content.value.push(line);
     currentLine.value = '';
     cursorPosition.value.offset = 0;
     cursorPosition.value.line += 1;
   }
+
+  function onClick () {
+    editableLine.value.root.focus();
+  }
 </script>
 
 <template>
-  <div class="pl-2 caret-transparent">
+  <div class="pl-2 caret-transparent h-[100%]" @click="onClick">
     <div class="w-2.5 h-[22px] absolute bg-white z-50" id="cursor" />
     <TerminalLine v-for="(line, index) in content" :key="index" :line="line" ref="nonEditableLines" />
     <TerminalEditableLine :content="currentLine" ref="editableLine" @keydown="onKeydown" @enter="onEnter" />

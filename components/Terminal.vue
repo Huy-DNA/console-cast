@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <main class="terminal w-[100vw] h-[100vh] bg-black text-white pt-5 pl-3 overflow-hidden">
+  <main class="terminal w-[100vw] min-h-[100vh] bg-black text-white pt-5 pl-3 overflow-hidden">
     <TerminalHeader />
     <TerminalBody />
   </main>

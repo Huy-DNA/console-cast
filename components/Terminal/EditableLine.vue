@@ -22,7 +22,7 @@
   });
 
   // auto-focus input box 
-  // onMounted(() => inputBox.value.focus());
+  onMounted(() => inputBox.value.focus());
 
   watch(cursorPosition, updateCursor, { deep: true });
   function updateCursor () {
@@ -56,7 +56,7 @@
     inputBox.value.scrollIntoView();
     if (e.key === 'Enter') {
       cursorPosition.value.offset = 0;
-      emits('submit', coloredWords.value);
+      emits('submit', props.content === '' ? [{ content: '', color: TColor.WHITE }] : coloredWords.value);
       return;
     }
     const { offset } = cursorPosition.value;

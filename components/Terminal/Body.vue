@@ -17,6 +17,8 @@
     curLineIndex.value = lineCount.value - 1;
     const executeResult = await execute(line.map(({ content }) => content));
     previousLines.value.push(...executeResult);
+    await nextTick();
+    editableLine.value.updateCursor();
   }
 
   function onScroll () {
@@ -42,7 +44,7 @@
 
 <template>
   <div
-    class="pl-2 caret-transparent h-[88vh] overflow-auto"
+    class="pl-2 caret-transparent h-[85vh] overflow-auto"
     @click="onClick"
     @scroll="onScroll"
   > 

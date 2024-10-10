@@ -9,7 +9,19 @@ module.exports = {
     "./error.vue",
   ],
   darkMode: ["class"],
-  safelist: ["dark"],
+  safelist: [
+    "text-red",
+    "text-yellow",
+    "text-green",
+    "text-blue",
+    "text-cyan",
+    "text-pink",
+    "text-teal",
+    "text-purple",
+    "text-white",
+    "text-black",
+    "text-emerald",
+  ],
   prefix: "",
   theme: {
     fontSize: {

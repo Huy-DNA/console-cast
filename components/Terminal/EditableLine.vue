@@ -12,10 +12,7 @@
   });
 
   const coloredWords = computed(() => {
-    return words.value.map((word) => ({
-      content: word,
-      color: TColor.WHITE,
-    }));
+    return highlight(words.value);
   });
 
   const inputBox = useTemplateRef('input-box');

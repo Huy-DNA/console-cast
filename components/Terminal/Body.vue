@@ -78,7 +78,8 @@
   }
 
   function onClick () {
-    editableLine.value.root.focus();
+    const selection = window.getSelection();
+    if (selection?.type !== 'Range') editableLine.value.root.focus();
   }
 </script>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
   const emits = defineEmits<{
-    submit: [{ line: TLine }],
+    submit: [TLine],
   }>();
 
   const content = ref('');
@@ -51,7 +51,7 @@
     inputBox.value.scrollIntoView();
     if (e.key === 'Enter') {
       cursorPosition.value.offset = 0;
-      emits('submit', { line: coloredWords.value });
+      emits('submit', coloredWords.value);
       content.value = '';
       return;
     }

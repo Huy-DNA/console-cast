@@ -10,7 +10,7 @@
     if (selection?.type !== 'Range') editableLine.value.root.focus();
   }
 
-  function onSubmit ({ line }: { line: TLine }) {
+  function onSubmit (line: TLine) {
     content.value.push(line);
   }
 

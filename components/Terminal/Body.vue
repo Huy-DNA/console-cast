@@ -12,8 +12,6 @@
   });
 
   watch([cursorPosition, lineNodes], changeCursorPosition, { deep: true });
-  onMounted(() => document.addEventListener('scroll', changeCursorPosition));
-  onUnmounted(() => document.removeEventListener('scroll', changeCursorPosition));
  
   function changeCursorPosition () {
     const { line, offset } = cursorPosition.value;
@@ -88,7 +86,7 @@
 </script>
 
 <template>
-  <div class="pl-2 caret-transparent h-[85vh] overflow-auto" @click="onClick">
+  <div class="pl-2 caret-transparent h-[85vh] overflow-auto" @click="onClick" @scroll="changeCursorPosition">
     <div class="w-2.5 h-[22px] absolute bg-white z-50" id="cursor" />
     <TerminalLine v-for="(line, index) in content" :key="index" :line="line" ref="nonEditableLines" />
     <TerminalEditableLine :content="currentLine" ref="editableLine" @keydown="onKeydown" @enter="onEnter" />

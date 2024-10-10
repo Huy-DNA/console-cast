@@ -11,15 +11,19 @@
     return [...(nonEditableLines.value || []).map(({ root }) => root), editableLine.value.root];
   });
 
-  watch([cursorPosition, lineNodes], () => {
+  watch([cursorPosition, lineNodes], changeCursorPosition, { deep: true });
+  onMounted(() => document.addEventListener('scroll', changeCursorPosition));
+  onUnmounted(() => document.removeEventListener('scroll', changeCursorPosition));
+ 
+  function changeCursorPosition () {
     const { line, offset } = cursorPosition.value;
     const lineNode = lineNodes.value[line];
     const position = lineNode ? getCharPosition(lineNode, offset) : { top: 0, left: 0 };
     const cursor = document.getElementById('cursor');
     cursor!.style.top = `${position.top}px`;
     cursor!.style.left = `${position.left}px`;
-  }, { deep: true });
- 
+  }
+
   function getCharPosition (element: Element, offset: number): { top: number, left: number } {
     let characterCount = 0;
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
@@ -84,7 +88,7 @@
 </script>
 
 <template>
-  <div class="pl-2 caret-transparent h-[100%]" @click="onClick">
+  <div class="pl-2 caret-transparent h-[85vh] overflow-auto" @click="onClick">
     <div class="w-2.5 h-[22px] absolute bg-white z-50" id="cursor" />
     <TerminalLine v-for="(line, index) in content" :key="index" :line="line" ref="nonEditableLines" />
     <TerminalEditableLine :content="currentLine" ref="editableLine" @keydown="onKeydown" @enter="onEnter" />

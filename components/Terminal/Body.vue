@@ -11,10 +11,12 @@
     if (selection?.type !== 'Range') editableLine.value.root.focus();
   }
 
-  function onSubmit (line: TLine) {
+  async function onSubmit (line: TLine) {
     currentLine.value = '';
     previousLines.value.push(line);
     curLineIndex.value = lineCount.value - 1;
+    const executeResult = await execute(line.map(({ content }) => content));
+    previousLines.value.push(...executeResult);
   }
 
   function onScroll () {

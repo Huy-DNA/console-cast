@@ -29,3 +29,5 @@ export interface TCursorPosition {
   line: number;
   offset: number;
 }
+
+export type TCommand = (...args: string[]) => TContent;

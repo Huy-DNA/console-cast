@@ -8,7 +8,7 @@
   }>();
 
   const words = computed(() => {
-    return props.content.split(/(\s+)/);
+    return parse(props.content);
   });
 
   const coloredWords = computed(() => {

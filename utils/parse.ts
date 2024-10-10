@@ -17,7 +17,8 @@ function getNextToken (command: string): { token: string, remaining: string } | 
     return undefined;
   }
   if (command[0] === ' ') {
-    const nonspaceIndex = command.search(/[^\s]/);
+    let nonspaceIndex = command.search(/[^\s]/);
+    if (nonspaceIndex === -1) nonspaceIndex = command.length;
     return { token: command.slice(0, nonspaceIndex), remaining: command.slice(nonspaceIndex) };
   }
 

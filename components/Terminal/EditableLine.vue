@@ -6,6 +6,8 @@
   const emits = defineEmits<{
     submit: [TLine],
     'update-content': [string],
+    'line-up': void,
+    'line-down': void,
   }>();
 
   const cursorPosition: Ref<TCursorPosition> = ref({ offset: 0 });
@@ -49,7 +51,7 @@
     return { top: 0, left: 0 };
   };
 
-  function onKeydown (e: KeyboardEvent) {
+  async function onKeydown (e: KeyboardEvent) {
     e.stopImmediatePropagation();
     inputBox.value.scrollIntoView();
     if (e.key === 'Enter') {
@@ -71,11 +73,15 @@
         setTimeout(() => inputBox.value.focus(), 50);
         return;
       case 'ArrowUp':
-        cursorPosition.value.offset = 0;
+        emits('line-up');
+        await nextTick();
+        cursorPosition.value.offset = props.content.length;
         setTimeout(() => inputBox.value.focus(), 50);
         return;
       case 'ArrowDown':
-        cursorPosition.value.offset = 0;
+        emits('line-down');
+        await nextTick();
+        cursorPosition.value.offset = props.content.length;
         setTimeout(() => inputBox.value.focus(), 50);
         return;
       case 'Backspace':

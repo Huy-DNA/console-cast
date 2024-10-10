@@ -1,6 +1,7 @@
 <script setup lang="ts">
   const previousLines: Ref<TContent> = ref([]);
-  const currentLine: Ref<string> = ref('');
+  const currentLine = ref('');
+  const curLineIndex = ref(0);
   const lineCount = computed(() => previousLines.value.length + 1);
 
   const editableLine = ref(null);
@@ -13,6 +14,7 @@
   function onSubmit (line: TLine) {
     currentLine.value = '';
     previousLines.value.push(line);
+    curLineIndex.value = lineCount.value - 1;
   }
 
   function onScroll () {
@@ -21,6 +23,18 @@
 
   function onUpdateContent (newContent: string) {
     currentLine.value = newContent;
+  }
+
+  function onLineUp () {
+    if (curLineIndex.value <= 0) return;
+    curLineIndex.value -= 1;
+    currentLine.value = previousLines.value[curLineIndex.value].map(({ content }) => content).join('');
+  }
+
+  function onLineDown () {
+    if (curLineIndex.value >= lineCount.value - 2) return;
+    curLineIndex.value += 1;
+    currentLine.value = previousLines.value[curLineIndex.value].map(({ content }) => content).join('');
   }
 </script>
 
@@ -41,6 +55,8 @@
       ref="editableLine"
       @submit="onSubmit"
       @update-content="onUpdateContent"
+      @line-up="onLineUp"
+      @line-down="onLineDown"
     />
   </div>
 </template>

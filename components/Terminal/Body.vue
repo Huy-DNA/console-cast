@@ -81,7 +81,7 @@
 
 <template>
   <div class="pl-2 caret-transparent">
-    <div class="w-2 h-[22px] absolute bg-white z-50" id="cursor" />
+    <div class="w-2.5 h-[22px] absolute bg-white z-50" id="cursor" />
     <TerminalLine v-for="(line, index) in content" :key="index" :line="line" ref="nonEditableLines" @keydown="onKeydown" />
     <TerminalEditableLine :content="currentLine" ref="editableLine" @keydown="onKeydown" @enter="onEnter" />
   </div>

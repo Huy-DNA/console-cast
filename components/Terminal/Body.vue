@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  const content: Ref<TContent> = ref([]);
+  const previousLines: Ref<TContent> = ref([]);
   const currentLine: Ref<string> = ref('');
-  const lineCount = computed(() => content.value.length + 1);
+  const lineCount = computed(() => previousLines.value.length + 1);
 
   const editableLine = ref(null);
 
@@ -11,11 +11,16 @@
   }
 
   function onSubmit (line: TLine) {
-    content.value.push(line);
+    currentLine.value = '';
+    previousLines.value.push(line);
   }
 
   function onScroll () {
     editableLine.value.updateCursor();
+  }
+
+  function onUpdateContent (newContent: string) {
+    currentLine.value = newContent;
   }
 </script>
 
@@ -26,7 +31,7 @@
     @scroll="onScroll"
   > 
     <TerminalLine
-      v-for="(line, index) in content"
+      v-for="(line, index) in previousLines"
       :key="index"
       :line="line"
       ref="nonEditableLines"
@@ -35,6 +40,7 @@
       :content="currentLine"
       ref="editableLine"
       @submit="onSubmit"
+      @update-content="onUpdateContent"
     />
   </div>
 </template>

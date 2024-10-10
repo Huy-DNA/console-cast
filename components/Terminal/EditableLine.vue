@@ -1,23 +1,26 @@
 <script setup lang="ts">
+  const props = defineProps<{
+    content: string,
+  }>();
 
   const emits = defineEmits<{
     submit: [TLine],
+    'update-content': [string],
   }>();
 
-  const content = ref('');
   const cursorPosition: Ref<TCursorPosition> = ref({ offset: 0 });
 
   const inputBox = useTemplateRef('input-box');
 
   const words = computed(() => {
-    return parse(content.value);
+    return parse(props.content);
   });
   const coloredWords = computed(() => {
     return highlight(words.value);
   });
 
   // auto-focus input box 
-  onMounted(() => inputBox.value.focus());
+  // onMounted(() => inputBox.value.focus());
 
   watch(cursorPosition, updateCursor, { deep: true });
   function updateCursor () {
@@ -52,18 +55,20 @@
     if (e.key === 'Enter') {
       cursorPosition.value.offset = 0;
       emits('submit', coloredWords.value);
-      content.value = '';
       return;
     }
     const { offset } = cursorPosition.value;
+    const { content } = props;
     switch (e.key) {
       case 'ArrowLeft':
         if (offset === 0) return;
         cursorPosition.value.offset -= 1;
+        setTimeout(() => inputBox.value.focus(), 50);
         return;
       case 'ArrowRight':
-        if (offset === content.value.length) return;
+        if (offset === content.length) return;
         cursorPosition.value.offset += 1;
+        setTimeout(() => inputBox.value.focus(), 50);
         return;
       case 'ArrowUp':
         cursorPosition.value.offset = 0;
@@ -75,16 +80,16 @@
         return;
       case 'Backspace':
         if (offset === 0) return;
-        content.value = content.value.slice(0, offset - 1) + content.value.slice(offset);
+        emits('update-content', content.slice(0, offset - 1) + content.slice(offset));
         cursorPosition.value.offset -= 1;
         return;
       case 'Delete':
         if (offset === content.value.length) return;
-        content.value = content.value.slice(0, offset) + content.value.slice(offset + 1);
+        emits('update-content', content.slice(0, offset) + content.slice(offset + 1));
         return;
       default:
         if (e.key.length !== 1) return;
-        content.value = content.value.slice(0, offset) + e.key + content.value.slice(offset);
+        emits('update-content', content.slice(0, offset) + e.key + content.slice(offset));
         cursorPosition.value.offset += 1;
     }
   }
@@ -96,8 +101,8 @@
     range.setEnd(inputBox.value, inputBox.value.childNodes.length);
 
     const caretOffset = document.caretPositionFromPoint(e.clientX, e.clientY).offset;
-    if (caretOffset > content.value.length) {
-      cursorPosition.value.offset = content.value.length;
+    if (caretOffset > props.content.length) {
+      cursorPosition.value.offset = props.content.length;
     } else {
       cursorPosition.value.offset = caretOffset;
     }

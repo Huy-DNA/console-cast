@@ -58,7 +58,7 @@
 
   async function printWelcome () {
     const executeResult = [
-      ...await execute('echo Theme inspired by \\u001b[33mcatpuccin\\u001b[38m...'),
+      ...await execute('echo Theme inspired by \\u001b[33mcatppuccin\\u001b[38m...'),
       ...await execute('echo " "'),
       ...await execute('echo \\u001b[32m " ／l" "\\u001b[31m              guest@console-cast"'),
       ...await execute('echo \\u001b[32m（ ゜､ ｡７ "\\u001b[30m７７\\u001b[34m       js" "\\u001b[38m        Nuxt 3"'),

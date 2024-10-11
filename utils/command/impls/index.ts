@@ -12,7 +12,7 @@ export async function execute (...args: string[] & { 0: TCommandName }): Promise
   }
   switch (args[0]) {
     case TCommandName.ECHO:
-      return echo(args as any);
+      return echo(...args as any);
     default:
       return echo('echo', `Unknown command:\u001b[31m ${args[0]}`);
   }

@@ -16,10 +16,9 @@ export async function execute (command: string): Promise<ColoredContent> {
   switch (args[0] as Command) {
     case Command.ECHO:
       res = echo(...args as any);
-    console.log(res);
       break;
     default:
-      res = echo('echo', ' ', `Unknown command:\u001b[31m ${args[0]}`);
+      res = echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);
       break;
   }
   return interpretAnsiEscapeColor(res);

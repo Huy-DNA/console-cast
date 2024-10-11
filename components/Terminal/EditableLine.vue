@@ -101,7 +101,7 @@
       default:
         if (e.key.length !== 1) return;
         emits('update-content', content.slice(0, offset) + e.key + content.slice(offset));
-        cursorPosition.value.offset += 1;
+        cursorPosition.value += 1;
     }
   }
 

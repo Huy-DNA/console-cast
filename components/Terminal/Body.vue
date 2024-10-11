@@ -15,11 +15,11 @@
   }
 
   async function onSubmit (line: ColoredLine) {
-    currentLine.value = '';
     if (line.length > 1 || line[0].content.trim()) historyCommands.value.push(line);
     previousLines.value.push(line);
     const executeResult = await execute(currentLine.value);
     previousLines.value.push(...executeResult);
+    currentLine.value = '';
     curCommandIndex.value = commandCount.value - 1;
     await nextTick();
     await printPrompt();

@@ -31,7 +31,6 @@ const colorCodes = {
 export function interpretAnsiEscapeColor (content: string[]): ColoredContent {
   return content.map((line) => {
     const chunks = line.split(/(\\u001b\[[0-9]*m)/);
-    console.log(chunks);
     const res = [{ content: chunks.shift()!, color: Color.WHITE }];
     while (chunks.length) {
       const color = (colorCodes as any)[chunks.shift()!] || Color.WHITE;

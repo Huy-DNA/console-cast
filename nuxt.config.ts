@@ -30,4 +30,11 @@ export default defineNuxtConfig({
     JWT_SECRET: process.env.JWT_SECRET,
     NODE_ENV: process.env.NODE_ENV,
   },
+  app: {
+    head: {
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+      title: 'ConsoleCast - Simulated terminal',
+    },
+  },
 });

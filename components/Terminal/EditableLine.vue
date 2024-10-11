@@ -110,6 +110,9 @@
         const text = await navigator.clipboard.readText();
         await emits('update-content', content.slice(0, cursorPosition.value.offset) + text + content.slice(cursorPosition.value.offset));
         cursorPosition.value.offset += text.length;
+        return;
+      case 'c':
+        return;
       default:
         return;
     }

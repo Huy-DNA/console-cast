@@ -1,6 +1,7 @@
 # ConsoleCast
 
-![image](https://github.com/user-attachments/assets/466ea067-aa67-4db7-abcd-2ec5b42b4dfe)
+<img width="1392" alt="image" src="https://github.com/user-attachments/assets/fc62361e-98af-425b-ae12-8aee50f18db5">
+
 ## Techstack
 
 * Fullstack framework: `nuxt`

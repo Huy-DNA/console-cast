@@ -17,3 +17,19 @@ export async function execute (...args: string[] & { 0: TCommandName }): Promise
       return echo('echo', `Unknown command:\u001b[31m ${args[0]}`);
   }
 }
+
+export function formatArg (arg: string): string {
+  if (arg[0] === "\'") {
+    arg = arg.slice(1);
+    if (arg[arg.length - 1] === "\'") {
+      arg = arg.slice(0, arg.length - 1);
+    }
+  } else if (arg[0] === "\"") {
+    arg = arg.slice(1);
+    if (arg[arg.length - 1] === "\"") {
+      arg = arg.slice(0, arg.length - 1);
+    }
+  }
+
+  return arg;
+}

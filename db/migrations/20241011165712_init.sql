@@ -47,6 +47,7 @@ CREATE TABLE files (
 
 -- migrate:down
 
+DROP TYPE file_type;
 DROP TABLE files;
 DROP TABLE users;
 DROP TABLE groups;

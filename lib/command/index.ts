@@ -6,7 +6,7 @@ import { parse } from '../services/parse';
 
 export async function execute (command: string): Promise<ColoredContent> {
   const args = parse(command);
-  if (!args[0].trim()) {
+  if (!args[0]?.trim()) {
     args.shift();
   }
   if (!args.length) {

@@ -11,6 +11,6 @@
 <style>
   .terminal * {
     white-space: pre;
-    font-family: ProtoNerdFont, 'Courier New', Courier, monospace;
+    font-family: RobotoMonoNerd, 'Courier New', Courier, monospace;
   }
 </style>

@@ -59,6 +59,9 @@
       emits('submit', props.content === '' ? [{ content: '', color: TColor.WHITE }] : coloredWords.value);
       return;
     }
+    if (e.ctrlKey) {
+      return await handleControlKey(e.key);
+    }
     const { offset } = cursorPosition.value;
     const { content } = props;
     switch (e.key) {
@@ -97,6 +100,18 @@
         if (e.key.length !== 1) return;
         emits('update-content', content.slice(0, offset) + e.key + content.slice(offset));
         cursorPosition.value.offset += 1;
+    }
+  }
+
+  async function handleControlKey(key: string) {
+    const { content } = props;
+    switch (key) {
+      case 'v':
+        const text = await navigator.clipboard.readText();
+        await emits('update-content', content.slice(0, cursorPosition.value.offset) + text + content.slice(cursorPosition.value.offset));
+        cursorPosition.value.offset += text.length;
+      default:
+        return;
     }
   }
 

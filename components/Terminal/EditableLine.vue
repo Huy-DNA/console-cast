@@ -1,26 +1,25 @@
 <script setup lang="ts">
+  import { parse, highlight, execute, ColoredContent, ColoredLine, ColoredWord, Color } from '~/lib';
+
   const props = defineProps<{
     content: string,
-    prefix: TWord[],
+    prefix: ColoredWord[],
   }>();
 
   const emits = defineEmits<{
-    submit: [TLine],
+    submit: [ColoredLine],
     'update-content': [string],
     'line-up': void,
     'line-down': void,
   }>();
 
-  const cursorPosition: Ref<TCursorPosition> = ref({ offset: 0 });
+  const cursorPosition = ref(0);
 
   const inputBox = useTemplateRef('input-box');
   const inputBoxWrapper = useTemplateRef('input-box-wrapper');
 
-  const words = computed(() => {
-    return parse(props.content);
-  });
   const coloredWords = computed(() => {
-    return highlight(words.value);
+    return highlight(props.content);
   });
 
   // auto-focus input box 
@@ -30,7 +29,7 @@
   async function updateCursor (shouldScrollIntoView = true) {
     await nextTick();
     if (shouldScrollIntoView) inputBoxWrapper.value.scrollIntoView();
-    const { offset } = cursorPosition.value;
+    const offset = cursorPosition.value;
     const position = getCharPosition(offset);
     const cursor = document.getElementById('cursor');
     cursor!.style.top = `${position.top}px`;
@@ -58,42 +57,42 @@
   async function onKeydown (e: KeyboardEvent) {
     e.stopImmediatePropagation();
     if (e.key === 'Enter') {
-      cursorPosition.value.offset = 0;
-      emits('submit', props.content === '' ? [{ content: '', color: TColor.WHITE }] : coloredWords.value);
+      cursorPosition.value = 0;
+      emits('submit', props.content === '' ? [{ content: '', color: Color.WHITE }] : coloredWords.value);
       return;
     }
     if (e.ctrlKey) {
       return await handleControlKey(e.key);
     }
-    const { offset } = cursorPosition.value;
+    const offset = cursorPosition.value;
     const { content } = props;
     switch (e.key) {
       case 'ArrowLeft':
         if (offset === 0) return;
-        cursorPosition.value.offset -= 1;
+        cursorPosition.value -= 1;
         setTimeout(() => inputBox.value.focus(), 50);
         return;
       case 'ArrowRight':
         if (offset === content.length) return;
-        cursorPosition.value.offset += 1;
+        cursorPosition.value += 1;
         setTimeout(() => inputBox.value.focus(), 50);
         return;
       case 'ArrowUp':
         emits('line-up');
         await nextTick();
-        cursorPosition.value.offset = props.content.length;
+        cursorPosition.value = props.content.length;
         setTimeout(() => inputBox.value.focus(), 50);
         return;
       case 'ArrowDown':
         emits('line-down');
         await nextTick();
-        cursorPosition.value.offset = props.content.length;
+        cursorPosition.value = props.content.length;
         setTimeout(() => inputBox.value.focus(), 50);
         return;
       case 'Backspace':
         if (offset === 0) return;
         emits('update-content', content.slice(0, offset - 1) + content.slice(offset));
-        cursorPosition.value.offset -= 1;
+        cursorPosition.value -= 1;
         return;
       case 'Delete':
         if (offset === content.value.length) return;
@@ -111,8 +110,8 @@
     switch (key) {
       case 'v':
         const text = await navigator.clipboard.readText();
-        await emits('update-content', content.slice(0, cursorPosition.value.offset) + text + content.slice(cursorPosition.value.offset));
-        cursorPosition.value.offset += text.length;
+        await emits('update-content', content.slice(0, cursorPosition.value) + text + content.slice(cursorPosition.value));
+        cursorPosition.value += text.length;
         return;
       case 'c':
         return;
@@ -129,9 +128,9 @@
 
     const caretOffset = document.caretPositionFromPoint(e.clientX, e.clientY).offset;
     if (caretOffset > props.content.length) {
-      cursorPosition.value.offset = props.content.length;
+      cursorPosition.value = props.content.length;
     } else {
-      cursorPosition.value.offset = caretOffset;
+      cursorPosition.value = caretOffset;
     }
   }
 

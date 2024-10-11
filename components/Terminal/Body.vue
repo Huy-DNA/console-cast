@@ -1,6 +1,8 @@
 <script setup lang="ts">
-  const historyCommands: Ref<TContent> = ref([]);
-  const previousLines: Ref<TContent> = ref([]);
+  import { ColoredContent, ColoredLine, Color, execute } from '~/lib';
+
+  const historyCommands: Ref<ColoredContent> = ref([]);
+  const previousLines: Ref<ColoredContent> = ref([]);
   const currentLine = ref('');
   const curCommandIndex = ref(0);
   const commandCount = computed(() => historyCommands.value.length + 1);
@@ -12,11 +14,11 @@
     if (selection?.type !== 'Range') editableLine.value.root.focus();
   }
 
-  async function onSubmit (line: TLine) {
+  async function onSubmit (line: ColoredLine) {
     currentLine.value = '';
     if (line.length > 1 || line[0].content.trim()) historyCommands.value.push(line);
     previousLines.value.push(line);
-    const executeResult = await execute(...line.map(({ content }) => content));
+    const executeResult = await execute(currentLine.value);
     previousLines.value.push(...executeResult);
     curCommandIndex.value = commandCount.value - 1;
     await nextTick();
@@ -50,20 +52,20 @@
   }
 
   async function printPrompt () {
-    const executeResult = await execute(TCommandName.ECHO, '┌', ' ' , '\u001b[35m~', ' ', 'as', ' ', '\u001b[34mguest');
+    const executeResult = await execute('echo ┌ \\u001b[35m~ \\u001b[38mas \\u001b[34mguest');
     previousLines.value.push(...executeResult);
   }
 
   async function printWelcome () {
     const executeResult = [
-      ...await execute(TCommandName.ECHO, ' Theme inspired by ', '\u001b[33mcatpuccin', '...'),
-      ...await execute(TCommandName.ECHO, ''),
-      ...await execute(TCommandName.ECHO, '\u001b[32m  ／l、', '\u001b[31m            guest@console-cast'),
-      ...await execute(TCommandName.ECHO, '\u001b[32m（ ゜､ ｡７' , '\u001b[34m          js',  '        Nuxt 3'),
-      ...await execute(TCommandName.ECHO, '\u001b[32m  l  ~ヽ', '\u001b[34m           css', '       Tailwind'),
-      ...await execute(TCommandName.ECHO, '\u001b[32m  じしf_,)ノ', '\u001b[34m        dbms', '      PostgreSQL 17 + Zapatos'),
-      ...await execute(TCommandName.ECHO, '\u001b[34m                   runtime', '   bun'),
-      ...await execute(TCommandName.ECHO, ''),
+      ...await execute('echo Theme inspired by \\u001b[33mcatpuccin\\u001b[38m...'),
+      ...await execute('echo " "'),
+      ...await execute('echo \\u001b[32m " ／l" "\\u001b[31m              guest@console-cast"'),
+      ...await execute('echo \\u001b[32m（ ゜､ ｡７ "\\u001b[34m          js" "\\u001b[38m        Nuxt 3"'),
+      ...await execute('echo \\u001b[32m l  "  ~ヽ" "\\u001b[34m           css" "\\u001b[38m       Tailwind"'),
+      ...await execute('echo \\u001b[32m じしf_,)ノ "\\u001b[34m         dbms" "\\u001b[38m      PostgreSQL 17 + Zapatos"'),
+      ...await execute('echo "\\u001b[34m                    runtime" "\\u001b[38m   bun"'),
+      ...await execute('echo " "'),
     ];
     previousLines.value.push(...executeResult); 
   }
@@ -89,10 +91,10 @@
     <TerminalEditableLine
       :content="currentLine"
       :prefix="[
-        { content: '└', color: TColor.WHITE },
-        { content: ' ', color: TColor.WHITE },
-        { content: '$', color: TColor.EMERALD },
-        { content: ' ', color: TColor.WHITE },
+        { content: '└', color: Color.WHITE },
+        { content: ' ', color: Color.WHITE },
+        { content: '$', color: Color.EMERALD },
+        { content: ' ', color: Color.WHITE },
       ]"
       ref="editableLine"
       @submit="onSubmit"

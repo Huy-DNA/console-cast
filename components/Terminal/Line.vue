@@ -1,5 +1,7 @@
 <script setup lang="ts">
-  const props = defineProps<{ line: TLine }>();
+  import { ColoredLine } from '~/lib';
+
+  const props = defineProps<{ line: ColoredLine }>();
 
   const root = useTemplateRef('root');
 

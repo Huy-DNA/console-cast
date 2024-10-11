@@ -22,7 +22,7 @@ function getNextToken (command: string): { token: string, remaining: string } | 
     return { token: command.slice(0, nonspaceIndex), remaining: command.slice(nonspaceIndex) };
   }
 
-  let token = "";
+  let token = '';
   let isInDoubleQuote = false;
   let isInSingleQuote = false;
   for (let i = 0; i < command.length; ++i) {
@@ -65,6 +65,8 @@ function getNextToken (command: string): { token: string, remaining: string } | 
           case "\"":
             token += "\"";
             break;
+          default:
+            token += nextChar;
         }
         break;
       }
@@ -72,5 +74,5 @@ function getNextToken (command: string): { token: string, remaining: string } | 
         token += char;
     }
   }
-  return { token, remaining: "" };
+  return { token, remaining: '' };
 }

@@ -1,4 +1,4 @@
-export enum TColor {
+export enum Color {
   RED = 'red',
   YELLOW = 'yellow',
   GREEN = 'green',
@@ -13,18 +13,13 @@ export enum TColor {
 }
 
 // A word is a sequence of non-space tokens and also includes all preceding spaces
-export interface TWord {
+export interface ColoredWord {
   content: string;
-  color: TColor;
+  color?: Color;
 }
 
 // A line is a sequence of words
-export type TLine = TWord[];
+export type ColoredLine = ColoredWord[];
 
 // A content is a sequence of lines
-export type TContent = TLine[];
-
-// Cursor position
-export interface TCursorPosition {
-  offset: number;
-}
+export type ColoredContent = ColoredLine[];

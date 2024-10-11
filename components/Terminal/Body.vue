@@ -40,11 +40,12 @@
 
   function onLineDown () { 
     if (curCommandIndex.value > commandCount.value - 2) return;
-    curCommandIndex.value += 1;
     if (curCommandIndex.value === commandCount.value - 2) {
       currentLine.value = '';
+      curCommandIndex.value += 1;
     } else {
       currentLine.value = historyCommands.value[curCommandIndex.value].map(({ content }) => content).join('');
+      curCommandIndex.value += 1;
     }
   }
 

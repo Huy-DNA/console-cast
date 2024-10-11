@@ -25,7 +25,7 @@
   }
 
   function onScroll () {
-    editableLine.value.updateCursor();
+    editableLine.value.updateCursor(false);
   }
 
   function onUpdateContent (newContent: string) {

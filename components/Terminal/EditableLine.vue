@@ -27,9 +27,9 @@
   onMounted(() => inputBox.value.focus());
 
   watch(cursorPosition, updateCursor, { deep: true });
-  async function updateCursor () {
+  async function updateCursor (shouldScrollIntoView = true) {
     await nextTick();
-    inputBoxWrapper.value.scrollIntoView();
+    if (shouldScrollIntoView) inputBoxWrapper.value.scrollIntoView();
     const { offset } = cursorPosition.value;
     const position = getCharPosition(offset);
     const cursor = document.getElementById('cursor');

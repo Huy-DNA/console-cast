@@ -1,6 +1,7 @@
 <script setup lang="ts">
   const props = defineProps<{
     content: string,
+    prefix: TWord[],
   }>();
 
   const emits = defineEmits<{
@@ -13,6 +14,7 @@
   const cursorPosition: Ref<TCursorPosition> = ref({ offset: 0 });
 
   const inputBox = useTemplateRef('input-box');
+  const inputBoxWrapper = useTemplateRef('input-box-wrapper');
 
   const words = computed(() => {
     return parse(props.content);
@@ -53,7 +55,7 @@
 
   async function onKeydown (e: KeyboardEvent) {
     e.stopImmediatePropagation();
-    inputBox.value.scrollIntoView();
+    inputBoxWrapper.value.scrollIntoView();
     if (e.key === 'Enter') {
       cursorPosition.value.offset = 0;
       emits('submit', props.content === '' ? [{ content: '', color: TColor.WHITE }] : coloredWords.value);
@@ -139,25 +141,32 @@
 </script>
 
 <template>
-  <p
-    role="text"
-    class="flex justify-start gap-0 w-[100%] outline-none"
-    tabindex="0"
-    @keydown="onKeydown"
-    @click="onClick"
-    ref="input-box"
-  >
-    <span
-      class="w-2.5 h-[22px] absolute block bg-white z-50"
-      id="cursor"
-    />
+  <div class="m-0 p-0" ref="input-box-wrapper" tabindex="0">
     <TerminalWord
-      v-for="(word, index) in coloredWords"
+      v-for="(word, index) in props.prefix"
       :key="index"
       :word="word"
     />
-    &nbsp;
-  </p>
+    <p
+      role="text"
+      class="inline-flex justify-start gap-0 w-[90%] outline-none"
+      tabindex="0"
+      @keydown="onKeydown"
+      @click="onClick"
+      ref="input-box"
+    >
+      <span
+        class="w-2.5 h-[22px] absolute block bg-white z-50"
+        id="cursor"
+      /> 
+      <TerminalWord
+        v-for="(word, index) in coloredWords"
+        :key="index"
+        :word="word"
+      />
+      &nbsp;
+    </p>
+  </div>
 </template>
 
 <style scoped>

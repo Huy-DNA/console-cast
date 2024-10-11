@@ -20,6 +20,7 @@
     previousLines.value.push(...executeResult);
     curCommandIndex.value = commandCount.value - 1;
     await nextTick();
+    await printPrompt();
     editableLine.value.updateCursor();
   }
 
@@ -47,7 +48,13 @@
     }
   }
 
+  async function printPrompt () {
+    const executeResult = await execute(TCommandName.ECHO, '┌', ' ' , '\u001b[35m~', ' ', 'as', ' ', '\u001b[34mguest');
+    previousLines.value.push(...executeResult);
+  }
+
   onMounted(async () => {
+    await printPrompt();
   });
 </script>
 
@@ -65,6 +72,12 @@
     />
     <TerminalEditableLine
       :content="currentLine"
+      :prefix="[
+        { content: '└', color: TColor.WHITE },
+        { content: ' ', color: TColor.WHITE },
+        { content: '$', color: TColor.EMERALD },
+        { content: ' ', color: TColor.WHITE },
+      ]"
       ref="editableLine"
       @submit="onSubmit"
       @update-content="onUpdateContent"

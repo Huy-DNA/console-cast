@@ -14,7 +14,7 @@ const colorCodes = {
 
 export const echo: TCommand = function(...args) {
   args.shift();
-  args.shift();
+  if (!args[0].trim()) args.shift();
   return [
     args.flatMap((arg) => {
       if (!arg.trim()) return [{ content: " ", color: TColor.WHITE }];

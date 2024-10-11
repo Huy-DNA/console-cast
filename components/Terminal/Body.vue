@@ -59,7 +59,7 @@
       ...await execute(TCommandName.ECHO, ' Theme inspired by ', '\u001b[33mcatpuccin', '...'),
       ...await execute(TCommandName.ECHO, ''),
       ...await execute(TCommandName.ECHO, '\u001b[32m  ／l、', '\u001b[31m            guest@console-cast'),
-      ...await execute(TCommandName.ECHO, '\u001b[32m（ﾟ､ ｡ ７' , '\u001b[34m           js',  '        Nuxt 3'),
+      ...await execute(TCommandName.ECHO, '\u001b[32m（ ゜､ ｡７' , '\u001b[34m          js',  '        Nuxt 3'),
       ...await execute(TCommandName.ECHO, '\u001b[32m  l  ~ヽ', '\u001b[34m           css', '       Tailwind'),
       ...await execute(TCommandName.ECHO, '\u001b[32m  じしf_,)ノ', '\u001b[34m        dbms', '      PostgreSQL 17 + Zapatos'),
       ...await execute(TCommandName.ECHO, '\u001b[34m                   runtime', '   bun'),

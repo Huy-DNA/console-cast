@@ -27,7 +27,9 @@
   onMounted(() => inputBox.value.focus());
 
   watch(cursorPosition, updateCursor, { deep: true });
-  function updateCursor () {
+  async function updateCursor () {
+    await nextTick();
+    inputBoxWrapper.value.scrollIntoView();
     const { offset } = cursorPosition.value;
     const position = getCharPosition(offset);
     const cursor = document.getElementById('cursor');
@@ -55,7 +57,6 @@
 
   async function onKeydown (e: KeyboardEvent) {
     e.stopImmediatePropagation();
-    inputBoxWrapper.value.scrollIntoView();
     if (e.key === 'Enter') {
       cursorPosition.value.offset = 0;
       emits('submit', props.content === '' ? [{ content: '', color: TColor.WHITE }] : coloredWords.value);

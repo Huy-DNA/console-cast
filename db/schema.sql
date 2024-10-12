@@ -239,6 +239,14 @@ ALTER TABLE ONLY public.users ALTER COLUMN group_id SET DEFAULT nextval('public.
 
 
 --
+-- Name: users c_uniq_users_name; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT c_uniq_users_name UNIQUE (name);
+
+
+--
 -- Name: files files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -268,6 +276,20 @@ ALTER TABLE ONLY public.schema_migrations
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: idx_files_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_files_name ON public.files USING btree (name text_pattern_ops);
+
+
+--
+-- Name: idx_users_group_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_users_group_id ON public.users USING hash (group_id);
 
 
 --
@@ -304,4 +326,5 @@ ALTER TABLE ONLY public.users
 --
 
 INSERT INTO public.schema_migrations (version) VALUES
-    ('20241011165712');
+    ('20241011165712'),
+    ('20241012044018');

@@ -15,3 +15,5 @@ export const initDbClient = async () => {
 
   return dbClient;
 };
+
+export const dbClient = await initDbClient();

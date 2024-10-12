@@ -19,8 +19,8 @@ export default defineEventHandler(async (event) => {
   const { name, password } = body;
   
   const { password: hashedPassword, id } = await db.selectExactlyOne('users', { name }).run(dbPool);
-  
-  if (hashedPassword === null || (password && await bcrypt.compare(password, hashedPassword))) {
+
+  if (hashedPassword === null || (password && bcrypt.compareSync(password, hashedPassword.trim()))) {
     const { JWT_SECRET } = useRuntimeConfig();
     const token = jwt.sign({ username: name, userid: id }, JWT_SECRET, { expiresIn: '24h' });
     setHeader(event, 'Set-Cookie', `jwt=${token}; HttpOnly; SameSite=Strict${isProduction ? '' : '; Secure'}`);

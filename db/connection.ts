@@ -1,9 +1,9 @@
 import pg from 'pg';
 
-export const initDbClient = async () => {
+export const initDbPool = async () => {
   const { DATABASE_HOST, DATABASE_USER, DATABASE_PORT, DATABASE_NAME, DATABASE_PASSWORD } = useRuntimeConfig();
 
-  const dbClient = new pg.Client({
+  const dbPool = new pg.Pool({
     user: DATABASE_USER,
     host: DATABASE_HOST,
     database: DATABASE_NAME,
@@ -11,9 +11,9 @@ export const initDbClient = async () => {
     port: parseInt(DATABASE_PORT || '5432'),
   });
 
-  await dbClient.connect();
+  await dbPool.connect();
 
-  return dbClient;
+  return dbPool;
 };
 
-export const dbClient = await initDbClient();
+export const dbPool = await initDbPool();

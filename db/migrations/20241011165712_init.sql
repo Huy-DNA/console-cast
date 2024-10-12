@@ -4,16 +4,16 @@ CREATE TYPE file_type AS ENUM ('file', 'directory', 'symlink');
 
 CREATE TABLE groups (
   id SERIAL PRIMARY KEY,
-  name CHAR(256),
-  created_at TIMESTAMP,
+  name CHAR(256) NOT NULL,
+  created_at TIMESTAMP NOT NULL,
   deleted_at TIMESTAMP NULL
 );
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  name CHAR(256),
-  password CHAR(256),
-  created_at TIMESTAMP,
+  name CHAR(256) NOT NULL,
+  password CHAR(256) NULL,
+  created_at TIMESTAMP NOT NULL,
   deleted_at TIMESTAMP NULL,
   group_id SERIAL,
 
@@ -25,14 +25,14 @@ CREATE TABLE users (
 
 CREATE TABLE files (
   id SERIAL PRIMARY KEY,
-  name TEXT,
-  owner_id SERIAL,
-  group_id SERIAL,
-  created_at TIMESTAMP,
-  updated_at TIMESTAMP,
+  name TEXT NOT NULL,
+  owner_id SERIAL NOT NULL,
+  group_id SERIAL NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
   deleted_at TIMESTAMP NULL,
-  permission_bits BIT(12),
-  file_type file_type,
+  permission_bits BIT(12) NOT NULL,
+  file_type file_type NOT NULL,
 
   CONSTRAINT fk_files_groups
     FOREIGN KEY(group_id)

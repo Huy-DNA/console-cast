@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const isProduction = process.env.NODE_ENV === 'production';
   const body = await readBody(event);
   if (typeof body !== 'object' || typeof body.name !== 'string' || !['string', 'undefined'].includes(typeof body.password)) {
-    return { error: { code: LoginErrorCode.INVALID_BODY, message: 'Invalid body. Expected "name" and "password" to be strings.' } };
+    return { error: { code: LoginErrorCode.INVALID_BODY, message: 'Invalid body. Expected "name" to be strings and "password" to be optionally strings.' } };
   }
   const { name, password } = body;
   

@@ -33,6 +33,7 @@ CREATE TABLE files (
   deleted_at TIMESTAMP NULL,
   permission_bits BIT(12) NOT NULL,
   file_type file_type NOT NULL,
+  content TEXT NULL,
 
   CONSTRAINT fk_files_groups
     FOREIGN KEY(group_id)

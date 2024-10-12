@@ -40,6 +40,8 @@ export const fileService = {
   },
   async getFileContent (filename: string): Promise<Result<Uint8Array, Diagnostic>> {
   },
+  async updateFileContent (filename: string, content: Uint8Array): Promise<Result<null, Diagnostic>> {
+  },
   async getFolderContent (filename: string): Promise<Result<FileMeta[], Diagnostic>> {
   },
   async removeFile (filename: string): Promise<Result<null, Diagnostic>> {

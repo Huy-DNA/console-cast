@@ -327,4 +327,5 @@ ALTER TABLE ONLY public.users
 
 INSERT INTO public.schema_migrations (version) VALUES
     ('20241011165712'),
-    ('20241012044018');
+    ('20241012044018'),
+    ('20241012080636');

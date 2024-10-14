@@ -1,4 +1,4 @@
-import { formatArg } from '~/lib/command/utils';
+import { formatArg } from "~/lib/command/utils";
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
 

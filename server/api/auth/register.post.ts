@@ -7,6 +7,7 @@ export enum RegisterErrorCode {
   INVALID_BODY = 1000,
   USER_ALREADY_EXISTS = 1001,
   PASSWORD_TOO_SHORT = 1002,
+  INVALID_USER_NAME = 1003,
   UNKNOWN_ERROR = 2000,
 }
 
@@ -16,11 +17,15 @@ export default defineEventHandler(async (event) => {
     return { error: { code: RegisterErrorCode.INVALID_BODY, message: 'Invalid body. Expected "name" and "password" to be strings.' } };
   }
   const { name, password } = body;
-  
+
   if (password.length < 6) {
     return { error: { code: RegisterErrorCode.PASSWORD_TOO_SHORT, message: 'Password must be at least 6 character long' } };
   }
-  
+
+  if (name.search(/\s/) !== -1) {
+    return { error: { code: RegisterErrorCode.INVALID_USER_NAME, message: 'Username must not contain spaces' } };
+  }
+
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 

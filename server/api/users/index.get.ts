@@ -18,7 +18,10 @@ export default defineEventHandler(async (event) => {
     return { error: { code: UserGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
 
-  const { name: username, created_at, id, group_id } = await db.selectExactlyOne('users', { name: formattedName, deleted_at: db.conditions.isNull }).run(dbPool);
-
-  return { ok: { data: { name: username, id, group_id, created_at }, message: 'Get user successfully' } };
+  try {
+    const { name: username, created_at, id, group_id } = await db.selectExactlyOne('users', { name: formattedName, deleted_at: db.conditions.isNull }).run(dbPool);
+    return { ok: { data: { name: username, id, group_id, created_at }, message: 'Get user successfully' } };
+  } catch {
+    return { error: { code: UserGetErrorCode.USER_NOT_FOUND, message: 'User not found' } };
+  }
 });

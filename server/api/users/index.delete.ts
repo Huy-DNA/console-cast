@@ -4,8 +4,8 @@ import { dbPool } from '~/db/connection';
 
 export enum UserDeleteErrorCode {
   INVALID_PARAM = 1000,
-  UNDELETABLE_USER = 1001,
   NOT_ENOUGH_PRIVILEGE = 2000,
+  UNDELETABLE_USER = 2001,
 }
 
 export default defineEventHandler(async (event) => {

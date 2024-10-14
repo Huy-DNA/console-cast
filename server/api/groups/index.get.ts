@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   try {
     const { group_id } = await db.selectExactlyOne('users', { name: event.context.auth.username, deleted_at: db.conditions.isNull }).run(dbPool);
     const { name: trueGroupName, created_at } = await db.selectExactlyOne('groups', { id: group_id, deleted_at: db.conditions.isNull }).run(dbPool);
-    if (formattedName !== 'guest' && formattedName !== trueGroupName) {
+    if (formattedName !== 'guest' && formattedName !== trueGroupName?.trim()) {
       return { error: { code: GroupGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
     }
     return { ok: { data: { name, group_id, created_at }, message: 'Get group successfully' } };

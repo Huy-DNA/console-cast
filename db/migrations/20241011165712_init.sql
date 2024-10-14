@@ -4,15 +4,15 @@ CREATE TYPE file_type AS ENUM ('file', 'directory', 'symlink');
 
 CREATE TABLE groups (
   id SERIAL PRIMARY KEY,
-  name CHAR(256) NOT NULL,
+  name VARCHAR(256) NOT NULL,
   created_at TIMESTAMP NOT NULL,
   deleted_at TIMESTAMP NULL
 );
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
-  name CHAR(256) NOT NULL,
-  password CHAR(256) NULL,
+  name VARCHAR(256) NOT NULL,
+  password VARCHAR(256) NULL,
   created_at TIMESTAMP NOT NULL,
   deleted_at TIMESTAMP NULL,
   group_id SERIAL,

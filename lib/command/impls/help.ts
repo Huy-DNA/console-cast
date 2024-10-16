@@ -32,24 +32,19 @@ function getDescription(commandName: string): string[] {
   const commandDescription = commandDescriptions[commandName as Command];
   if (commandDescription !== undefined) {
     return [
-      ' ',
-      `\\u001b[32m${commandName}`,
-      ' ',
-      `\\u001b[33mDescription:\\u001b[37m ${commandDescription.description}\n`,
-      ' ',
+      `Entry: \\u001b[32m${commandName}\\u001b[37m - ${commandDescription.description}\n`,
       ...commandDescription.usages.flatMap(({ usage, args }) =>
         [`\\u001b[34m- ${usage}`,
           `    \\u001b[32m${commandName} \\u001b[36m${args.join(' ')}`])
     ];
   } else {
-    return [`No entry in index: \\u001b[31m${commandName}`];
+    return [`No entry found: \\u001b[31m${commandName}`];
   }
 }
 
 export const help: CommandFunc = function(...args) {
   args.shift();
   args.shift();
-
 
   const commandName = formatArg(args[0]);
   return getDescription(commandName);

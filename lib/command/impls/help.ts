@@ -28,28 +28,21 @@ const commandDescriptions: Record<Command, CommandDescription> = {
   },
 };
 
-//const colorCodes = {
-//  '\\u001b[30m': Color.BLACK,
-//  '\\u001b[31m': Color.RED,
-//  '\\u001b[32m': Color.GREEN,
-//  '\\u001b[33m': Color.YELLOW,
-//  '\\u001b[34m': Color.BLUE,
-//  '\\u001b[35m': Color.PURPLE,
-//  '\\u001b[36m': Color.CYAN,
-//  '\\u001b[37m': Color.WHITE,
-//  '\\u001b[95m': Color.PINK,
-//};
 function getDescription(commandName: string): string[] {
   const commandDescription = commandDescriptions[commandName as Command];
   if (commandDescription !== undefined) {
     return [
-      `Description: ${commandDescription.description}\n`,
+      ' ',
+      `\\u001b[32m${commandName}`,
+      ' ',
+      `\\u001b[33mDescription:\\u001b[37m ${commandDescription.description}\n`,
+      ' ',
       ...commandDescription.usages.flatMap(({ usage, args }) =>
-        [`- ${usage}`,
-          `    ${commandName} ${args.join(' ')}`])
+        [`\\u001b[34m- ${usage}`,
+          `    \\u001b[32m${commandName} \\u001b[36m${args.join(' ')}`])
     ];
   } else {
-    return [`No entry in index: ${commandName}`];
+    return [`No entry in index: \\u001b[31m${commandName}`];
   }
 }
 

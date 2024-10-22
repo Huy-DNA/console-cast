@@ -9,8 +9,8 @@ export default defineEventHandler(async (event) => {
 
   const { JWT_KEY } = useRuntimeConfig();
   try {
-    const { username, userid } = jwt.decode(jwtToken, JWT_KEY) as any;
-    event.context.auth = { username, userid };
+    const { username, userid, groupid } = jwt.decode(jwtToken, JWT_KEY) as any;
+    event.context.auth = { username, userid, groupid };
     return;
   } catch {
     event.context.auth = null;

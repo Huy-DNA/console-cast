@@ -20,18 +20,22 @@ export default defineEventHandler(async (event) => {
   }
   const fileName = formatArg(name);
   const containerDirName = path.dirname(fileName);
-  const { permission_bits: containerDirPermissionBits, owner_id: containerDirOwnerId, group_id: containerDirGroupId } = await db.selectExactlyOne('files', { name: containerDirName, file_type: 'directory' }).run(dbPool);
-  if (
-    !canAccess(
-      { userId: event.context.auth.userId as number, groupId: event.context.auth.groupId as number },
-      { fileType: FileType.REGULAR_FILE, ownerId: containerDirOwnerId, groupId: containerDirGroupId, permissionBits: containerDirPermissionBits },
-      AccessType.READ,
-    )
-  ) {
-    return { error: { code: FileGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+  try {
+    const { permission_bits: containerDirPermissionBits, owner_id: containerDirOwnerId, group_id: containerDirGroupId } = await db.selectExactlyOne('files', { name: containerDirName, file_type: 'directory' }).run(dbPool);
+    if (
+      !canAccess(
+        { userId: event.context.auth.userId as number, groupId: event.context.auth.groupId as number },
+        { fileType: FileType.REGULAR_FILE, ownerId: containerDirOwnerId, groupId: containerDirGroupId, permissionBits: containerDirPermissionBits },
+        AccessType.READ,
+      )
+    ) {
+      return { error: { code: FileGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+    }
+
+    const { permission_bits, owner_id, group_id } = await db.selectExactlyOne('files', { name: fileName }).run(dbPool);
+
+    return { ok: { message: 'Fetch file information successfully', data: { permission: permission_bits, ownerId: owner_id, groupId: group_id, fileName } } };
+  } catch {
+    return { error: { code: FileGetErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
   }
-
-  const { permission_bits, owner_id, group_id } = await db.selectExactlyOne('files', { name: fileName }).run(dbPool);
-
-  return { ok: { message: 'Fetch file information successfully', data: { permission: permission_bits, ownerId: owner_id, groupId: group_id, fileName } } };
 });

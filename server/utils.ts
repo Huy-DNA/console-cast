@@ -8,6 +8,10 @@ export function trimQuote (value: string): string {
   return value;
 }
 
+export function isPathNameValid (name: string): boolean {
+  return name.match(/^[a-zA-Z 0-9\._/]+$/g) !== null;
+}
+
 export const enum AccessType {
   READ,
   WRITE,

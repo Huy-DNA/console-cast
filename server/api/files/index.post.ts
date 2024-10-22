@@ -42,6 +42,6 @@ export default defineEventHandler(async (event) => {
 
     return { ok: { message: 'Create file successfully' } };
   } catch {
-    return { error: { code: FilePostErrorCode.INVALID_FOLDER, message: 'File not found' } };
+    return { error: { code: FilePostErrorCode.INVALID_FOLDER, message: 'Folder not found' } };
   }
 });

@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
       return { error: { code: FileDeleteErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
     }
 
-    await db.deletes('files', { name: db.conditions.like(`${fileName}%`) }).run(dbPool);
+    await db.update('files', { deleted_at: new Date(Date.now()) }, { name: db.conditions.like(`${fileName}%`) }).run(dbPool);
 
     return { ok: { message: 'Delete file information successfully' } };
   } catch {

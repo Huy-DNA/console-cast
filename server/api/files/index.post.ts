@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FilePostErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
   const body = await readBody(event);
-  if (typeof body !== 'object' || !['string', 'undefined'].includes(typeof body.content) || !Array.isArray(body.permission_bits) || !body.permission_bits.every((bit: unknown) => typeof bit === 'boolean')) {
+  if (typeof body !== 'object' || !['string', 'undefined'].includes(typeof body.content) || !Array.isArray(body.permission_bits) || body.length !== 12 || !body.permission_bits.every((bit: unknown) => typeof bit === 'boolean')) {
     return { error: { code: FilePostErrorCode.INVALID_BODY, message: 'Invalid body. Expected "content" to be an optional string.' } };
   }
   const { content, permission_bits } = body;

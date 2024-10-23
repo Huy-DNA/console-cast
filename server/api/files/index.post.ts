@@ -7,6 +7,7 @@ export enum FilePostErrorCode {
   INVALID_BODY = 1001,
   NOT_ENOUGH_PRIVILEGE = 2000,
   INVALID_FOLDER = 3000,
+  FILE_ALREADY_EXISTS = 3001,
 }
 
 export default defineEventHandler(async (event) => {
@@ -34,6 +35,10 @@ export default defineEventHandler(async (event) => {
       )
     ) {
       return { error: { code: FilePostErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+    }
+
+    if (await db.selectOne('files', { name: fileName, deleted_at: db.conditions.isNull }).run(dbPool)) {
+      return { error: { code: FilePostErrorCode.FILE_ALREADY_EXISTS, message: 'This file already exists' } };
     }
 
     await db.insert('files', { name: fileName, content: content ?? null, file_type: content ? 'file' : 'directory', created_at: new Date(Date.now()), updated_at: new Date(Date.now()), deleted_at: null, permission_bits, owner_id: event.context.auth.userid, group_id: event.context.auth.groupid }).run(dbPool);

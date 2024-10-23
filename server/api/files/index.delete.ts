@@ -32,10 +32,14 @@ export default defineEventHandler(async (event) => {
     ) {
       return { error: { code: FileDeleteErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
     }
+    
+    if (!(await db.selectOne('files', { name: fileName, deleted_at: db.conditions.isNull }).run(dbPool))) {
+      return { error: { code: FileDeleteErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
+    }
 
     await db.update('files', { deleted_at: new Date(Date.now()) }, { name: db.conditions.like(`${fileName}%`) }).run(dbPool);
 
-    return { ok: { message: 'Delete file information successfully' } };
+    return { ok: { message: 'Delete file successfully' } };
   } catch {
     return { error: { code: FileDeleteErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
   }

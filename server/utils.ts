@@ -30,7 +30,7 @@ export interface TargetFilePermission {
   fileType: FileType;
   ownerId: number;
   groupId: number;
-  permissionBits: boolean[] & { length: 12 };
+  permissionBits: string & { length: 12; [index: number]: '0' | '1' };
 }
 
 export interface Accessor {
@@ -42,7 +42,7 @@ export function canAccess (accessor: Accessor, file: TargetFilePermission, acces
   const accessBitIndex = accessType === AccessType.READ ? 0 : accessType === AccessType.WRITE ? 1 : 2;
   const userKindIndex = file.ownerId === accessor.userId ? 2 : file.groupId === accessor.groupId ? 1 : 0;
   const bitIndex = userKindIndex * 3 + accessBitIndex;
-  return file.permissionBits[bitIndex];
+  return file.permissionBits[bitIndex] === '1';
 }
 
 export function normalizePathname (name: string): string {

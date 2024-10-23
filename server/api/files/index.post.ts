@@ -18,8 +18,8 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FilePostErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
   const body = await readBody(event);
-  if (typeof body !== 'object' || !['string', 'undefined'].includes(typeof body.content) || !Array.isArray(body.permission_bits) || body.length !== 12 || !body.permission_bits.every((bit: unknown) => typeof bit === 'boolean')) {
-    return { error: { code: FilePostErrorCode.INVALID_BODY, message: 'Invalid body. Expected "content" to be an optional string.' } };
+  if (typeof body !== 'object' || !['string', 'undefined'].includes(typeof body.content) || typeof body.permission_bits !== 'string' || body.permission_bits.length !== 12 || !body.permission_bits.split('').every((bit: string) => ['0', '1'].includes(bit))) {
+    return { error: { code: FilePostErrorCode.INVALID_BODY, message: 'Invalid body. Expected "content" to be an optional string and "permission_bits" to be a bit string.' } };
   }
   const { content, permission_bits } = body;
   const fileName = normalizePathname(name);
@@ -29,14 +29,14 @@ export default defineEventHandler(async (event) => {
     if (
       !canAccess(
         { userId: event.context.auth.userId as number, groupId: event.context.auth.groupId as number },
-        { fileType: FileType.REGULAR_FILE, ownerId: containerDirOwnerId, groupId: containerDirGroupId, permissionBits: containerDirPermissionBits },
+        { fileType: FileType.DIRECTORY, ownerId: containerDirOwnerId, groupId: containerDirGroupId, permissionBits: containerDirPermissionBits },
         AccessType.WRITE,
       )
     ) {
       return { error: { code: FilePostErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
     }
 
-    await db.insert('files', { name: fileName, content: content ?? null, file_type: content ? 'file' : 'directory', created_at: new Date(Date.now()), updated_at: new Date(Date.now()), deleted_at: null, permission_bits, owner_id: event.context.auth.owner_id, group_id: event.context.auth.group_id }).run(dbPool);
+    await db.insert('files', { name: fileName, content: content ?? null, file_type: content ? 'file' : 'directory', created_at: new Date(Date.now()), updated_at: new Date(Date.now()), deleted_at: null, permission_bits, owner_id: event.context.auth.userid, group_id: event.context.auth.groupid }).run(dbPool);
 
     return { ok: { message: 'Create file successfully' } };
   } catch {

@@ -1,3 +1,5 @@
+import { formatArg } from "~/lib/command/utils";
+
 export function trimQuote (value: string): string {
   if (['"', '\''].includes(value[0])) {
     value = value.slice(1);
@@ -40,4 +42,10 @@ export function canAccess (accessor: Accessor, file: TargetFilePermission, acces
   const userKindIndex = file.ownerId === accessor.userId ? 2 : file.groupId === accessor.groupId ? 1 : 0;
   const bitIndex = userKindIndex * 3 + accessBitIndex;
   return file.permissionBits[bitIndex];
+}
+
+export function normalizePathname (name: string): string {
+  const unquotedName = formatArg(name);
+  if (unquotedName[unquotedName.length - 1] === '/') return unquotedName.slice(0, unquotedName.length - 1);
+  return unquotedName;
 }

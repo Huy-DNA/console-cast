@@ -1,8 +1,7 @@
 import path from 'path';
-import { formatArg } from '~/lib/command/utils';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { AccessType, canAccess, FileType } from '~/server/utils';
+import { AccessType, canAccess, FileType, normalizePathname } from '~/server/utils';
 
 export enum FilePostErrorCode {
   INVALID_PARAM = 1000,
@@ -24,7 +23,7 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FilePostErrorCode.INVALID_BODY, message: 'Invalid body. Expected "content" to be an optional string.' } };
   }
   const { content, permission_bits } = body;
-  const fileName = formatArg(name);
+  const fileName = normalizePathname(name);
   const containerDirName = path.dirname(fileName);
   try {
     const { permission_bits: containerDirPermissionBits, owner_id: containerDirOwnerId, group_id: containerDirGroupId } = await db.selectExactlyOne('files', { name: containerDirName, file_type: 'directory' }).run(dbPool);

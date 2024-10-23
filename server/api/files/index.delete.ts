@@ -1,8 +1,7 @@
 import path from 'path';
-import { formatArg } from '~/lib/command/utils';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { AccessType, canAccess, FileType, isPathNameValid } from '~/server/utils';
+import { AccessType, canAccess, FileType, isPathNameValid, normalizePathname } from '~/server/utils';
 
 export enum FileDeleteErrorCode {
   INVALID_PARAM = 1000,
@@ -18,7 +17,7 @@ export default defineEventHandler(async (event) => {
   if (!event.context.auth) {
     return { error: { code: FileDeleteErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
-  const fileName = formatArg(name);
+  const fileName = normalizePathname(name);
   if (!isPathNameValid(fileName)) {
     return { error: { code: FileDeleteErrorCode.INVALID_PARAM, message: 'Invalid filename' } };
   }

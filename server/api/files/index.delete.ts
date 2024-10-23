@@ -1,7 +1,7 @@
 import path from 'path';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { AccessType, canAccess, FileType, isPathNameValid, normalizePathname } from '~/server/utils';
+import { AccessType, canAccess, FileType, getParentDir, isPathNameValid, normalizePathname } from '~/server/utils';
 
 export enum FileDeleteErrorCode {
   INVALID_PARAM = 1000,
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   if (!isPathNameValid(fileName)) {
     return { error: { code: FileDeleteErrorCode.INVALID_PARAM, message: 'Invalid filename' } };
   }
-  const containerDirName = path.dirname(fileName);
+  const containerDirName = getParentDir(fileName);
   try {
     const { permission_bits: containerDirPermissionBits, owner_id: containerDirOwnerId, group_id: containerDirGroupId } = await db.selectExactlyOne('files', { name: containerDirName, file_type: 'directory' }).run(dbPool);
     if (

@@ -1,7 +1,7 @@
 import path from 'path';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { AccessType, canAccess, FileType, normalizePathname } from '~/server/utils';
+import { AccessType, canAccess, FileType, getParentDir, normalizePathname } from '~/server/utils';
 
 export enum FileGetErrorCode {
   INVALID_PARAM = 1000,
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FileGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
   const fileName = normalizePathname(name);
-  const containerDirName = path.dirname(fileName);
+  const containerDirName = getParentDir(fileName);
   try {
     const { permission_bits: containerDirPermissionBits, owner_id: containerDirOwnerId, group_id: containerDirGroupId } = await db.selectExactlyOne('files', { name: containerDirName, file_type: 'directory' }).run(dbPool);
     if (

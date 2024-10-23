@@ -1,3 +1,4 @@
+import path from 'path';
 import { formatArg } from "~/lib/command/utils";
 
 export function trimQuote (value: string): string {
@@ -48,4 +49,8 @@ export function normalizePathname (name: string): string {
   const unquotedName = formatArg(name);
   if (unquotedName[unquotedName.length - 1] === '/') return unquotedName.slice(0, unquotedName.length - 1);
   return unquotedName;
+}
+
+export function getParentDir (name: string): string {
+  return normalizePathname(path.dirname(normalizePathname(name)));
 }

@@ -52,5 +52,13 @@ export function normalizePathname (name: string): string {
 }
 
 export function getParentDir (name: string): string {
-  return normalizePathname(path.dirname(normalizePathname(name)));
+  const curPath = normalizePathname(name);
+  if (isRoot(curPath)) {
+    return curPath;
+  }
+  return normalizePathname(path.dirname(curPath));
+}
+
+export function isRoot (name: string): name is '' {
+  return name === '';
 }

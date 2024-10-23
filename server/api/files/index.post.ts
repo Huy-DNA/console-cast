@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
     const { permission_bits: containerDirPermissionBits, owner_id: containerDirOwnerId, group_id: containerDirGroupId } = await db.selectExactlyOne('files', { name: containerDirName, file_type: 'directory' }).run(dbPool);
     if (
       !canAccess(
-        { userId: event.context.auth.userId as number, groupId: event.context.auth.groupId as number },
+        { userId: event.context.auth.userid as number, groupId: event.context.auth.groupid as number },
         { fileType: FileType.DIRECTORY, ownerId: containerDirOwnerId, groupId: containerDirGroupId, permissionBits: containerDirPermissionBits },
         AccessType.WRITE,
       )

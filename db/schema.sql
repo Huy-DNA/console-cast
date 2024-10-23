@@ -30,14 +30,15 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.files (
     id integer NOT NULL,
-    name text,
+    name text NOT NULL,
     owner_id integer NOT NULL,
     group_id integer NOT NULL,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone,
-    permission_bits bit(12),
-    file_type public.file_type
+    permission_bits bit(12) NOT NULL,
+    file_type public.file_type NOT NULL,
+    content text
 );
 
 
@@ -107,8 +108,8 @@ ALTER SEQUENCE public.files_owner_id_seq OWNED BY public.files.owner_id;
 
 CREATE TABLE public.groups (
     id integer NOT NULL,
-    name character(256),
-    created_at timestamp without time zone,
+    name character varying(256) NOT NULL,
+    created_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone
 );
 
@@ -148,9 +149,9 @@ CREATE TABLE public.schema_migrations (
 
 CREATE TABLE public.users (
     id integer NOT NULL,
-    name character(256),
-    password character(256),
-    created_at timestamp without time zone,
+    name character varying(256) NOT NULL,
+    password character varying(256),
+    created_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone,
     group_id integer NOT NULL
 );

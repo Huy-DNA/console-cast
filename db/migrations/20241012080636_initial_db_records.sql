@@ -16,6 +16,7 @@ INSERT INTO users (name, password, created_at, group_id)
 
 INSERT INTO files (name, owner_id, group_id, created_at, updated_at, deleted_at, permission_bits, file_type)
   VALUES
+    ('', 0, 0, NOW(), NOW(), NULL, B'000111111101', 'directory'),
     ('/home', 0, 0, NOW(), NOW(), NULL, B'000111111101', 'directory'),
     ('/home/guest', 1, 1, NOW(), NOW(), NULL, B'000111111101', 'directory');
 

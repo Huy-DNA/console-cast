@@ -40,6 +40,13 @@ export const help: CommandFunc = function(...args) {
   args.shift();
   args.shift();
 
+  if (args.length === 0 || !args[0].trim()) {
+    return [
+      'Please specify one of these commands:',
+      ...Object.values(Command).sort().map((name) => `- ${name}`),
+    ];
+  }
+
   const commandName = formatArg(args[0]);
   return getDescription(commandName);
 };

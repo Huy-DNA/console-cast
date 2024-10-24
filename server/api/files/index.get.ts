@@ -1,4 +1,3 @@
-import path from 'path';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
 import { AccessType, canAccess, FileType, getParentDir, normalizePathname } from '~/server/utils';

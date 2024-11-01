@@ -33,9 +33,9 @@ export default defineEventHandler(async (event) => {
   try {
     await db.readCommitted(dbPool, async (txnClient) => {
       await Promise.all([
-        handleNameChange(txnClient, event, file_name),
         handleOwnerChange(txnClient, event, owner_id),
         handlePermissionChange(txnClient, event, permission_bits),
+        handleNameChange(txnClient, event, file_name),
       ]);
     });
   } catch (e) {
@@ -98,8 +98,24 @@ async function handleNameChange<T extends db.IsolationLevel> (dbClient: db.TxnCl
   }
 }
 
-async function handleOwnerChange<T extends db.IsolationLevel> (db: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, onwerId: string) {
+async function handleOwnerChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, ownerId: number) {
+  const { name } = getQuery(event);
+  const fileName = normalizePathname(name as string); 
+
+  let oldOwnerId;
+  try {
+    const { owner_id } = await db.selectExactlyOne('files', { name: fileName }).run(dbClient);
+    oldOwnerId = owner_id;
+  } catch {
+    throw { error: { code: FileMetaPatchErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
+  }
+
+  if (oldOwnerId !== event.context.auth.userid) {
+    throw { error: { code: FileMetaPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Only owner can change its file ownership' } };
+  }
+  
+  await db.update('files', { owner_id: ownerId }, { name: fileName, deleted_at: db.conditions.isNull }).run(dbClient);
 }
 
-async function handlePermissionChange<T extends db.IsolationLevel> (db: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, permissionBits: string) {
+async function handlePermissionChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, permissionBits: string) {
 }

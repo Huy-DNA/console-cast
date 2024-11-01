@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   }
   const fileName = normalizePathname(name);
   try {
-    const { permission_bits: filePermissionBits, owner_id: fileOwnerId, group_id: fileGroupId, content } = await db.selectExactlyOne('files', { name: fileName }).run(dbPool);
+    const { permission_bits: filePermissionBits, owner_id: fileOwnerId, group_id: fileGroupId, content } = await db.selectExactlyOne('files', { name: fileName, file_type: 'file' }).run(dbPool);
     if (
       !canAccess(
         { userId: event.context.auth.userid as number, groupId: event.context.auth.groupid as number },

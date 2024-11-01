@@ -1,4 +1,4 @@
-import { EventHandlerRequest, type H3Event } from 'h3';
+import type { EventHandlerRequest, H3Event } from 'h3';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
 import { AccessType, canAccess, FileType, getParentDir, normalizePathname } from '~/server/utils';

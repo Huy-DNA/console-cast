@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { ColoredWord } from '~/lib';
+import type { ColoredWord } from '~/lib';
 
-  const props = defineProps<{ word: ColoredWord }>();
+const props = defineProps<{ word: ColoredWord }>();
 </script>
 
 <template>

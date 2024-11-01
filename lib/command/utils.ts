@@ -1,14 +1,14 @@
 import { Color, type ColoredContent } from '~/lib/types';
 
 export function formatArg (arg: string): string {
-  if (arg[0] === "\'") {
+  if (arg[0] === '\'') {
     arg = arg.slice(1);
-    if (arg[arg.length - 1] === "\'") {
+    if (arg[arg.length - 1] === '\'') {
       arg = arg.slice(0, arg.length - 1);
     }
-  } else if (arg[0] === "\"") {
+  } else if (arg[0] === '"') {
     arg = arg.slice(1);
-    if (arg[arg.length - 1] === "\"") {
+    if (arg[arg.length - 1] === '"') {
       arg = arg.slice(0, arg.length - 1);
     }
   }

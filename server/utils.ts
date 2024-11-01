@@ -1,5 +1,5 @@
 import path from 'path';
-import { formatArg } from "~/lib/command/utils";
+import { formatArg } from '~/lib/command/utils';
 
 export function trimQuote (value: string): string {
   if (['"', '\''].includes(value[0])) {

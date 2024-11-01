@@ -13,7 +13,7 @@ export function highlight (command: string): ColoredLine {
     if (arg.match(/^[0-9]+$/)) {
       return { content: arg, color: Color.PINK };
     }
-    if (["\'", "\""].includes(arg[0])) {
+    if (['\'', '"'].includes(arg[0])) {
       return { content: arg, color: Color.CYAN };
     }
     if (nonspaceArgIndex === 1) {

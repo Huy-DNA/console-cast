@@ -28,50 +28,50 @@ function getNextToken (command: string): { token: string, remaining: string } | 
   for (let i = 0; i < command.length; ++i) {
     const char = command[i];
     switch (char) {
-      case "\"": {
-        token += "\"";
-        if (isInDoubleQuote) {
-          isInDoubleQuote = false;
-        } else if (!isInSingleQuote) {
-          isInDoubleQuote = true;
-        }
-        break;
+    case '"': {
+      token += '"';
+      if (isInDoubleQuote) {
+        isInDoubleQuote = false;
+      } else if (!isInSingleQuote) {
+        isInDoubleQuote = true;
       }
-      case "\'": {
-        token += "\'";
-        if (isInSingleQuote) {
-          isInSingleQuote = false;
-        } else if (!isInDoubleQuote) {
-          isInSingleQuote = true;
-        }
-        break;
+      break;
+    }
+    case '\'': {
+      token += '\'';
+      if (isInSingleQuote) {
+        isInSingleQuote = false;
+      } else if (!isInDoubleQuote) {
+        isInSingleQuote = true;
       }
-      case " ": {
-        if (isInDoubleQuote || isInSingleQuote) {
-          token += " ";
-        } else {
-          return { token, remaining: command.slice(i) };
-        }
-        break;
+      break;
+    }
+    case ' ': {
+      if (isInDoubleQuote || isInSingleQuote) {
+        token += ' ';
+      } else {
+        return { token, remaining: command.slice(i) };
       }
-      case "\\": {
-        token += "\\";
-        i += 1;
-        const nextChar = command[i];
-        switch (nextChar) {
-          case "\'":
-            token += "\'";
-            break;
-          case "\"":
-            token += "\"";
-            break;
-          default:
-            token += nextChar;
-        }
+      break;
+    }
+    case '\\': {
+      token += '\\';
+      i += 1;
+      const nextChar = command[i];
+      switch (nextChar) {
+      case '\'':
+        token += '\'';
         break;
-      }
+      case '"':
+        token += '"';
+        break;
       default:
-        token += char;
+        token += nextChar;
+      }
+      break;
+    }
+    default:
+      token += char;
     }
   }
   return { token, remaining: '' };

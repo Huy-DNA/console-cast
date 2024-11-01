@@ -1,20 +1,20 @@
 <script setup lang="ts">
-  import { ColoredLine } from '~/lib';
+import type { ColoredLine } from '~/lib';
 
-  const props = defineProps<{ line: ColoredLine }>();
+const props = defineProps<{ line: ColoredLine }>();
 
-  const root = useTemplateRef('root');
+const root = useTemplateRef('root');
 
-  defineExpose({
-    root,
-  });
+defineExpose({
+  root,
+});
 </script>
 
 <template>
   <p
+    ref="root"
     role="text"
     class="flex justify-start gap-0 w-[100%]"
-    ref="root"
     tabindex="0"
   >
     <TerminalWord

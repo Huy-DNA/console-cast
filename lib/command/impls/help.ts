@@ -29,7 +29,7 @@ function getDescription(commandName: string): string[] {
     return [
       `${commandName} - ${commandDescription.description}\n`,
       ...commandDescription.usages.map(({ args }) =>
-          `Usage: ${commandName} ${args.join(' ')}`),
+        `Usage: ${commandName} ${args.join(' ')}`),
     ];
   } else {
     return [`No entry found: \\u001b[31m${commandName}`];

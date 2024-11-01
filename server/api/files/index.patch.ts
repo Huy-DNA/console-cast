@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
 });
 
 
-async function handleNameChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, newFileName: string) {
+async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, newFileName: string) {
   const { name } = getQuery(event);
   const oldFileName = normalizePathname(name as string);
   const oldContainerDirName = getParentDir(oldFileName);
@@ -70,7 +70,7 @@ async function handleNameChange<T extends db.IsolationLevel> (dbClient: db.TxnCl
   ) {
     throw { error: { code: FileMetaPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
-  
+
   let newContainerDirPermissionBits, newContainerDirOwnerId, newContainerDirGroupId;
   try {
     const { permission_bits, owner_id, group_id } = await db.selectExactlyOne('files', { name: newContainerDirName, file_type: 'directory' }).run(dbClient);
@@ -98,9 +98,9 @@ async function handleNameChange<T extends db.IsolationLevel> (dbClient: db.TxnCl
   }
 }
 
-async function handleOwnerChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, ownerId: number) {
+async function handleOwnerChange<T extends db.IsolationLevel>(dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, ownerId: number) {
   const { name } = getQuery(event);
-  const fileName = normalizePathname(name as string); 
+  const fileName = normalizePathname(name as string);
 
   let oldOwnerId;
   try {
@@ -113,9 +113,25 @@ async function handleOwnerChange<T extends db.IsolationLevel> (dbClient: db.TxnC
   if (oldOwnerId !== event.context.auth.userid) {
     throw { error: { code: FileMetaPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Only owner can change its file ownership' } };
   }
-  
+
   await db.update('files', { owner_id: ownerId }, { name: fileName, deleted_at: db.conditions.isNull }).run(dbClient);
 }
 
-async function handlePermissionChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, permissionBits: string) {
+async function handlePermissionChange<T extends db.IsolationLevel>(dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, permissionBits: string) {
+  const { name } = getQuery(event);
+  const fileName = normalizePathname(name as string);
+
+  let ownerId;
+  try {
+    const { owner_id } = await db.selectExactlyOne('files', { name: fileName }).run(dbClient);
+    ownerId = owner_id;
+  } catch {
+    throw { error: { code: FileMetaPatchErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
+  }
+
+  if (ownerId !== event.context.auth.userid) {
+    throw { error: { code: FileMetaPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Only owner can change its file permission' } };
+  }
+
+  await db.update('files', { permission_bits: permissionBits }, { name: fileName, deleted_at: db.conditions.isNull }).run(dbClient);
 }

@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'path-browserify';
 
 export class VirtualPath {
   private path: string;
@@ -16,7 +16,7 @@ export class VirtualPath {
   }
 
   static createAndCheck(path: string): VirtualPath {
-    if (path.match(/^[a-zA-Z 0-9._/]+$/g) !== null) {
+    if (path.match(/^[a-zA-Z \-0-9._/]+$/g) === null) {
       throw new Error('Invalid path pattern');
     }
     return new VirtualPath(path);
@@ -51,10 +51,21 @@ export class VirtualPath {
 
   toFormattedString(username: string): string {
     const homeDir = VirtualPath.homeDir(username);
+    if (this.path === '') {
+      return '/';
+    }
     if (this.path.startsWith(homeDir.path)) {
       return '~' + this.path.slice(homeDir.path.length, this.path.length);
     }
     return this.path;
+  }
+
+  resolve (newDir: string): VirtualPath {
+    if (this.isRoot() && (['.', '..'].includes(newDir))) return this;
+    if (path.isAbsolute(newDir)) {
+      return VirtualPath.create(newDir);
+    }
+    return VirtualPath.create(path.resolve(this.path, newDir));
   }
 
   static homeDir(username: string): VirtualPath {

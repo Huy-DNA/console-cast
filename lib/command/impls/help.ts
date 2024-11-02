@@ -21,6 +21,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['<command>'] },
     ],
   },
+  [Command.CD]: {
+    description: 'Change current working directory',
+    usages: [
+      { args: ['<dirname>'] },
+    ],
+  },
 };
 
 function getDescription(commandName: string): string[] {

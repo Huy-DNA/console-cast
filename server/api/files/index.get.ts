@@ -31,9 +31,9 @@ export default defineEventHandler(async (event) => {
       return { error: { code: FileMetaGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
     }
 
-    const { permission_bits, owner_id, group_id } = await db.selectExactlyOne('files', { name: filepath.toString() }).run(dbPool);
+    const { permission_bits, owner_id, group_id, file_type } = await db.selectExactlyOne('files', { name: filepath.toString() }).run(dbPool);
 
-    return { ok: { message: 'Fetch file information successfully', data: { permission: permission_bits, ownerId: owner_id, groupId: group_id, fileName: filepath.toString() } } };
+    return { ok: { message: 'Fetch file information successfully', data: { permission: permission_bits, ownerId: owner_id, groupId: group_id, fileName: filepath.toString(), fileType: file_type } } };
   } catch {
     return { error: { code: FileMetaGetErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
   }

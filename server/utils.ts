@@ -32,8 +32,8 @@ export interface Accessor {
 }
 
 export function canAccess (accessor: Accessor, file: TargetFilePermission, accessType: AccessType): boolean {
-  const accessBitIndex = accessType === AccessType.READ ? 0 : accessType === AccessType.WRITE ? 1 : 2;
+  const accessBitIndex = accessType === AccessType.READ ? 2 : accessType === AccessType.WRITE ? 1 : 0;
   const userKindIndex = file.ownerId === accessor.userId ? 2 : file.groupId === accessor.groupId ? 1 : 0;
-  const bitIndex = userKindIndex * 3 + accessBitIndex;
+  const bitIndex = 11 - (userKindIndex * 3 + accessBitIndex);
   return file.permissionBits[bitIndex] === '1';
 }

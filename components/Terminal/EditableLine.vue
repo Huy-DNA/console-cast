@@ -1,44 +1,47 @@
 <script setup lang="ts">
-import type { ColoredLine, ColoredWord} from '~/lib';
-import { parse, highlight, execute, ColoredContent, Color } from '~/lib';
+import type { ColoredLine, ColoredWord } from '~/lib';
+import { highlight, Color } from '~/lib';
 
 const props = defineProps<{
-    content: string,
-    prefix: ColoredWord[],
-  }>();
+  content: string,
+  prefix: ColoredWord[],
+}>();
 
 const emits = defineEmits<{
-    submit: [ColoredLine],
-    'update-content': [string],
-    'line-up': void,
-    'line-down': void,
-  }>();
+  (event: 'submit', line: ColoredLine): void;
+  (event: 'update-content', content: string): Promise<void>;
+  (event: 'line-up'): void;
+  (event: 'line-down'): void;
+}>();
 
 const cursorPosition = ref(0);
 
-const inputBox = useTemplateRef('input-box');
-const inputBoxWrapper = useTemplateRef('input-box-wrapper');
+const inputBox = useTemplateRef<HTMLElement | null>('input-box');
+const inputBoxWrapper = useTemplateRef<HTMLElement | null>('input-box-wrapper');
 
 const coloredWords = computed(() => {
   return highlight(props.content);
 });
 
 // auto-focus input box 
-onMounted(() => inputBox.value.focus());
+onMounted(() => inputBox.value?.focus());
 
-watch(cursorPosition, updateCursor, { deep: true });
-async function updateCursor (shouldScrollIntoView = true) {
+watch(cursorPosition, () => updateCursor());
+
+async function updateCursor(shouldScrollIntoView = true) {
   await nextTick();
-  if (shouldScrollIntoView) inputBoxWrapper.value.scrollIntoView();
+  if (shouldScrollIntoView) inputBoxWrapper.value?.scrollIntoView();
   const offset = cursorPosition.value;
   const position = getCharPosition(offset);
   const cursor = document.getElementById('cursor');
-    cursor!.style.top = `${position.top}px`;
-    cursor!.style.left = `${position.left}px`;
+  cursor!.style.top = `${position.top}px`;
+  cursor!.style.left = `${position.left}px`;
 }
-function getCharPosition (offset: number): { top: number, left: number } {
+
+function getCharPosition(offset: number): { top: number, left: number } {
   let characterCount = 0;
-  const walker = document.createTreeWalker(inputBox.value, NodeFilter.SHOW_TEXT, null, false);
+  const walker = document.createTreeWalker(inputBox.value as Node, NodeFilter.SHOW_TEXT, null);
+  console.log(walker);
   let node: Node | null = null;
   while (node = walker.nextNode()) {
     const textLength = node.textContent!.length;
@@ -47,7 +50,7 @@ function getCharPosition (offset: number): { top: number, left: number } {
       const range = new Range();
       range.setStart(node, charIndex);
       range.setEnd(node, charIndex + 1);
-      const rect = range.getBoundingClientRect(); 
+      const rect = range.getBoundingClientRect();
       return { top: rect.top, left: rect.left };
     }
     characterCount += textLength;
@@ -55,7 +58,7 @@ function getCharPosition (offset: number): { top: number, left: number } {
   return { top: 0, left: 0 };
 };
 
-async function onKeydown (e: KeyboardEvent) {
+async function onKeydown(e: KeyboardEvent) {
   e.stopImmediatePropagation();
   if (e.key === 'Enter') {
     cursorPosition.value = 0;
@@ -68,73 +71,112 @@ async function onKeydown (e: KeyboardEvent) {
   const offset = cursorPosition.value;
   const { content } = props;
   switch (e.key) {
-  case 'ArrowLeft':
-    if (offset === 0) return;
-    cursorPosition.value -= 1;
-    setTimeout(() => inputBox.value.focus(), 50);
-    return;
-  case 'ArrowRight':
-    if (offset === content.length) return;
-    cursorPosition.value += 1;
-    setTimeout(() => inputBox.value.focus(), 50);
-    return;
-  case 'ArrowUp':
-    emits('line-up');
-    await nextTick();
-    cursorPosition.value = props.content.length;
-    setTimeout(() => inputBox.value.focus(), 50);
-    return;
-  case 'ArrowDown':
-    emits('line-down');
-    await nextTick();
-    cursorPosition.value = props.content.length;
-    setTimeout(() => inputBox.value.focus(), 50);
-    return;
-  case 'Backspace':
-    if (offset === 0) return;
-    emits('update-content', content.slice(0, offset - 1) + content.slice(offset));
-    cursorPosition.value -= 1;
-    return;
-  case 'Delete':
-    if (offset === content.value.length) return;
-    emits('update-content', content.slice(0, offset) + content.slice(offset + 1));
-    return;
-  default:
-    if (e.key.length !== 1) return;
-    emits('update-content', content.slice(0, offset) + e.key + content.slice(offset));
-    cursorPosition.value += 1;
+    case 'ArrowLeft':
+      if (offset === 0) return;
+      cursorPosition.value -= 1;
+      setTimeout(() => inputBox.value?.focus(), 50);
+      return;
+    case 'ArrowRight':
+      if (offset === content.length) return;
+      cursorPosition.value += 1;
+      setTimeout(() => inputBox.value?.focus(), 50);
+      return;
+    case 'ArrowUp':
+      emits('line-up');
+      await nextTick();
+      cursorPosition.value = props.content.length;
+      setTimeout(() => inputBox.value?.focus(), 50);
+      return;
+    case 'ArrowDown':
+      emits('line-down');
+      await nextTick();
+      cursorPosition.value = props.content.length;
+      setTimeout(() => inputBox.value?.focus(), 50);
+      return;
+    case 'Backspace':
+      if (offset === 0) return;
+      emits('update-content', content.slice(0, offset - 1) + content.slice(offset));
+      cursorPosition.value -= 1;
+      return;
+    case 'Delete':
+      if (offset === content.length) return;
+      emits('update-content', content.slice(0, offset) + content.slice(offset + 1));
+      return;
+    default:
+      if (e.key.length !== 1) return;
+      emits('update-content', content.slice(0, offset) + e.key + content.slice(offset));
+      cursorPosition.value += 1;
   }
 }
 
 async function handleControlKey(key: string) {
   const { content } = props;
   switch (key) {
-  case 'v':
-    const text = await navigator.clipboard.readText();
-    await emits('update-content', content.slice(0, cursorPosition.value) + text + content.slice(cursorPosition.value));
-    cursorPosition.value += text.length;
-    return;
-  case 'c':
-    return;
-  default:
-    return;
+    case 'v':
+      const text = await navigator.clipboard.readText();
+      await emits('update-content', content.slice(0, cursorPosition.value) + text + content.slice(cursorPosition.value));
+      cursorPosition.value += text.length;
+      return;
+    case 'c':
+      return;
+    default:
+      return;
   }
 }
 
-function onClick (e: MouseEvent) {
-  const range = document.createRange();
+function onClick(e: MouseEvent) {
+  if (!inputBox.value) return;
 
-  range.setStart(inputBox.value, 0);
-  range.setEnd(inputBox.value, inputBox.value.childNodes.length);
+  const range = getClickPosition(e.clientX, e.clientY, inputBox.value);
+  if (!range) return;
 
-  const caretOffset = document.caretPositionFromPoint(e.clientX, e.clientY).offset;
-  if (caretOffset > props.content.length) {
-    cursorPosition.value = props.content.length;
-  } else {
-    cursorPosition.value = caretOffset;
-  }
+  cursorPosition.value = Math.min(range.offset, props.content.length);
 }
 
+function getClickPosition(x: number, y: number, element: HTMLElement): { offset: number; node: Node } | null {
+  const textNodes: Node[] = [];
+  const walker = document.createTreeWalker(
+    element,
+    NodeFilter.SHOW_TEXT,
+    null
+  );
+
+  let node: Node | null;
+  while (node = walker.nextNode()) {
+    textNodes.push(node);
+  }
+
+  if (textNodes.length === 0) return null;
+
+  for (const node of textNodes) {
+    const range = document.createRange();
+    range.selectNodeContents(node);
+
+    const rects = range.getClientRects();
+    for (let i = 0; i < rects.length; i++) {
+      const rect = rects[i];
+
+      if (y >= rect.top && y <= rect.bottom &&
+        x >= rect.left && x <= rect.right) {
+
+        const textContent = node.textContent || '';
+        const charWidth = rect.width / textContent.length;
+        const charIndex = Math.floor((x - rect.left) / charWidth);
+
+        return {
+          node,
+          offset: Math.min(charIndex, textContent.length)
+        };
+      }
+    }
+  }
+
+  const lastNode = textNodes[textNodes.length - 1];
+  return {
+    node: lastNode,
+    offset: (lastNode.textContent || '').length
+  };
+}
 defineExpose({
   root: inputBox,
   updateCursor,
@@ -143,46 +185,34 @@ defineExpose({
 
 <template>
   <div ref="input-box-wrapper" class="m-0 p-0" tabindex="0">
-    <TerminalWord
-      v-for="(word, index) in props.prefix"
-      :key="index"
-      :word="word"
-    />
-    <p
-      ref="input-box"
-      role="text"
-      class="inline-flex justify-start gap-0 w-[90%] outline-none"
-      tabindex="0"
-      @keydown="onKeydown"
-      @click="onClick"
-    >
-      <span
-        id="cursor"
-        class="w-2.5 h-[22px] absolute block bg-white z-50"
-      /> 
-      <TerminalWord
-        v-for="(word, index) in coloredWords"
-        :key="index"
-        :word="word"
-      />
+    <TerminalWord v-for="(word, index) in props.prefix" :key="index" :word="word" />
+    <p ref="input-box" role="text" class="inline-flex justify-start gap-0 w-[90%] outline-none" tabindex="0"
+      @keydown="onKeydown" @click="onClick">
+      <span id="cursor" class="w-2.5 h-[22px] absolute block bg-white z-50" />
+      <TerminalWord v-for="(word, index) in coloredWords" :key="index" :word="word" />
       &nbsp;
     </p>
   </div>
 </template>
 
 <style scoped>
-  @keyframes blink {
-    0%, 20%, 80%, 100% {
-      opacity: 0.7;
-    }
-    
-    
-    30%, 60% {
-      opacity: 0;
-    }
+@keyframes blink {
+
+  0%,
+  20%,
+  80%,
+  100% {
+    opacity: 0.7;
   }
 
-  #cursor {
-    animation: blink 1s infinite;
+
+  30%,
+  60% {
+    opacity: 0;
   }
+}
+
+#cursor {
+  animation: blink 1s infinite;
+}
 </style>

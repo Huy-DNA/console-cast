@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const { name: username, created_at, id, group_id } = await db.selectExactlyOne('users', { name: formattedName, deleted_at: db.conditions.isNull }).run(dbPool);
-    return { ok: { data: { name: username?.trim(), id, group_id, created_at }, message: 'Get user successfully' } };
+    return { ok: { data: { name: username?.trim(), userId: id, groupId: group_id, createdAt: created_at }, message: 'Get user successfully' } };
   } catch {
     return { error: { code: UserGetErrorCode.USER_NOT_FOUND, message: 'User not found' } };
   }

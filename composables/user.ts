@@ -24,9 +24,9 @@ export const useUserStore = createGlobalState(() => {
       username.value = 'guest';
       return;
     }
-    userId.value = meta.id;
-    groupId.value = meta.group_id;
-    createdAt.value = meta.created_at;
+    userId.value = meta.userId;
+    groupId.value = meta.groupId;
+    createdAt.value = meta.createdAt;
   });
   return {
     username,

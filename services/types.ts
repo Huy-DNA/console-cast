@@ -18,6 +18,10 @@ export class Ok<T> {
   map<R> (callback: (_: T) => R): Ok<R> {
     return new Ok(callback(this.data));
   }
+
+  error () {
+    throw new Error('Ok does not contain error messages');
+  }
 }
 
 export class Err<E> {
@@ -37,6 +41,10 @@ export class Err<E> {
 
   map (): Err<E> {
     return this;
+  }
+
+  error (): E {
+    return this.err;
   }
 }
 

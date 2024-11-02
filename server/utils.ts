@@ -1,6 +1,3 @@
-import path from 'path';
-import { formatArg } from '~/lib/command/utils';
-
 export function trimQuote (value: string): string {
   if (['"', '\''].includes(value[0])) {
     value = value.slice(1);
@@ -9,10 +6,6 @@ export function trimQuote (value: string): string {
     value = value.slice(0, value.length - 1);
   }
   return value;
-}
-
-export function isPathNameValid (name: string): boolean {
-  return name.match(/^[a-zA-Z 0-9\._/]+$/g) !== null;
 }
 
 export const enum AccessType {
@@ -43,22 +36,4 @@ export function canAccess (accessor: Accessor, file: TargetFilePermission, acces
   const userKindIndex = file.ownerId === accessor.userId ? 2 : file.groupId === accessor.groupId ? 1 : 0;
   const bitIndex = userKindIndex * 3 + accessBitIndex;
   return file.permissionBits[bitIndex] === '1';
-}
-
-export function normalizePathname (name: string): string {
-  const unquotedName = formatArg(name);
-  if (unquotedName[unquotedName.length - 1] === '/') return unquotedName.slice(0, unquotedName.length - 1);
-  return unquotedName;
-}
-
-export function getParentDir (name: string): string {
-  const curPath = normalizePathname(name);
-  if (isRoot(curPath)) {
-    return curPath;
-  }
-  return normalizePathname(path.dirname(curPath));
-}
-
-export function isRoot (name: string): name is '' {
-  return name === '';
 }

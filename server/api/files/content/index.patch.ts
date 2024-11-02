@@ -1,6 +1,7 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { AccessType, canAccess, FileType, normalizePathname } from '~/server/utils';
+import { VirtualPath } from '~/lib/path';
+import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
 
 export enum FileContentPatchErrorCode {
   INVALID_PARAM = 1000,
@@ -21,9 +22,9 @@ export default defineEventHandler(async (event) => {
   if (!event.context.auth) {
     return { error: { code: FileContentPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
-  const fileName = normalizePathname(name);
+  const filepath = VirtualPath.create(trimQuote(name));
   try {
-    const { permission_bits: filePermissionBits, owner_id: fileOwnerId, group_id: fileGroupId } = await db.selectExactlyOne('files', { name: fileName, file_type: 'file' }).run(dbPool);
+    const { permission_bits: filePermissionBits, owner_id: fileOwnerId, group_id: fileGroupId } = await db.selectExactlyOne('files', { name: filepath.toString(), file_type: 'file' }).run(dbPool);
     if (
       !canAccess(
         { userId: event.context.auth.userid as number, groupId: event.context.auth.groupid as number },
@@ -34,7 +35,7 @@ export default defineEventHandler(async (event) => {
       return { error: { code: FileContentPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
     }
 
-    await db.update('files', { content: body.content }, { name: fileName, deleted_at: db.conditions.isNull }).run(dbPool);
+    await db.update('files', { content: body.content }, { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbPool);
 
     return { ok: { message: 'Update file content successfully' } };
   } catch {

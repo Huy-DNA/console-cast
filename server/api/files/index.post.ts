@@ -1,6 +1,7 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { AccessType, canAccess, FileType, getParentDir, normalizePathname } from '~/server/utils';
+import { VirtualPath } from '~/lib/path';
+import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
 
 export enum FilePostErrorCode {
   INVALID_PARAM = 1000,
@@ -23,10 +24,10 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FilePostErrorCode.INVALID_BODY, message: 'Invalid body. Expected "content" to be an optional string and "permission_bits" to be a bit string.' } };
   }
   const { content, permission_bits } = body;
-  const fileName = normalizePathname(name);
-  const containerDirName = getParentDir(fileName);
+  const filepath = VirtualPath.create(trimQuote(name));
+  const containerPath = filepath.parent();
   try {
-    const { permission_bits: containerDirPermissionBits, owner_id: containerDirOwnerId, group_id: containerDirGroupId } = await db.selectExactlyOne('files', { name: containerDirName, file_type: 'directory' }).run(dbPool);
+    const { permission_bits: containerDirPermissionBits, owner_id: containerDirOwnerId, group_id: containerDirGroupId } = await db.selectExactlyOne('files', { name: containerPath.toString(), file_type: 'directory' }).run(dbPool);
     if (
       !canAccess(
         { userId: event.context.auth.userid as number, groupId: event.context.auth.groupid as number },
@@ -37,11 +38,11 @@ export default defineEventHandler(async (event) => {
       return { error: { code: FilePostErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
     }
 
-    if (await db.selectOne('files', { name: fileName, deleted_at: db.conditions.isNull }).run(dbPool)) {
+    if (await db.selectOne('files', { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbPool)) {
       return { error: { code: FilePostErrorCode.FILE_ALREADY_EXISTS, message: 'This file already exists' } };
     }
 
-    await db.insert('files', { name: fileName, content: content ?? null, file_type: content ? 'file' : 'directory', created_at: new Date(Date.now()), updated_at: new Date(Date.now()), deleted_at: null, permission_bits, owner_id: event.context.auth.userid, group_id: event.context.auth.groupid }).run(dbPool);
+    await db.insert('files', { name: filepath.toString(), content: content ?? null, file_type: content ? 'file' : 'directory', created_at: new Date(Date.now()), updated_at: new Date(Date.now()), deleted_at: null, permission_bits, owner_id: event.context.auth.userid, group_id: event.context.auth.groupid }).run(dbPool);
 
     return { ok: { message: 'Create file successfully' } };
   } catch {

@@ -1,8 +1,8 @@
-import path from 'path';
-import { createInjectionState } from '@vueuse/core';
+import path from 'path-browserify';
+import { createGlobalState } from '@vueuse/core';
 import { VirtualPath } from '~/lib/path';
 
-const [useProvideCwdStore, _useCwdStore] = createInjectionState(() => {
+export const useCwdStore = createGlobalState(() => {
   const homeDir = VirtualPath.homeDir('guest');
   const cwd = ref(homeDir);
   function switchCwd(newDir: string) {
@@ -19,11 +19,3 @@ const [useProvideCwdStore, _useCwdStore] = createInjectionState(() => {
     switchCwd,
   };
 });
-
-export { useProvideCwdStore };
-export function useCwdStore() {
-  const cwdStore = _useCwdStore();
-  if (cwdStore == null)
-    throw new Error('Please call `useProvideCwdStore` on the appropriate parent component');
-  return cwdStore;
-}

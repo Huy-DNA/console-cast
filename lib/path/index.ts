@@ -1,4 +1,4 @@
-import path from 'path';
+import path from 'path-browserify';
 
 export class VirtualPath {
   private path: string;
@@ -16,7 +16,7 @@ export class VirtualPath {
   }
 
   static createAndCheck(path: string): VirtualPath {
-    if (path.match(/^[a-zA-Z 0-9._/]+$/g) !== null) {
+    if (path.match(/^[a-zA-Z \-0-9._/]+$/g) === null) {
       throw new Error('Invalid path pattern');
     }
     return new VirtualPath(path);

@@ -23,7 +23,7 @@ export async function execute(command: string): Promise<ColoredContent> {
     res = help(...args as any);
     break;
   case Command.CD:
-    res = cd(...args as any);
+    res = await cd(...args as any);
     break;
   default:
     res = echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);

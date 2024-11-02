@@ -1,6 +1,6 @@
-import { createInjectionState } from '@vueuse/core';
+import { createGlobalState } from '@vueuse/core';
 
-const [useProvideUserStore, _useUserStore] = createInjectionState(() => {
+export const useUserStore = createGlobalState(() => {
   const username = ref('');
   const userId = ref(null);
   const groupId = ref(null);
@@ -36,11 +36,3 @@ const [useProvideUserStore, _useUserStore] = createInjectionState(() => {
     createdAt,
   };
 });
-
-export { useProvideUserStore };
-export function useUserStore() {
-  const userStore = _useUserStore();
-  if (userStore == null)
-    throw new Error('Please call `useUserStore` on the appropriate parent component');
-  return userStore;
-}

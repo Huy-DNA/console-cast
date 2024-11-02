@@ -1,7 +1,8 @@
+import { fileService } from '~/services';
 import { formatArg } from '../utils';
 import type { CommandFunc } from './types';
 
-export const cd: CommandFunc = function(...args) {
+export const cd: CommandFunc = async function(...args) {
   // discard `cd`
   args.shift();
   // discard first space
@@ -12,6 +13,9 @@ export const cd: CommandFunc = function(...args) {
       'Expected an absolute or relative directory name',
     ];
   }
+
+  const dirname = formatArg(args[0]);
+  const res = await fileService.changeDirectory(dirname);
   return [
   ];
 };

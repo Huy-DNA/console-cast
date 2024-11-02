@@ -20,6 +20,6 @@ export const cd: CommandFunc = async function(...args) {
     return [];
   }
   return [
-    res.err
+    res.error()!.message,
   ];
 };

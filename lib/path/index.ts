@@ -61,9 +61,12 @@ export class VirtualPath {
   }
 
   resolve (newDir: string): VirtualPath {
-    if (this.isRoot() && (['.', '..'].includes(newDir))) return this;
     if (path.isAbsolute(newDir)) {
       return VirtualPath.create(newDir);
+    }
+    if (this.isRoot()) {
+      if (['.', '..'].includes(newDir)) return this;
+      return VirtualPath.create(`/${newDir}`);
     }
     return VirtualPath.create(path.resolve(this.path, newDir));
   }

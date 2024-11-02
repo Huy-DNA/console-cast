@@ -1,22 +1,18 @@
 import path from 'path';
 import { createInjectionState } from '@vueuse/core';
+import { VirtualPath } from '~/lib/path';
 
-const [useProvideCwdStore, _useCwdStore] = createInjectionState((username: string) => {
-  const homeDir = `/home/${username}`;
+const [useProvideCwdStore, _useCwdStore] = createInjectionState(() => {
+  const homeDir = VirtualPath.homeDir('guest');
   const cwd = ref(homeDir);
   function switchCwd(newDir: string) {
     let newPath = cwd.value;
     if (path.isAbsolute(newDir)) {
-      newPath = newDir;
+      newPath = VirtualPath.createAndCheck(newDir);
     } else {
-      newPath = path.resolve(newPath, newDir);
+      newPath = VirtualPath.create(path.resolve(newPath.toString(), newDir));
     }
     cwd.value = newPath;
-  }
-  function formatCwd(): string {
-    if (cwd.value.startsWith(homeDir)) {
-      
-    }
   }
   return {
     cwd,
@@ -26,8 +22,8 @@ const [useProvideCwdStore, _useCwdStore] = createInjectionState((username: strin
 
 export { useProvideCwdStore };
 export function useCwdStore() {
-  const userStore = _useCwdStore();
-  if (userStore == null)
+  const cwdStore = _useCwdStore();
+  if (cwdStore == null)
     throw new Error('Please call `useProvideCwdStore` on the appropriate parent component');
-  return userStore;
+  return cwdStore;
 }

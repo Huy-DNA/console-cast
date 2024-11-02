@@ -3,6 +3,7 @@ import type { ColoredContent, ColoredLine} from '~/lib';
 import { Color, execute } from '~/lib';
 
 const { username } = useUserStore();
+const { cwd } = useCwdStore();
 const historyCommands: Ref<ColoredContent> = ref([]);
 const previousLines: Ref<ColoredContent> = ref([]);
 const currentLine = ref('');
@@ -54,7 +55,7 @@ function onLineDown () {
 }
 
 async function printPrompt () {
-  const executeResult = await execute(`echo ┌ \\u001b[35m~ \\u001b[38mas \\u001b[34m${username.value}`);
+  const executeResult = await execute(`echo ┌ \\u001b[35m${cwd.value.toFormattedString(username.value)} \\u001b[38mas \\u001b[34m${username.value}`);
   previousLines.value.push(...executeResult);
 }
 

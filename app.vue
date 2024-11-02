@@ -1,5 +1,6 @@
 <script setup lang="ts">
 useProvideUserStore();
+useProvideCwdStore();
 </script>
 
 <template>

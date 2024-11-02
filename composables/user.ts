@@ -1,7 +1,7 @@
 import { createInjectionState } from '@vueuse/core';
 
 const [useProvideUserStore, _useUserStore] = createInjectionState(() => {
-  const username = ref('');
+  const username = ref('guest');
   const userId = ref(null);
   const groupId = ref(null);
   const createdAt = ref(null);

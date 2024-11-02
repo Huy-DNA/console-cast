@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
     const { permission_bits: filePermissionBits, owner_id: fileOwnerId, group_id: fileGroupId, content } = await db.selectExactlyOne('files', { name: filepath.toString(), file_type: 'file' }).run(dbPool);
     if (
       !canAccess(
-        { userId: event.context.auth.userid as number, groupId: event.context.auth.groupid as number },
+        { userId: event.context.auth.userId as number, groupId: event.context.auth.groupId as number },
         { fileType: FileType.REGULAR_FILE, ownerId: fileOwnerId, groupId: fileGroupId, permissionBits: filePermissionBits },
         AccessType.READ,
       )

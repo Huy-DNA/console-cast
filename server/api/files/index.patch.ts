@@ -64,7 +64,7 @@ async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnCli
 
   if (
     !canAccess(
-      { userId: event.context.auth.userid as number, groupId: event.context.auth.groupid as number },
+      { userId: event.context.auth.userId as number, groupId: event.context.auth.groupId as number },
       { fileType: FileType.DIRECTORY, ownerId: oldContainerDirOwnerId, groupId: oldContainerDirGroupId, permissionBits: oldContainerDirPermissionBits },
       AccessType.WRITE,
     )
@@ -84,7 +84,7 @@ async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnCli
 
   if (
     !canAccess(
-      { userId: event.context.auth.userid as number, groupId: event.context.auth.groupid as number },
+      { userId: event.context.auth.userId as number, groupId: event.context.auth.groupId as number },
       { fileType: FileType.DIRECTORY, ownerId: newContainerDirOwnerId, groupId: newContainerDirGroupId, permissionBits: newContainerDirPermissionBits },
       AccessType.WRITE,
     )
@@ -111,7 +111,7 @@ async function handleOwnerChange<T extends db.IsolationLevel>(dbClient: db.TxnCl
     throw { error: { code: FileMetaPatchErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
   }
 
-  if (oldOwnerId !== event.context.auth.userid) {
+  if (oldOwnerId !== event.context.auth.userId) {
     throw { error: { code: FileMetaPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Only owner can change its file ownership' } };
   }
 
@@ -130,7 +130,7 @@ async function handlePermissionChange<T extends db.IsolationLevel>(dbClient: db.
     throw { error: { code: FileMetaPatchErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
   }
 
-  if (ownerId !== event.context.auth.userid) {
+  if (ownerId !== event.context.auth.userId) {
     throw { error: { code: FileMetaPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Only owner can change its file permission' } };
   }
 

@@ -7,10 +7,11 @@ export const cd: CommandFunc = function(...args) {
   // discard first space
   args.shift();
 
+  if (args.length !== 1 || !args[0].trim()) {
+    return [
+      'Expected an absolute or relative directory name',
+    ];
+  }
   return [
-    args.map((arg) => {
-      if (!arg.trim()) return '';
-      return formatArg(arg);
-    }).filter((arg) => arg).join(' '),
   ];
 };

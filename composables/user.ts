@@ -19,7 +19,7 @@ const [useProvideUserStore, _useUserStore] = createInjectionState(() => {
     const meta = (await useFetch('/api/users', {
       method: 'get',
       query: { name: username.value },
-    })).data.value.ok.data;
+    }))?.data?.value?.ok?.data;
     if (!meta) {
       username.value = 'guest';
       return;

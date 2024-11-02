@@ -15,6 +15,7 @@
     "db:migrate": "dbmate migrate"
   },
   "dependencies": {
+    "@vueuse/core": "^11.2.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",

@@ -47,10 +47,11 @@ export const fileService = {
   },
   async changeDirectory (filename: string): Promise<Result<null, Diagnostic>> {
     try {
+      const { cwd, switchCwd } = useCwdStore();
       const meta = await $fetch('/api/files', {
         method: 'get',
         query: {
-          name: filename,
+          name: cwd.value.resolve(filename).toString(),
         },
         credentials: 'include',
       });
@@ -61,7 +62,6 @@ export const fileService = {
       if (data.fileType !== 'directory') {
         return new Err({ code: 1, message: 'Expected a directory' });
       }
-      const { switchCwd } = useCwdStore();
       switchCwd(filename);
       return new Ok(null);
     } catch {

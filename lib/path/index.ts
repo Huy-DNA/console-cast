@@ -51,6 +51,9 @@ export class VirtualPath {
 
   toFormattedString(username: string): string {
     const homeDir = VirtualPath.homeDir(username);
+    if (this.path === '') {
+      return '/';
+    }
     if (this.path.startsWith(homeDir.path)) {
       return '~' + this.path.slice(homeDir.path.length, this.path.length);
     }

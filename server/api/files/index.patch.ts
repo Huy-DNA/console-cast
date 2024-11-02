@@ -1,7 +1,8 @@
 import type { EventHandlerRequest, H3Event } from 'h3';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { AccessType, canAccess, FileType, getParentDir, normalizePathname } from '~/server/utils';
+import { VirtualPath } from '~/lib/path';
+import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
 
 export enum FileMetaPatchErrorCode {
   INVALID_PARAM = 1000,
@@ -47,13 +48,13 @@ export default defineEventHandler(async (event) => {
 
 async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, newFileName: string) {
   const { name } = getQuery(event);
-  const oldFileName = normalizePathname(name as string);
-  const oldContainerDirName = getParentDir(oldFileName);
-  const newContainerDirName = getParentDir(newFileName);
+  const oldFilepath = VirtualPath.create(trimQuote(name as string));
+  const oldContainerPath = oldFilepath.parent();
+  const newContainerPath = VirtualPath.create(trimQuote(newFileName)).parent();
 
   let oldContainerDirPermissionBits, oldContainerDirOwnerId, oldContainerDirGroupId;
   try {
-    const { permission_bits, owner_id, group_id } = await db.selectExactlyOne('files', { name: oldContainerDirName, file_type: 'directory' }).run(dbClient);
+    const { permission_bits, owner_id, group_id } = await db.selectExactlyOne('files', { name: oldContainerPath.toString(), file_type: 'directory' }).run(dbClient);
     oldContainerDirPermissionBits = permission_bits;
     oldContainerDirOwnerId = owner_id;
     oldContainerDirGroupId = group_id;
@@ -73,7 +74,7 @@ async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnCli
 
   let newContainerDirPermissionBits, newContainerDirOwnerId, newContainerDirGroupId;
   try {
-    const { permission_bits, owner_id, group_id } = await db.selectExactlyOne('files', { name: newContainerDirName, file_type: 'directory' }).run(dbClient);
+    const { permission_bits, owner_id, group_id } = await db.selectExactlyOne('files', { name: newContainerPath.toString(), file_type: 'directory' }).run(dbClient);
     newContainerDirPermissionBits = permission_bits;
     newContainerDirOwnerId = owner_id;
     newContainerDirGroupId = group_id;
@@ -92,7 +93,7 @@ async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnCli
   }
 
   try {
-    await db.update('files', { name: newFileName }, { name: oldFileName, deleted_at: db.conditions.isNull }).run(dbClient);
+    await db.update('files', { name: newFileName }, { name: oldFilepath.toString(), deleted_at: db.conditions.isNull }).run(dbClient);
   } catch {
     throw { error: { code: FileMetaPatchErrorCode.SOURCE_NOT_EXIST, message: 'File not found' } };
   }
@@ -100,11 +101,11 @@ async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnCli
 
 async function handleOwnerChange<T extends db.IsolationLevel>(dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, ownerId: number) {
   const { name } = getQuery(event);
-  const fileName = normalizePathname(name as string);
+  const filepath = VirtualPath.create(trimQuote(name as string));
 
   let oldOwnerId;
   try {
-    const { owner_id } = await db.selectExactlyOne('files', { name: fileName }).run(dbClient);
+    const { owner_id } = await db.selectExactlyOne('files', { name: filepath.toString() }).run(dbClient);
     oldOwnerId = owner_id;
   } catch {
     throw { error: { code: FileMetaPatchErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
@@ -114,16 +115,16 @@ async function handleOwnerChange<T extends db.IsolationLevel>(dbClient: db.TxnCl
     throw { error: { code: FileMetaPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Only owner can change its file ownership' } };
   }
 
-  await db.update('files', { owner_id: ownerId }, { name: fileName, deleted_at: db.conditions.isNull }).run(dbClient);
+  await db.update('files', { owner_id: ownerId }, { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbClient);
 }
 
 async function handlePermissionChange<T extends db.IsolationLevel>(dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, permissionBits: string) {
   const { name } = getQuery(event);
-  const fileName = normalizePathname(name as string);
+  const filepath = VirtualPath.create(trimQuote(name as string));
 
   let ownerId;
   try {
-    const { owner_id } = await db.selectExactlyOne('files', { name: fileName }).run(dbClient);
+    const { owner_id } = await db.selectExactlyOne('files', { name: filepath.toString() }).run(dbClient);
     ownerId = owner_id;
   } catch {
     throw { error: { code: FileMetaPatchErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
@@ -133,5 +134,5 @@ async function handlePermissionChange<T extends db.IsolationLevel>(dbClient: db.
     throw { error: { code: FileMetaPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Only owner can change its file permission' } };
   }
 
-  await db.update('files', { permission_bits: permissionBits }, { name: fileName, deleted_at: db.conditions.isNull }).run(dbClient);
+  await db.update('files', { permission_bits: permissionBits }, { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbClient);
 }

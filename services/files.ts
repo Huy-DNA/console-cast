@@ -32,9 +32,6 @@ export interface FileMeta {
   updatedAt: Date;
 }
 
-const state = { 
-};
-
 export const fileService = {
   async getMetaOfFile (filename: string): Promise<Result<FileMeta, Diagnostic>> {
   },

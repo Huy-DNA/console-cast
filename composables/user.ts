@@ -11,6 +11,7 @@ const [useProvideUserStore, _useUserStore] = createInjectionState(() => {
     await useFetch('/api/auth/login', {
       method: 'post',
       body: { name, password },
+      credentials: 'include',
     });
   }
   watch(username, async () => {

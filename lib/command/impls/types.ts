@@ -7,4 +7,6 @@ export enum Command {
   SU = 'su',
   LS = 'ls',
   USERADD = 'useradd',
+  TOUCH = 'touch',
+  MKDIR = 'mkdir',
 }

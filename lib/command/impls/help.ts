@@ -33,6 +33,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['-u <username>', '-p <password>'] },
     ],
   },
+  [Command.LS]: {
+    description: 'List directory\'s content',
+    usages: [
+      { args: ['<dirname>?'] },
+    ],
+  },
   [Command.USERADD]: {
     description: 'Register user',
     usages: [

@@ -38,7 +38,10 @@ export default defineEventHandler(async (event) => {
       return { error: { code: FileDeleteErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
     }
 
-    await db.update('files', { deleted_at: new Date(Date.now()) }, { name: db.conditions.like(`${filepath.toString()}%`) }).run(dbPool);
+    await db.readCommitted(dbPool, async (dbClient) => {
+      await db.update('files', { deleted_at: new Date(Date.now()) }, { name: db.conditions.like(`${filepath.toString()}/%`) }).run(dbClient);
+      await db.update('files', { deleted_at: new Date(Date.now()) }, { name: filepath.toString() }).run(dbClient);
+    });
 
     return { ok: { message: 'Delete file successfully' } };
   } catch {

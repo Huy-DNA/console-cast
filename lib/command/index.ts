@@ -6,6 +6,7 @@ import { interpretAnsiEscapeColor } from './utils';
 import { parse } from '../services/parse';
 import { cd } from './impls/cd';
 import { su } from './impls/su';
+import { ls } from './impls/ls';
 import { useradd } from './impls/useradd';
 
 export async function execute(command: string): Promise<ColoredContent> {
@@ -29,6 +30,9 @@ export async function execute(command: string): Promise<ColoredContent> {
     break;
   case Command.SU:
     res = await su(...args as any);
+    break;
+  case Command.LS:
+    res = await ls(...args as any);
     break;
   case Command.USERADD:
     res = await useradd(...args as any);

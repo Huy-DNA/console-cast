@@ -5,4 +5,5 @@ export enum Command {
   HELP = 'help',
   CD = 'cd',
   SU = 'su',
+  USERADD = 'useradd',
 }

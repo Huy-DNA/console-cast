@@ -33,6 +33,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['-u <username>', '-p <password>'] },
     ],
   },
+  [Command.USERADD]: {
+    description: 'Register user',
+    usages: [
+      { args: ['-u <username>', '-p <password>'] },
+    ],
+  },
 };
 
 function getDescription(commandName: string): string[] {

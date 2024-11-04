@@ -6,6 +6,7 @@ import { interpretAnsiEscapeColor } from './utils';
 import { parse } from '../services/parse';
 import { cd } from './impls/cd';
 import { su } from './impls/su';
+import { ls } from './impls/ls';
 
 export async function execute(command: string): Promise<ColoredContent> {
   const args = parse(command);
@@ -28,6 +29,9 @@ export async function execute(command: string): Promise<ColoredContent> {
     break;
   case Command.SU:
     res = await su(...args as any);
+    break;
+  case Command.LS:
+    res = await ls(...args as any);
     break;
   default:
     res = echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);

@@ -30,22 +30,45 @@ export interface FileMeta {
   groupId: number;
   createdAt: Date;
   updatedAt: Date;
+  fileType: string;
 }
 
 export const fileService = {
-  async getMetaOfFile (filename: string): Promise<Result<FileMeta, Diagnostic>> {
+  async getMetaOfFile(filename: string): Promise<Result<FileMeta, Diagnostic>> {
   },
-  async getFileContent (filename: string): Promise<Result<Uint8Array, Diagnostic>> {
+  async getFileContent(filename: string): Promise<Result<Uint8Array, Diagnostic>> {
   },
-  async updateFileContent (filename: string, content: Uint8Array): Promise<Result<null, Diagnostic>> {
+  async updateFileContent(filename: string, content: Uint8Array): Promise<Result<null, Diagnostic>> {
   },
-  async getFolderContent (filename: string): Promise<Result<FileMeta[], Diagnostic>> {
+  async getFolderContent(filename: string): Promise<Result<FileMeta[], Diagnostic>> {
+    const { cwd } = useCwdStore();
+    const meta = await $fetch('/api/files/ls', {
+      method: 'get',
+      query: {
+        name: cwd.value.resolve(filename).toString(),
+      },
+      credentials: 'include',
+    });
+    if (meta.error) {
+      return new Err({ code: meta.error.code, message: meta.error.message });
+    }
+    const { ok: { data } } = meta;
+    return new Ok(data.files.map((file) => ({
+      name: file.name,
+      fullname: file.name,
+      permission: file.permissionBits,
+      ownerId: file.ownerId,
+      groupId: file.groupId,
+      createdAt: file.createdAt,
+      updatedAt: file.updatedAt,
+      fileType: file.fileType,
+    })));
   },
-  async removeFile (filename: string): Promise<Result<null, Diagnostic>> {
+  async removeFile(filename: string): Promise<Result<null, Diagnostic>> {
   },
-  async createFile (filename: string): Promise<Result<null, Diagnostic>> {
+  async createFile(filename: string): Promise<Result<null, Diagnostic>> {
   },
-  async changeDirectory (filename: string): Promise<Result<null, Diagnostic>> {
+  async changeDirectory(filename: string): Promise<Result<null, Diagnostic>> {
     try {
       const { cwd, switchCwd } = useCwdStore();
       const meta = await $fetch('/api/files', {
@@ -68,10 +91,10 @@ export const fileService = {
       return new Err({ code: 500, message: 'Network connection error' });
     }
   },
-  async moveFile (filename: string, destination: string): Promise<Result<null, Diagnostic>> {
+  async moveFile(filename: string, destination: string): Promise<Result<null, Diagnostic>> {
   },
-  async copyFile (filename: string, destination: string): Promise<Result<null, Diagnostic>> {
+  async copyFile(filename: string, destination: string): Promise<Result<null, Diagnostic>> {
   },
-  async currentDirectory (): Promise<Result<string, Diagnostic>> {
+  async currentDirectory(): Promise<Result<string, Diagnostic>> {
   },
 };

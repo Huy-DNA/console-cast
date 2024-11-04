@@ -56,17 +56,19 @@ function getNextToken (command: string): { token: string, remaining: string } | 
     }
     case '\\': {
       token += '\\';
-      i += 1;
-      const nextChar = command[i];
-      switch (nextChar) {
-      case '\'':
-        token += '\'';
-        break;
-      case '"':
-        token += '"';
-        break;
-      default:
-        token += nextChar;
+      if (command.length < 1) {
+        i += 1;
+        const nextChar = command[i];
+        switch (nextChar) {
+          case '\'':
+            token += '\'';
+            break;
+          case '"':
+            token += '"';
+            break;
+          default:
+            token += nextChar;
+        }
       }
       break;
     }

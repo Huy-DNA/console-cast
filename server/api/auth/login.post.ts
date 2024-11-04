@@ -17,14 +17,18 @@ export default defineEventHandler(async (event) => {
     return { error: { code: LoginErrorCode.INVALID_BODY, message: 'Invalid body. Expected "name" to be strings and "password" to be optionally strings.' } };
   }
   const { name, password } = body;
-  
-  const { password: hashedPassword, id, group_id } = await db.selectExactlyOne('users', { name }).run(dbPool);
 
-  if (hashedPassword === null || (password && bcrypt.compareSync(password, hashedPassword.trim()))) {
-    const { JWT_SECRET } = useRuntimeConfig();
-    const token = jwt.sign({ username: name, userId: id, groupId: group_id }, JWT_SECRET, { expiresIn: '24h' });
-    setHeader(event, 'Set-Cookie', `jwt=${token}; HttpOnly; Path=/; SameSite=Strict${!isProduction ? '' : '; Secure'}`);
-    return { ok: { message: 'Login successfully' } };
+  try {
+    const { password: hashedPassword, id, group_id, created_at } = await db.selectExactlyOne('users', { name }).run(dbPool);
+
+    if (hashedPassword === null || (password && bcrypt.compareSync(password, hashedPassword.trim()))) {
+      const { JWT_SECRET } = useRuntimeConfig();
+      const token = jwt.sign({ username: name, userId: id, groupId: group_id }, JWT_SECRET, { expiresIn: '24h' });
+      setHeader(event, 'Set-Cookie', `jwt=${token}; HttpOnly; Path=/; SameSite=Strict${!isProduction ? '' : '; Secure'}`);
+      return { ok: { message: 'Login successfully', data: { username: name, userId: id, groupId: group_id, createdAt: created_at } } };
+    }
+  } catch {
+    return { error: { code: LoginErrorCode.INVALID_CRED, message: 'Invalid credentials' } };
   }
 
   return { error: { code: LoginErrorCode.INVALID_CRED, message: 'Invalid credentials' } };

@@ -15,6 +15,7 @@ export const enum AccessType {
 }
 
 export const enum FileType {
+  UNKNOWN,
   REGULAR_FILE,
   DIRECTORY,
 }

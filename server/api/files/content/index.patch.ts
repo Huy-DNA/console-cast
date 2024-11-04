@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
     if (
       !canAccess(
         { userId: event.context.auth.userId as number, groupId: event.context.auth.groupId as number },
-        { fileType: FileType.REGULAR_FILE, ownerId: fileOwnerId, groupId: fileGroupId, permissionBits: filePermissionBits },
+        { fileType: FileType.UNKNOWN, ownerId: fileOwnerId, groupId: fileGroupId, permissionBits: filePermissionBits },
         AccessType.WRITE,
       )
     ) {

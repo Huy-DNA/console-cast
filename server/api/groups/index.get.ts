@@ -9,22 +9,15 @@ export enum GroupGetErrorCode {
 }
 
 export default defineEventHandler(async (event) => {
-  const { name } = getQuery(event);
-  if (typeof name !== 'string') {
-    return { error: { code: GroupGetErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be string' } };
+  const { id } = getQuery(event);
+  if (typeof id !== 'string') {
+    return { error: { code: GroupGetErrorCode.INVALID_PARAM, message: 'Expect the "id" query param to be string' } };
   }
-  const formattedName = formatArg(name);
-  if (formattedName !== 'guest' && !event.context.auth) {
-    return { error: { code: GroupGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
-  }
+  const formattedId = Number.parseInt(formatArg(id));
 
   try {
-    const { group_id: groupId } = await db.selectExactlyOne('users', { name: event.context.auth.username, deleted_at: db.conditions.isNull }).run(dbPool);
-    const { name: trueGroupName, created_at: createdAt } = await db.selectExactlyOne('groups', { id: groupId, deleted_at: db.conditions.isNull }).run(dbPool);
-    if (formattedName !== 'guest' && formattedName !== trueGroupName?.trim()) {
-      return { error: { code: GroupGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
-    }
-    return { ok: { data: { name, groupId, createdAt }, message: 'Get group successfully' } };
+    const { name, created_at: createdAt } = await db.selectExactlyOne('groups', { id: formattedId, deleted_at: db.conditions.isNull }).run(dbPool);
+    return { ok: { data: { name, groupId: formattedId, createdAt }, message: 'Get group successfully' } };
   } catch {
     return { error: { code: GroupGetErrorCode.GROUP_NOT_FOUND, message: 'Group not found' } };
   }

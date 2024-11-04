@@ -1,6 +1,8 @@
+import { userService } from '~/services/users';
 import { formatArg } from '../utils';
 import type { CommandFunc } from './types';
 import { fileService } from '~/services/files';
+import { groupService } from '~/services/groups';
 
 export const ls: CommandFunc = async function(...args) {
   // discard `ls`
@@ -17,9 +19,17 @@ export const ls: CommandFunc = async function(...args) {
 
   if (res.isOk()) {
     const files = res.unwrap();
+    const fileLines = [];
+    for (const file of files) {
+      const fileType = formatFileType(file.fileType as string);
+      const filePermissionBits = formatPermissionBits(file.permission as unknown as string);
+      const fileOwner = (await userService.getMetaOfUser(file.ownerId)).unwrap().name;
+      const fileGroup = (await groupService.getMetaOfGroup(file.groupId)).unwrap().name;
+      fileLines.push(`${fileType}${filePermissionBits} ${fileOwner} ${fileGroup} ${file.name}`);
+    }
     return [
       `total ${files.length}`,
-      ...files.map((file) => `${formatFileType(file.fileType as string)}${formatPermissionBits(file.permission as unknown as string)} ${file.ownerId} ${file.groupId} ${file.name}`),
+      ...fileLines,
     ];
   }
 

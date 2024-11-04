@@ -9,6 +9,17 @@ export interface UserMeta {
 
 export const userService = {
   async getMetaOfUser(id: number): Promise<Result<UserMeta, Diagnostic>> {
+    const res = await $fetch('/api/users', {
+      method: 'get',
+      query: {
+        id,
+      },
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    const { ok: { data } } = res;
+    return new Ok({ name: data.name, userId: data.userId, groupId: data.groupId, createdAt: data.createdAt });
   },
   async getHomeDirectory(id: number): Promise<Result<string, Diagnostic>> {
   },

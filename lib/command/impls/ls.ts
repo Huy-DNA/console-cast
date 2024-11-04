@@ -17,7 +17,6 @@ export const ls: CommandFunc = async function(...args) {
 
   if (res.isOk()) {
     const files = res.unwrap();
-    console.log(files);
     return [
       `total ${files.length}`,
       ...files.map((file) => `${formatFileType(file.fileType as string)}${formatPermissionBits(file.permission as unknown as string)} ${file.ownerId} ${file.groupId} ${file.name}`),

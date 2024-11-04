@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   }
   const filepath = VirtualPath.create(trimQuote(name));
   try {
-    const { permission_bits: filePermissionBits, owner_id: fileOwnerId, group_id: fileGroupId, content } = await db.selectExactlyOne('files', { name: filepath.toString(), file_type: 'file' }).run(dbPool);
+    const { permission_bits: filePermissionBits, owner_id: fileOwnerId, group_id: fileGroupId, content } = await db.selectExactlyOne('files', { name: filepath.toString(), file_type: 'file', deleted_at: db.conditions.isNull }).run(dbPool);
     if (
       !canAccess(
         { userId: event.context.auth.userId as number, groupId: event.context.auth.groupId as number },

@@ -39,8 +39,8 @@ export default defineEventHandler(async (event) => {
     }
 
     await db.readCommitted(dbPool, async (dbClient) => {
-      await db.update('files', { deleted_at: new Date(Date.now()) }, { name: db.conditions.like(`${filepath.toString()}/%`) }).run(dbClient);
-      await db.update('files', { deleted_at: new Date(Date.now()) }, { name: filepath.toString() }).run(dbClient);
+      await db.update('files', { deleted_at: new Date(Date.now()) }, { name: db.conditions.like(`${filepath.toString()}/%`), deleted_at: db.conditions.isNull }).run(dbClient);
+      await db.update('files', { deleted_at: new Date(Date.now()) }, { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbClient);
     });
 
     return { ok: { message: 'Delete file successfully' } };

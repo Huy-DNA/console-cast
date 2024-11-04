@@ -54,7 +54,7 @@ async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnCli
 
   let oldContainerDirPermissionBits, oldContainerDirOwnerId, oldContainerDirGroupId;
   try {
-    const { permission_bits, owner_id, group_id } = await db.selectExactlyOne('files', { name: oldContainerPath.toString(), file_type: 'directory' }).run(dbClient);
+    const { permission_bits, owner_id, group_id } = await db.selectExactlyOne('files', { name: oldContainerPath.toString(), file_type: 'directory', deleted_at: db.conditions.isNull }).run(dbClient);
     oldContainerDirPermissionBits = permission_bits;
     oldContainerDirOwnerId = owner_id;
     oldContainerDirGroupId = group_id;
@@ -74,7 +74,7 @@ async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnCli
 
   let newContainerDirPermissionBits, newContainerDirOwnerId, newContainerDirGroupId;
   try {
-    const { permission_bits, owner_id, group_id } = await db.selectExactlyOne('files', { name: newContainerPath.toString(), file_type: 'directory' }).run(dbClient);
+    const { permission_bits, owner_id, group_id } = await db.selectExactlyOne('files', { name: newContainerPath.toString(), file_type: 'directory', deleted_at: db.conditions.isNull }).run(dbClient);
     newContainerDirPermissionBits = permission_bits;
     newContainerDirOwnerId = owner_id;
     newContainerDirGroupId = group_id;
@@ -105,7 +105,7 @@ async function handleOwnerChange<T extends db.IsolationLevel>(dbClient: db.TxnCl
 
   let oldOwnerId;
   try {
-    const { owner_id } = await db.selectExactlyOne('files', { name: filepath.toString() }).run(dbClient);
+    const { owner_id } = await db.selectExactlyOne('files', { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbClient);
     oldOwnerId = owner_id;
   } catch {
     throw { error: { code: FileMetaPatchErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
@@ -124,7 +124,7 @@ async function handlePermissionChange<T extends db.IsolationLevel>(dbClient: db.
 
   let ownerId;
   try {
-    const { owner_id } = await db.selectExactlyOne('files', { name: filepath.toString() }).run(dbClient);
+    const { owner_id } = await db.selectExactlyOne('files', { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbClient);
     ownerId = owner_id;
   } catch {
     throw { error: { code: FileMetaPatchErrorCode.FILE_NOT_FOUND, message: 'File not found' } };

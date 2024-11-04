@@ -1,3 +1,4 @@
+import path from 'path-browserify';
 import { Err, Ok, type Diagnostic, type Result } from './types';
 
 export enum UserKind {
@@ -54,7 +55,7 @@ export const fileService = {
     }
     const { ok: { data } } = meta;
     return new Ok(data.files.map((file) => ({
-      name: file.name,
+      name: path.basename(file.name),
       fullname: file.name,
       permission: file.permissionBits,
       ownerId: file.ownerId,

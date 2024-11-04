@@ -69,6 +69,8 @@ export const fileService = {
   },
   async createFile(filename: string): Promise<Result<null, Diagnostic>> {
   },
+  async createFolder(filename: string): Promise<Result<null, Diagnostic>> {
+  },
   async changeDirectory(filename: string): Promise<Result<null, Diagnostic>> {
     try {
       const { cwd, switchCwd } = useCwdStore();

@@ -7,6 +7,7 @@ import { parse } from '../services/parse';
 import { cd } from './impls/cd';
 import { su } from './impls/su';
 import { ls } from './impls/ls';
+import { useradd } from './impls/useradd';
 
 export async function execute(command: string): Promise<ColoredContent> {
   const args = parse(command);
@@ -32,6 +33,9 @@ export async function execute(command: string): Promise<ColoredContent> {
     break;
   case Command.LS:
     res = await ls(...args as any);
+    break;
+  case Command.USERADD:
+    res = await useradd(...args as any);
     break;
   default:
     res = echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);

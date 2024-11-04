@@ -6,4 +6,5 @@ export enum Command {
   CD = 'cd',
   SU = 'su',
   LS = 'ls',
+  USERADD = 'useradd',
 }

@@ -38,6 +38,7 @@ export default defineEventHandler(async (event) => {
     await db.readCommitted(dbPool, async (txnClient) => {
       const { id } = await db.insert('groups', { name, created_at: new Date(Date.now()), deleted_at: null }).run(txnClient);
       await db.insert('users', { name, password: hashedPassword, created_at: new Date(Date.now()), deleted_at: null, group_id: id }).run(txnClient);
+      await db.insert('files', { name: `/home/${name}`, created_at: new Date(Date.now()), deleted_at: null, owner_id: id, group_id: id, file_type: 'directory', content: null, updated_at: new Date(Date.now()), permission_bits: '000111111001' }).run(txnClient);
     });
 
     return { ok: { message: 'Register successfully' } };

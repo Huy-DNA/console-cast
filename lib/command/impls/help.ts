@@ -27,6 +27,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['<dirname>'] },
     ],
   },
+  [Command.SU]: {
+    description: 'Switch user',
+    usages: [
+      { args: ['-u <username>', '-p <password>'] },
+    ],
+  },
 };
 
 function getDescription(commandName: string): string[] {

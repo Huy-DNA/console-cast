@@ -4,4 +4,5 @@ export enum Command {
   ECHO = 'echo',
   HELP = 'help',
   CD = 'cd',
+  SU = 'su',
 }

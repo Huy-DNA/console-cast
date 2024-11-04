@@ -33,6 +33,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['-u <username>', '-p <password>'] },
     ],
   },
+  [Command.LS]: {
+    description: 'List directory\'s content',
+    usages: [
+      { args: ['<dirname>?'] },
+    ],
+  },
 };
 
 function getDescription(commandName: string): string[] {

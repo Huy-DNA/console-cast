@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
       return { error: { code: FilePostErrorCode.FILE_ALREADY_EXISTS, message: 'This file already exists' } };
     }
 
-    await db.insert('files', { name: filepath.toString(), content: content ?? null, file_type: content ? 'file' : 'directory', created_at: new Date(Date.now()), updated_at: new Date(Date.now()), deleted_at: null, permission_bits, owner_id: event.context.auth.userId, group_id: event.context.auth.groupId }).run(dbPool);
+    await db.insert('files', { name: filepath.toString(), content: content ?? null, file_type: typeof content === 'string' ? 'file' : 'directory', created_at: new Date(Date.now()), updated_at: new Date(Date.now()), deleted_at: null, permission_bits, owner_id: event.context.auth.userId, group_id: event.context.auth.groupId }).run(dbPool);
 
     return { ok: { message: 'Create file successfully' } };
   } catch {

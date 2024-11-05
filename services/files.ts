@@ -68,9 +68,10 @@ export const fileService = {
   async removeFile(filename: string): Promise<Result<null, Diagnostic>> {
   },
   async createFile(filename: string, content: string, permissionBits: string): Promise<Result<null, Diagnostic>> {
+    const { cwd } = useCwdStore();
     const res = await $fetch('/api/files', {
       method: 'post',
-      query: { name: filename },
+      query: { name: cwd.value.resolve(filename).toString() },
       body: {
         content,
         permission_bits: permissionBits,
@@ -78,7 +79,7 @@ export const fileService = {
       credentials: 'include',
     });
     if (res.error) {
-      return new Err({ code: meta.error.code, message: meta.error.message });
+      return new Err({ code: res.error.code, message: res.error.message });
     }
     return new Ok(null);
   },

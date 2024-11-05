@@ -45,6 +45,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['-u <username>', '-p <password>'] },
     ],
   },
+  [Command.UMASK]: {
+    description: 'Set file mode creation mask',
+    usages: [
+      { args: ['(<oct><oct><oct>)?'] },
+    ],
+  },
 };
 
 function getDescription(commandName: string): string[] {

@@ -1,6 +1,7 @@
 import { createGlobalState } from '@vueuse/core';
 
 export const useUserStore = createGlobalState(() => {
+  const { clearUmask } = useUmaskStore();
   const username = ref(window?.localStorage?.getItem('username') || 'guest');
   onMounted(async () => {
     if (username.value === 'guest') {
@@ -19,6 +20,7 @@ export const useUserStore = createGlobalState(() => {
   function switchUser(name: string) {
     username.value = name;
     localStorage.setItem('username', name);
+    clearUmask();
   }
   watch(username, async () => {
     const meta = (await useFetch('/api/users', {

@@ -9,4 +9,5 @@ export enum Command {
   USERADD = 'useradd',
   TOUCH = 'touch',
   MKDIR = 'mkdir',
+  UMASK = 'umask',
 }

@@ -7,15 +7,21 @@ export interface UserMeta {
   createdAt: Date;
 }
 
+const userMetaCache = new Map<number, unknown>();
+
 export const userService = {
   async getMetaOfUser(id: number): Promise<Result<UserMeta, Diagnostic>> {
-    const res = await $fetch('/api/users', {
-      method: 'get',
-      query: {
-        id,
-      },
-      credentials: 'include',
-    });
+    if (!userMetaCache.has(id)) {
+      const res = await $fetch('/api/users', {
+        method: 'get',
+        query: {
+          id,
+        },
+        credentials: 'include',
+      });
+      userMetaCache.set(id, res);
+    }
+    const res = userMetaCache.get(id) as any;
     if (res.error) {
       return new Err({ code: res.error.code, message: res.error.message });
     }

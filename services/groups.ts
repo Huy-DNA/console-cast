@@ -6,14 +6,20 @@ export interface GroupMeta {
   createdAt: Date;
 }
 
+const groupMetaCache = new Map<number, unknown>();
+
 export const groupService = {
-  async getMetaOfGroup (id: number): Promise<Result<GroupMeta, Diagnostic>> {
-    const res = await $fetch('/api/groups', {
-      method: 'get',
-      query: {
-        id,
-      },
-    });
+  async getMetaOfGroup(id: number): Promise<Result<GroupMeta, Diagnostic>> {
+    if (!groupMetaCache.has(id)) {
+      const res = await $fetch('/api/groups', {
+        method: 'get',
+        query: {
+          id,
+        },
+      });
+      groupMetaCache.set(id, res);
+    }
+    const res = groupMetaCache.get(id) as any;
     if (res.error) {
       return new Err({ code: res.error.code, message: res.error.message });
     }

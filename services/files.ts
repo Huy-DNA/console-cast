@@ -67,7 +67,20 @@ export const fileService = {
   },
   async removeFile(filename: string): Promise<Result<null, Diagnostic>> {
   },
-  async createFile(filename: string): Promise<Result<null, Diagnostic>> {
+  async createFile(filename: string, content: string, permissionBits: string): Promise<Result<null, Diagnostic>> {
+    const res = await $fetch('/api/files', {
+      method: 'post',
+      query: { name: filename },
+      body: {
+        content,
+        permission_bits: permissionBits,
+      },
+      credentials: 'include',
+    });
+    if (res.error) {
+      return new Err({ code: meta.error.code, message: meta.error.message });
+    }
+    return new Ok(null);
   },
   async createFolder(filename: string): Promise<Result<null, Diagnostic>> {
   },

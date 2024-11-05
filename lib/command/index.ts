@@ -10,6 +10,7 @@ import { ls } from './impls/ls';
 import { useradd } from './impls/useradd';
 import { touch } from './impls/touch';
 import { mkdir } from './impls/mkdir';
+import { umask } from './impls/umask';
 
 export async function execute(command: string): Promise<ColoredContent> {
   const args = parse(command);
@@ -44,6 +45,9 @@ export async function execute(command: string): Promise<ColoredContent> {
     break;
   case Command.MKDIR:
     res = await mkdir(...args as any);
+    break;
+  case Command.UMASK:
+    res = await umask(...args as any);
     break;
   default:
     res = echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);

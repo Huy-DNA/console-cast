@@ -51,8 +51,8 @@ function umaskToOct(umask: string): string {
 }
 
 function umaskFromOct(octs: string): string {
-  const ownerOct = octs[0];
-  const groupOct = octs[1];
-  const otherOct = octs[2];
+  const ownerOct = Number.parseInt(octs[0]);
+  const groupOct = Number.parseInt(octs[1]);
+  const otherOct = Number.parseInt(octs[2]);
   return `000${ownerOct.toString(2).padStart(3, '0')}${groupOct.toString(2).padStart(3, '0')}${otherOct.toString(2).padStart(3, '0')}`;
 }

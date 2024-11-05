@@ -14,6 +14,7 @@ export const userService = {
       query: {
         id,
       },
+      credentials: 'include',
     });
     if (res.error) {
       return new Err({ code: res.error.code, message: res.error.message });
@@ -30,13 +31,14 @@ export const userService = {
         name,
         password,
       },
+      credentials: 'include',
     });
     if (res.error) {
       return new Err({ code: res.error.code, message: res.error.message });
     }
     const { ok: { data } } = res;
     const { switchUser } = useUserStore();
-    switchUser(data.username, password);
+    switchUser(data.username);
     return new Ok({ name: data.username, userId: data.userId, groupId: data.groupId, createdAt: data.createdAt });
   },
   async addUser(name: string, password: string | undefined): Promise<Result<null, Diagnostic>> {

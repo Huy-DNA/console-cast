@@ -1,24 +1,30 @@
 import { createGlobalState } from '@vueuse/core';
 
 export const useUserStore = createGlobalState(() => {
-  const username = ref('');
+  const username = ref(window?.localStorage?.getItem('username') || 'guest');
+  onMounted(async () => {
+    if (username.value === 'guest') {
+      await useFetch('/api/auth/login', {
+        method: 'post',
+        body: {
+          name: username.value,
+        },
+        credentials: 'include',
+      });
+    }
+  });
   const userId = ref(null);
   const groupId = ref(null);
   const createdAt = ref(null);
-  onMounted(() => username.value = 'guest');
-  async function switchUser(name: string, password: string | undefined) {
+  function switchUser(name: string) {
     username.value = name;
-    await useFetch('/api/auth/login', {
-      method: 'post',
-      body: { name, password },
-      credentials: 'include',
-    });
+    localStorage.setItem('username', name);
   }
   watch(username, async () => {
-    await switchUser(username.value, undefined);
     const meta = (await useFetch('/api/users', {
       method: 'get',
       query: { name: username.value },
+      credentials: 'include',
     }))?.data?.value?.ok?.data;
     if (!meta) {
       username.value = 'guest';

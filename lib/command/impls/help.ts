@@ -21,6 +21,18 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['<command>'] },
     ],
   },
+  [Command.TOUCH]: {
+    description: 'Create an empty file',
+    usages: [
+      { args: ['<filename>'] },
+    ],
+  },
+  [Command.MKDIR]: {
+    description: 'Create an empty folder',
+    usages: [
+      { args: ['<dirname>'] },
+    ],
+  },
   [Command.CD]: {
     description: 'Change current working directory',
     usages: [

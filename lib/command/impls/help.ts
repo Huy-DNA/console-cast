@@ -63,6 +63,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['(<oct><oct><oct>)?'] },
     ],
   },
+  [Command.RM]: {
+    description: 'Remove files',
+    usages: [
+      { args: ['<filename>+'] },
+    ],
+  },
 };
 
 function getDescription(commandName: string): string[] {

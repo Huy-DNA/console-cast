@@ -10,4 +10,5 @@ export enum Command {
   TOUCH = 'touch',
   MKDIR = 'mkdir',
   UMASK = 'umask',
+  RM = 'rm',
 }

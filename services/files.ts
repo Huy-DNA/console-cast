@@ -66,6 +66,17 @@ export const fileService = {
     })));
   },
   async removeFile(filename: string): Promise<Result<null, Diagnostic>> {
+    const { cwd } = useCwdStore();
+    const res = await $fetch('/api/files', {
+      method: 'delete',
+      query: { name: cwd.value.resolve(filename).toString() },
+      credentials: 'include',
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    return new Ok(null);
+
   },
   async createFile(filename: string, content: string, permissionBits: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();

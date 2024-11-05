@@ -23,7 +23,7 @@ export class VirtualPath {
   }
 
   isValid(): boolean {
-    return this.path.match(/^[a-zA-Z 0-9._/]+$/g) === null;
+    return this.path.match(/^[a-zA-Z \-0-9._/]+$/g) !== null;
   }
 
   parent(): VirtualPath {

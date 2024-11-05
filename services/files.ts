@@ -83,7 +83,21 @@ export const fileService = {
     }
     return new Ok(null);
   },
-  async createFolder(filename: string): Promise<Result<null, Diagnostic>> {
+  async createFolder(filename: string, permissionBits: string): Promise<Result<null, Diagnostic>> {
+    const { cwd } = useCwdStore();
+    const res = await $fetch('/api/files', {
+      method: 'post',
+      query: { name: cwd.value.resolve(filename).toString() },
+      body: {
+        permission_bits: permissionBits,
+      },
+      credentials: 'include',
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    return new Ok(null);
+
   },
   async changeDirectory(filename: string): Promise<Result<null, Diagnostic>> {
     try {

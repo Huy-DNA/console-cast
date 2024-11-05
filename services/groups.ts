@@ -25,6 +25,5 @@ export const groupService = {
     }
     const { ok: { data } } = res;
     return new Ok({ name: data.name, id: data.id, createdAt: data.createdAt });
-
   },
 };

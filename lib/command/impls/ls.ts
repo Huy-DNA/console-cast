@@ -48,14 +48,14 @@ function formatFileType(fileType: string): string {
 }
 
 function formatPermissionBits(permissionBits: string): string {
-  const ownerRead = permissionBits[3];
-  const ownerWrite = permissionBits[4];
-  const ownerExecute = permissionBits[5];
-  const groupRead = permissionBits[6];
-  const groupWrite = permissionBits[7];
-  const groupExecute = permissionBits[8];
-  const otherRead = permissionBits[9];
-  const otherWrite = permissionBits[10];
-  const otherExecute = permissionBits[11];
+  const ownerRead = Number.parseInt(permissionBits[3]);
+  const ownerWrite = Number.parseInt(permissionBits[4]);
+  const ownerExecute = Number.parseInt(permissionBits[5]);
+  const groupRead = Number.parseInt(permissionBits[6]);
+  const groupWrite = Number.parseInt(permissionBits[7]);
+  const groupExecute = Number.parseInt(permissionBits[8]);
+  const otherRead = Number.parseInt(permissionBits[9]);
+  const otherWrite = Number.parseInt(permissionBits[10]);
+  const otherExecute = Number.parseInt(permissionBits[11]);
   return `${ownerRead ? 'r' : '-'}${ownerWrite ? 'w' : '-'}${ownerExecute ? 'x' : '-'}${groupRead ? 'r' : '-'}${groupWrite ? 'w' : '-'}${groupExecute ? 'x' : '-'}${otherRead ? 'r' : '-'}${otherWrite ? 'w' : '-'}${otherExecute ? 'x' : '-'}`;
 }

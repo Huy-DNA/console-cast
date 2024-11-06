@@ -69,6 +69,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['<filename>+'] },
     ],
   },
+  [Command.CP]: {
+    description: 'Copy file from src to dest',
+    usages: [
+      { args: ['<src>', '<dest>'] },
+    ],
+  },
 };
 
 function getDescription(commandName: string): string[] {

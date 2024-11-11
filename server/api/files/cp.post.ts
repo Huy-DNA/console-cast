@@ -91,11 +91,10 @@ export default defineEventHandler(async (event) => {
           name: destFilename,
           content: srcContent,
           file_type: 'file',
-          deleted_at: db.conditions.isNull,
           created_at: new Date(Date.now()),
           updated_at: new Date(Date.now()),
           owner_id: event.context.auth.userId,
-          groupd_id: event.context.auth.groupId,
+          group_id: event.context.auth.groupId,
           permission_bits: body.permission_bits,
         }).run(dbClient);
       }

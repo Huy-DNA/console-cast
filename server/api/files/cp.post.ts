@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FileCpErrorCode.INVALID_BODY, message: 'Invalid body. Expected "src" and "dest" to be strings and permission_bits to be a bit string.' } };
   }
   const src = VirtualPath.create(body.src);
-  const dest = VirtualPath.create(body.src);
+  const dest = VirtualPath.create(body.dest);
 
   try {
     await db.serializable(dbPool, async (dbClient) => {

@@ -103,4 +103,6 @@ export default defineEventHandler(async (event) => {
   } catch (e) {
     return e;
   }
+
+  return { ok: { message: 'Copy file successfully' } };
 });

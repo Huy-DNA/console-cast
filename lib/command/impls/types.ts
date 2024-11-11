@@ -11,4 +11,6 @@ export enum Command {
   MKDIR = 'mkdir',
   UMASK = 'umask',
   RM = 'rm',
+  CP = 'cp',
+  MV = 'mv',
 }

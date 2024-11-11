@@ -14,7 +14,7 @@ export const cd: CommandFunc = async function(...args) {
     ];
   }
 
-  const dirname = formatArg(args[0]);
+  const dirname = formatArg(args[0])!;
   const res = await fileService.changeDirectory(dirname);
   if (res.isOk()) {
     return [];

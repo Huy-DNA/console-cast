@@ -10,7 +10,7 @@ export const rm: CommandFunc = async function(...args) {
   args.shift();
 
   const { cwd } = useCwdStore();
-  const filenames = uniq(args.filter((arg) => arg.trim()).map((arg) => cwd.value.resolve(formatArg(arg)).toString()));
+  const filenames = uniq(args.filter((arg) => arg.trim()).map((arg) => cwd.value.resolve(formatArg(arg)!).toString()));
 
   const lines = [];
   for (const filename of filenames) {

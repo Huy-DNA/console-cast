@@ -1,6 +1,9 @@
 import { Color, type ColoredContent } from '~/lib/types';
 
-export function formatArg (arg: string): string {
+export function formatArg (arg: string | undefined): string | undefined {
+  if (arg === undefined) {
+    return undefined;
+  }
   if (arg[0] === '\'') {
     arg = arg.slice(1);
     if (arg[arg.length - 1] === '\'') {

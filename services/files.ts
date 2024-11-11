@@ -108,7 +108,6 @@ export const fileService = {
       return new Err({ code: res.error.code, message: res.error.message });
     }
     return new Ok(null);
-
   },
   async changeDirectory(filename: string): Promise<Result<null, Diagnostic>> {
     try {
@@ -133,10 +132,37 @@ export const fileService = {
       return new Err({ code: 500, message: 'Network connection error' });
     }
   },
-  async moveFile(filename: string, destination: string): Promise<Result<null, Diagnostic>> {
+  async moveFile(src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
+    const { cwd } = useCwdStore();
+    const res = await $fetch('/api/files/mv', {
+      method: 'post',
+      body: {
+        src: cwd.value.resolve(src).toString(),
+        dest: cwd.value.resolve(dest).toString(),
+        permission_bits: umask,
+      },
+      credentials: 'include',
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    return new Ok(null);
+
   },
-  async copyFile(filename: string, destination: string): Promise<Result<null, Diagnostic>> {
-  },
-  async currentDirectory(): Promise<Result<string, Diagnostic>> {
+  async copyFile(src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
+    const { cwd } = useCwdStore();
+    const res = await $fetch('/api/files/cp', {
+      method: 'post',
+      body: {
+        src: cwd.value.resolve(src).toString(),
+        dest: cwd.value.resolve(dest).toString(),
+        permission_bits: umask,
+      },
+      credentials: 'include',
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    return new Ok(null);
   },
 };

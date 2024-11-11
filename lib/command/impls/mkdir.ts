@@ -8,11 +8,11 @@ export const mkdir: CommandFunc = async function(...args) {
   // discard first space
   args.shift();
 
-  if (args.length > 1) {
+  if (args.length > 1 || args.length === 0) {
     return ['Invalid use of mkdir. Run \'help mkdir\''];
   }
 
-  const filename = formatArg(args[0]);
+  const filename = formatArg(args[0])!;
   
   const { umask } = useUmaskStore();
   const res = await fileService.createFolder(filename, umask.value);

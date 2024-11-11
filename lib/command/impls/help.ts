@@ -69,6 +69,18 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['<filename>+'] },
     ],
   },
+  [Command.CP]: {
+    description: 'Copy file from src to dest',
+    usages: [
+      { args: ['<src>', '<dest>'] },
+    ],
+  },
+  [Command.MV]: {
+    description: 'Move file from src to dest',
+    usages: [
+      { args: ['<src>', '<dest>'] },
+    ],
+  },
 };
 
 function getDescription(commandName: string): string[] {
@@ -95,6 +107,6 @@ export const help: CommandFunc = function(...args) {
     ];
   }
 
-  const commandName = formatArg(args[0]);
+  const commandName = formatArg(args[0])!;
   return getDescription(commandName);
 };

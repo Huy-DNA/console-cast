@@ -18,7 +18,7 @@ export const umask: CommandFunc = async function(...args) {
     ];
   }
 
-  const umask = formatArg(args[0]);
+  const umask = formatArg(args[0])!;
   if (umask.length !== 3 || !isOctDigit(umask[0]) || !isOctDigit(umask[1]) || !isOctDigit(umask[2])) {
     return ['Invalid umask'];
   }

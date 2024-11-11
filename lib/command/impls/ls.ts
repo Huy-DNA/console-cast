@@ -14,7 +14,7 @@ export const ls: CommandFunc = async function(...args) {
     return ['Expect an optional dirname as argument.'];
   }
 
-  const dirname = args.length ? formatArg(args[0]) : '.';
+  const dirname = args.length ? formatArg(args[0])! : '.';
   const res = await fileService.getFolderContent(dirname);
 
   if (res.isOk()) {

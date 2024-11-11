@@ -65,7 +65,7 @@ export default defineEventHandler(async (event) => {
         throw { error: { code: FileCpErrorCode.INVALID_COPY_FOLDER_TO_FILE, message: 'Cannot copy a folder to a file' } };
       }
       const destFilename = destExist && destFileType === 'directory' ? dest.resolve(src.basename()).toString() : dest.toString();
-      if (srcFileType === 'directory' && !destExist) {
+      if (srcFileType === 'directory') {
         await db.sql`
           INSERT INTO ${'files'}(name, content, file_type, updated_at, created_at, deleted_at, permission_bits, owner_id, group_id)
           VALUES (${db.param(destFilename)}, NULL, 'directory', NOW(), NOW(), NULL, ${db.param(body.permission_bits)}, ${db.param(event.context.auth.userId)}, ${db.param(event.context.auth.groupId)})
@@ -77,13 +77,6 @@ export default defineEventHandler(async (event) => {
           WHERE ${'deleted_at'} is NULL AND ${'name'} LIKE ${db.param(src.toString() + '/%')}
         `.run(dbClient);
         return;
-      } else if (srcFileType === 'directory' && destExist) {
-        return await db.sql`
-          INSERT INTO ${'files'}(name, content, file_type, updated_at, created_at, deleted_at, permission_bits, owner_id, group_id)
-          SELECT ${db.param(destFilename)} || SUBSTRING(name, ${db.raw((src.toString().length + 1).toString())}) as name, content, file_type, NOW() as updated_at, NOW() as created_at, NULL AS deleted_at, permission_bits, ${db.param(event.context.auth.userId)} AS owner_id, ${db.param(event.context.auth.groupId)} AS group_id
-          FROM ${'files'}
-          WHERE ${'deleted_at'} is NULL AND ${'name'} LIKE ${db.param(src.toString() + '/%')}
-        `.run(dbClient);
       } else if (destExist) {
         return await db.update('files', { content: srcContent, updated_at: new Date(Date.now()) }, { name: destFilename, deleted_at: db.conditions.isNull }).run(dbClient);
       } else {

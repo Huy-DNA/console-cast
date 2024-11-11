@@ -82,7 +82,7 @@ export default defineEventHandler(async (event) => {
           INSERT INTO ${'files'}(name, content, file_type, updated_at, created_at, deleted_at, permission_bits, owner_id, group_id)
           SELECT ${db.param(destFilename)} || SUBSTRING(name, ${db.param(src.toString().length)}) as name, content, file_type, NOW() as updated_at, NOW() as created_at, NULL AS deleted_at, permission_bits, ${db.param(event.context.auth.userId)} AS owner_id, ${db.param(event.context.auth.groupId)} AS group_id
           FROM ${'files'}
-          WHERE ${'deleted_at'} is NULL AND (${'name'} LIKE ${db.param(src.toString() + '/%')}
+          WHERE ${'deleted_at'} is NULL AND ${'name'} LIKE ${db.param(src.toString() + '/%')}
         `.run(dbClient);
       } else if (destExist) {
         return await db.update('files', { content: srcContent, updated_at: new Date(Date.now()) }, { name: destFilename, deleted_at: db.conditions.isNull }).run(dbClient);

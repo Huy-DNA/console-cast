@@ -75,6 +75,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['<src>', '<dest>'] },
     ],
   },
+  [Command.MV]: {
+    description: 'Move file from src to dest',
+    usages: [
+      { args: ['<src>', '<dest>'] },
+    ],
+  },
 };
 
 function getDescription(commandName: string): string[] {

@@ -12,4 +12,5 @@ export enum Command {
   UMASK = 'umask',
   RM = 'rm',
   CP = 'cp',
+  MV = 'mv',
 }

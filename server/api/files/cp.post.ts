@@ -71,16 +71,16 @@ export default defineEventHandler(async (event) => {
           VALUES (${db.param(destFilename)}, NULL, 'directory', NOW(), NOW(), NULL, ${db.param(body.permission_bits)}, ${db.param(event.context.auth.userId)}, ${db.param(event.context.auth.groupId)})
         `.run(dbClient);
         await db.sql`
-          INSERT INTO ${'files'}
-          SELECT ${db.param(destFilename)} || SUBSTRING(name, ${db.param(src.toString().length)}), content, file_type, NOW() as updated_at, NOW() as created_at, NULL AS deleted_at, permission_bits, ${db.param(event.context.auth.userId)} AS owner_id, ${db.param(event.context.auth.groupId)} AS group_id
+          INSERT INTO ${'files'}(name, content, file_type, updated_at, created_at, deleted_at, permission_bits, owner_id, group_id)
+          SELECT ${db.param(destFilename)} || SUBSTRING(name, ${db.param(src.toString().length)}) as name, content, file_type, NOW() as updated_at, NOW() as created_at, NULL AS deleted_at, permission_bits, ${db.param(event.context.auth.userId)} AS owner_id, ${db.param(event.context.auth.groupId)} AS group_id
           FROM ${'files'}
           WHERE ${'deleted_at'} is NULL AND ${'name'} LIKE ${db.param(src.toString() + '/%')}
         `.run(dbClient);
         return;
       } else if (srcFileType === 'directory' && destExist) {
         return await db.sql`
-          INSERT INTO ${'files'}
-          SELECT ${db.param(destFilename)} || SUBSTRING(name, ${db.param(src.toString().length)}), content, file_type, NOW() as updated_at, NOW() as created_at, NULL AS deleted_at, permission_bits, ${db.param(event.context.auth.userId)} AS owner_id, ${db.param(event.context.auth.groupId)} AS group_id
+          INSERT INTO ${'files'}(name, content, file_type, updated_at, created_at, deleted_at, permission_bits, owner_id, group_id)
+          SELECT ${db.param(destFilename)} || SUBSTRING(name, ${db.param(src.toString().length)}) as name, content, file_type, NOW() as updated_at, NOW() as created_at, NULL AS deleted_at, permission_bits, ${db.param(event.context.auth.userId)} AS owner_id, ${db.param(event.context.auth.groupId)} AS group_id
           FROM ${'files'}
           WHERE ${'deleted_at'} is NULL AND (${'name'} LIKE ${db.param(src.toString() + '/%')}
         `.run(dbClient);
@@ -100,6 +100,7 @@ export default defineEventHandler(async (event) => {
       }
     });
   } catch (e) {
+    console.log(e)
     return e;
   }
 

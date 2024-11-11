@@ -101,6 +101,6 @@ export const help: CommandFunc = function(...args) {
     ];
   }
 
-  const commandName = formatArg(args[0]);
+  const commandName = formatArg(args[0])!;
   return getDescription(commandName);
 };

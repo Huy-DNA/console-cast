@@ -12,7 +12,7 @@ export const mkdir: CommandFunc = async function(...args) {
     return ['Invalid use of mkdir. Run \'help mkdir\''];
   }
 
-  const filename = formatArg(args[0]);
+  const filename = formatArg(args[0])!;
   
   const { umask } = useUmaskStore();
   const res = await fileService.createFolder(filename, umask.value);

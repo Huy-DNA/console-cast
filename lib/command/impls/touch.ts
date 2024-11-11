@@ -12,7 +12,7 @@ export const touch: CommandFunc = async function(...args) {
     return ['Invalid use of touch. Run \'help touch\''];
   }
 
-  const filename = formatArg(args[0]);
+  const filename = formatArg(args[0])!;
   
   const { umask } = useUmaskStore();
   const res = await fileService.createFile(filename, '', umask.value);

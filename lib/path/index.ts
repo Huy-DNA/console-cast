@@ -60,7 +60,7 @@ export class VirtualPath {
     return this.path;
   }
 
-  resolve (newDir: string): VirtualPath {
+  resolve(newDir: string): VirtualPath {
     if (path.isAbsolute(newDir)) {
       return VirtualPath.create(newDir);
     }
@@ -69,6 +69,10 @@ export class VirtualPath {
       return VirtualPath.create(`/${newDir}`);
     }
     return VirtualPath.create(path.resolve(this.path, newDir));
+  }
+
+  basename(): string {
+    return path.basename(this.path);
   }
 
   static homeDir(username: string): VirtualPath {

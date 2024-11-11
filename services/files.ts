@@ -132,7 +132,22 @@ export const fileService = {
       return new Err({ code: 500, message: 'Network connection error' });
     }
   },
-  async moveFile(filename: string, dest: string): Promise<Result<null, Diagnostic>> {
+  async moveFile(src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
+    const { cwd } = useCwdStore();
+    const res = await $fetch('/api/files/mv', {
+      method: 'post',
+      body: {
+        src: cwd.value.resolve(src).toString(),
+        dest: cwd.value.resolve(dest).toString(),
+        permission_bits: umask,
+      },
+      credentials: 'include',
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    return new Ok(null);
+
   },
   async copyFile(src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
@@ -149,7 +164,5 @@ export const fileService = {
       return new Err({ code: res.error.code, message: res.error.message });
     }
     return new Ok(null);
-  },
-  async currentDirectory(): Promise<Result<string, Diagnostic>> {
   },
 };

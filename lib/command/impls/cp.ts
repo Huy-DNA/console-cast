@@ -19,7 +19,10 @@ export const cp: CommandFunc = async function(...args) {
   }
   const { umask } = useUmaskStore();
   const res = await fileService.copyFile(src, dest, umask.value);
-
+  if (res.isOk()) {
+    return [];
+  }
   return [
+    res.error()!.message,
   ];
 };

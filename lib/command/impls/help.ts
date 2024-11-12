@@ -99,6 +99,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['<alias>'] },
     ],
   },
+  [Command.DU]: {
+    description: 'Get file size',
+    usages: [
+      { args: ['<pathname>?'] },
+    ],
+  },
 };
 
 function getDescription (commandName: string): string[] {

@@ -17,4 +17,5 @@ export enum Command {
   CAT = 'cat',
   ALIAS = 'alias',
   UNALIAS = 'unalias',
+  DU = 'du',
 }

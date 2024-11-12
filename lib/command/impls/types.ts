@@ -16,4 +16,5 @@ export enum Command {
   MV = 'mv',
   CAT = 'cat',
   ALIAS = 'alias',
+  UNALIAS = 'unalias',
 }

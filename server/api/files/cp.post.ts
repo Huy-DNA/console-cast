@@ -17,8 +17,15 @@ export default defineEventHandler(async (event) => {
     typeof body.permission_bits === 'string' && (body.permission_bits.length !== 12 || !body.permission_bits.split('').every((bit: string) => ['0', '1'].includes(bit)))) {
     return { error: { code: FileCpErrorCode.INVALID_BODY, message: 'Invalid body. Expected "src" and "dest" to be strings and permission_bits to be a bit string.' } };
   }
+
   const src = VirtualPath.create(body.src);
+  if (!src.isValid()) {
+    return { error: { code: FileCpErrorCode.INVALID_BODY, message: 'Expect the "src" param to be valid path' } };
+  }
   const dest = VirtualPath.create(body.dest);
+  if (!dest.isValid()) {
+    return { error: { code: FileCpErrorCode.INVALID_BODY, message: 'Expect the "dest" param to be valid path' } };
+  }
 
   try {
     await db.serializable(dbPool, async (dbClient) => {

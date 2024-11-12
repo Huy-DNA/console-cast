@@ -13,6 +13,9 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FileMetaGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
   const filepath = VirtualPath.create(trimQuote(name));
+  if (!filepath.isValid()) {
+    return { error: { code: FileMetaGetErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
+  }
   const containerPath = filepath.parent();
   try {
     const { permission_bits: containerDirPermissionBits, owner_id: containerDirOwnerId, group_id: containerDirGroupId } = await db.selectExactlyOne('files', { name: containerPath.toString(), file_type: 'directory', deleted_at: db.conditions.isNull }).run(dbPool);

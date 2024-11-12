@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   }
   const filepath = VirtualPath.create(trimQuote(name));
   if (!filepath.isValid()) {
-    return { error: { code: FileDeleteErrorCode.INVALID_PARAM, message: 'Invalid filename' } };
+    return { error: { code: FileDeleteErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
   }
   const containerPath = filepath.parent();
   try {

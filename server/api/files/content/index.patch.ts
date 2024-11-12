@@ -17,6 +17,9 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FileContentPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
   const filepath = VirtualPath.create(trimQuote(name));
+  if (!filepath.isValid()) {
+    return { error: { code: FileContentPatchErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
+  }
   try {
     const { permission_bits: filePermissionBits, owner_id: fileOwnerId, group_id: fileGroupId, content } = await db.selectExactlyOne('files', { name: filepath.toString(), file_type: 'file', deleted_at: db.conditions.isNull }).run(dbPool);
     if (

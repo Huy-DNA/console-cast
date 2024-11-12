@@ -18,6 +18,9 @@ export default defineEventHandler(async (event) => {
   }
   const { content, permission_bits } = body;
   const filepath = VirtualPath.create(trimQuote(name));
+  if (!filepath.isValid()) {
+    return { error: { code: FilePostErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
+  }
   const containerPath = filepath.parent();
   try {
     const { permission_bits: containerDirPermissionBits, owner_id: containerDirOwnerId, group_id: containerDirGroupId } = await db.selectExactlyOne('files', { name: containerPath.toString(), file_type: 'directory', deleted_at: db.conditions.isNull }).run(dbPool);

@@ -115,3 +115,9 @@ export enum AliasDeleteErrorCode {
   INVALID_BODY = 1000,
   NOT_LOGIN = 2000,
 }
+
+export enum FileSizeErrorCode {
+  INVALID_PARAM = 1000,
+  NOT_ENOUGH_PRIVILEGE = 2000,
+  FILE_NOT_FOUND = 3000,
+}

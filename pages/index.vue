@@ -2,5 +2,5 @@
 </script>
 
 <template>
-  <Terminal />
+  <XTerminal />
 </template>

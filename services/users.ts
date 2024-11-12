@@ -28,8 +28,6 @@ export const userService = {
     const { ok: { data } } = res;
     return new Ok({ name: data.name, userId: data.userId, groupId: data.groupId, createdAt: data.createdAt });
   },
-  async getHomeDirectory (id: number): Promise<Result<string, Diagnostic>> {
-  },
   async switchUser (name: string, password: string | undefined): Promise<Result<UserMeta, Diagnostic>> {
     const res = await $fetch('/api/auth/login', {
       method: 'post',
@@ -59,8 +57,7 @@ export const userService = {
       return new Err({ code: res.error.code, message: res.error.message });
     }
     const { switchUser } = useUserStore();
-    switchUser(name, password);
+    switchUser(name);
     return new Ok(null);
-
   }
 };

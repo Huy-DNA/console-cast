@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import type { ColoredLine, ColoredWord} from '~/lib';
-import { parse, highlight, execute, ColoredContent, Color } from '~/lib';
+import type { ColoredLine, ColoredWord } from '~/lib';
+import { highlight, Color } from '~/lib';
 
 const props = defineProps<{
-    content: string,
-    prefix: ColoredWord[],
-  }>();
+  content: string,
+  prefix: ColoredWord[],
+}>();
 
 const emits = defineEmits<{
-    submit: [ColoredLine],
-    'update-content': [string],
-    'line-up': void,
-    'line-down': void,
-  }>();
+  submit: [ColoredLine],
+  'update-content': [string],
+  'line-up': [],
+  'line-down': [],
+}>();
 
 const cursorPosition = ref(0);
 
@@ -33,8 +33,8 @@ async function updateCursor (shouldScrollIntoView = true) {
   const offset = cursorPosition.value;
   const position = getCharPosition(offset);
   const cursor = document.getElementById('cursor');
-    cursor!.style.top = `${position.top}px`;
-    cursor!.style.left = `${position.left}px`;
+  cursor!.style.top = `${position.top}px`;
+  cursor!.style.left = `${position.left}px`;
 }
 function getCharPosition (offset: number): { top: number, left: number } {
   let characterCount = 0;
@@ -48,7 +48,7 @@ function getCharPosition (offset: number): { top: number, left: number } {
       const range = new Range();
       range.setStart(node, charIndex);
       range.setEnd(node, charIndex + 1);
-      const rect = range.getBoundingClientRect(); 
+      const rect = range.getBoundingClientRect();
       return { top: rect.top, left: rect.left };
     }
     characterCount += textLength;
@@ -110,11 +110,12 @@ async function onKeydown (e: KeyboardEvent) {
 async function handleControlKey (key: string) {
   const { content } = props;
   switch (key) {
-  case 'v':
+  case 'v': {
     const text = await navigator.clipboard.readText();
     await emits('update-content', content.slice(0, cursorPosition.value) + text + content.slice(cursorPosition.value));
     cursorPosition.value += text.length;
     return;
+  }
   case 'c':
     return;
   default:
@@ -144,46 +145,35 @@ defineExpose({
 
 <template>
   <div ref="input-box-wrapper" class="m-0 p-0" tabindex="0">
-    <TerminalWord
-      v-for="(word, index) in props.prefix"
-      :key="index"
-      :word="word"
-    />
+    <TerminalWord v-for="(word, index) in props.prefix" :key="index" :word="word" />
     <p
-      ref="input-box"
-      role="text"
-      class="inline-flex justify-start gap-0 w-[90%] outline-none"
-      tabindex="0"
-      @keydown="onKeydown"
-      @click="onClick"
-    >
-      <span
-        id="cursor"
-        class="w-2.5 h-[22px] absolute block bg-white z-50"
-      /> 
-      <TerminalWord
-        v-for="(word, index) in coloredWords"
-        :key="index"
-        :word="word"
-      />
+ref="input-box" role="text" class="inline-flex justify-start gap-0 w-[90%] outline-none" tabindex="0"
+      @keydown="onKeydown" @click="onClick">
+      <span id="cursor" class="w-2.5 h-[22px] absolute block bg-white z-50" />
+      <TerminalWord v-for="(word, index) in coloredWords" :key="index" :word="word" />
       &nbsp;
     </p>
   </div>
 </template>
 
 <style scoped>
-  @keyframes blink {
-    0%, 20%, 80%, 100% {
-      opacity: 0.7;
-    }
-    
-    
-    30%, 60% {
-      opacity: 0;
-    }
+@keyframes blink {
+
+  0%,
+  20%,
+  80%,
+  100% {
+    opacity: 0.7;
   }
 
-  #cursor {
-    animation: blink 1s infinite;
+
+  30%,
+  60% {
+    opacity: 0;
   }
+}
+
+#cursor {
+  animation: blink 1s infinite;
+}
 </style>

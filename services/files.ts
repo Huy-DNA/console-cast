@@ -216,4 +216,16 @@ export const fileService = {
     }
     return new Ok(null);
   },
+  async getFileSize (pathname: string): Promise<Result<number, Diagnostic>> {
+    const { cwd } = useCwdStore();
+    const res = await $fetch('/api/files/size', {
+      method: 'get',
+      query: { name: cwd.value.resolve(pathname).toString() },
+      credentials: 'include',
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    return new Ok(res.ok.data.size);
+  }
 };

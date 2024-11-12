@@ -23,13 +23,7 @@ export async function execute (command: string): Promise<ColoredContent> {
   }
   const shellDir = shellDirRes.unwrap();
   const { args, redirections } = shellDir; 
-  if (!args[0]?.trim()) {
-    args.shift();
-  }
-  if (!args.length) {
-    return [[{ content: ' ', color: Color.WHITE }]];
-  }
-  const output = await commandDispatch(...args);
+  const output = args.length ? await commandDispatch(...args) : [];
   return interpretAnsiEscapeColor(output);
 }
 

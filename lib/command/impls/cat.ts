@@ -14,5 +14,10 @@ export const cat: AsyncCommandFunc = async function (...args) {
 
   const filename = formatArg(args[0])!;
   const res = await fileService.getFileContent(filename);
-  return [];
+  if (res.isOk()) {
+    return [res.unwrap()];
+  }
+  return [
+    res.error()!.message,
+  ];
 };

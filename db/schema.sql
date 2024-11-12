@@ -293,14 +293,6 @@ ALTER TABLE ONLY public.users ALTER COLUMN group_id SET DEFAULT nextval('public.
 
 
 --
--- Name: aliases aliases_name_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.aliases
-    ADD CONSTRAINT aliases_name_key UNIQUE (name);
-
-
---
 -- Name: users c_uniq_users_name; Type: CONSTRAINT; Schema: public; Owner: -
 --
 

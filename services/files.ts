@@ -1,5 +1,6 @@
 import path from 'path-browserify';
 import { Err, Ok, type Diagnostic, type Result } from './types';
+import { FilePostErrorCode } from '~/lib';
 
 export enum UserKind {
   OWNER = 'owner',
@@ -37,9 +38,51 @@ export interface FileMeta {
 export const fileService = {
   async getMetaOfFile (filename: string): Promise<Result<FileMeta, Diagnostic>> {
   },
-  async getFileContent (filename: string): Promise<Result<Uint8Array, Diagnostic>> {
+  async getFileContent (filename: string): Promise<Result<string, Diagnostic>> {
   },
-  async updateFileContent (filename: string, content: Uint8Array): Promise<Result<null, Diagnostic>> {
+  // FIXME: Possible race condition if multiple modifications happen on a file
+  async writeFileContent (filename: string, content: string): Promise<Result<null, Diagnostic>> {
+    const { umask } = useUmaskStore();
+    const createRes = await fileService.createFile(filename, '', umask.value);
+    if (!createRes.isOk() && createRes.error()!.code === FilePostErrorCode.INVALID_FOLDER) {
+      return createRes;
+    }
+    const { cwd } = useCwdStore();
+    const res = await $fetch('/api/files/content', {
+      method: 'patch',
+      query: { name: cwd.value.resolve(filename) },
+      body: {
+        content,
+        shouldAppend: false,
+      },
+      credentials: 'include',
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    return new Ok(null);
+  },
+  // FIXME: Possible race condition if multiple modifications happen on a file
+  async appendFileCOntent (filename: string, content: string): Promise<Result<null, Diagnostics>> {
+    const { umask } = useUmaskStore();
+    const createRes = await fileService.createFile(filename, '', umask.value);
+    if (!createRes.isOk() && createRes.error()!.code === FilePostErrorCode.INVALID_FOLDER) {
+      return createRes;
+    }
+    const { cwd } = useCwdStore();
+    const res = await $fetch('/api/files/content', {
+      method: 'patch',
+      query: { name: cwd.value.resolve(filename) },
+      body: {
+        content,
+        shouldAppend: true,
+      },
+      credentials: 'include',
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    return new Ok(null);
   },
   async getFolderContent (filename: string): Promise<Result<FileMeta[], Diagnostic>> {
     const { cwd } = useCwdStore();

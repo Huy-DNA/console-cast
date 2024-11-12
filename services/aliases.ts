@@ -22,6 +22,7 @@ export const aliasService = {
   },
   async setAlias (name: string, command: string): Promise<Result<null, Diagnostic>> {
     const res = await $fetch('/api/aliases', {
+      method: 'post',
       body: {
         name,
         command,

@@ -14,11 +14,15 @@ import { umask } from './impls/umask';
 import { rm } from './impls/rm';
 import { cp } from './impls/cp';
 import { mv } from './impls/mv';
-import { Err, fileService, Ok, type Result } from '~/services';
+import { aliasService, Err, fileService, Ok, type Result } from '~/services';
 import { cat } from './impls/cat';
+import { alias } from './impls/alias';
+import { unalias } from './impls/unalias';
 
 export async function execute (command: string): Promise<ColoredContent> {
-  const shellDirRes = extractShellRedirection(...parse(command).filter((arg) => arg.trim()));
+  const commandTokens = parse(command).filter((arg) => arg.trim());
+  const resolvedAlias = await resolveAlias(...commandTokens);
+  const shellDirRes = extractShellRedirection(...resolvedAlias);
   if (!shellDirRes.isOk()) {
     return interpretAnsiEscapeColor(shellDirRes.error()!);
   }
@@ -64,6 +68,10 @@ async function commandDispatch (...args: string[]): Promise<string[]> {
     return await rm(...args);
   case Command.CAT:
     return await cat(...args);
+  case Command.ALIAS:
+    return await alias(...args);
+  case Command.UNALIAS:
+    return await unalias(...args);
   default:
     return echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);
   }
@@ -106,4 +114,12 @@ async function redirectOutput (output: string[], { mode, name }: { mode: Redirec
   }
   if (res.isOk()) return [];
   return [res.error()!.message];
+}
+
+async function resolveAlias (...args: string[]): Promise<string[]> {
+  while (await aliasService.hasAlias(args[0])) {
+    const resolvedCommand = parse((await aliasService.getAlias(args[0])).unwrap()).filter((arg) => arg.trim());
+    args.splice(0, 1, ...resolvedCommand, ...args.slice(1));
+  }
+  return args;
 }

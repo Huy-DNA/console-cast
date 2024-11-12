@@ -15,4 +15,6 @@ export enum Command {
   CP = 'cp',
   MV = 'mv',
   CAT = 'cat',
+  ALIAS = 'alias',
+  UNALIAS = 'unalias',
 }

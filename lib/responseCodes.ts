@@ -99,3 +99,19 @@ export enum UserGetErrorCode {
   NOT_ENOUGH_PRIVILEGE = 2000,
   USER_NOT_FOUND = 3000,
 }
+
+export enum AliasGetErrorCode {
+  INVALID_PARAM = 1000,
+  NOT_LOGIN = 2000,
+  ALIAS_NOT_FOUND = 3000,
+}
+
+export enum AliasPostErrorCode {
+  INVALID_BODY = 1000,
+  NOT_LOGIN = 2000,
+}
+
+export enum AliasDeleteErrorCode {
+  INVALID_BODY = 1000,
+  NOT_LOGIN = 2000,
+}

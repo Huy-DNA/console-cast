@@ -19,6 +19,7 @@ import { cat } from './impls/cat';
 import { alias } from './impls/alias';
 import { unalias } from './impls/unalias';
 import { du } from './impls/du';
+import { groups } from './impls/groups';
 
 export async function execute (command: string): Promise<ColoredContent> {
   const commandTokens = parse(command).filter((arg) => arg.trim());
@@ -75,6 +76,8 @@ async function commandDispatch (...args: string[]): Promise<string[]> {
     return await unalias(...args);
   case Command.DU:
     return await du(...args);
+  case Command.GROUPS:
+    return await groups(...args);
   default:
     return echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);
   }

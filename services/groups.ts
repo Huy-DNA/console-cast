@@ -9,7 +9,7 @@ export interface GroupMeta {
 const groupMetaCache = new Map<number, unknown>();
 
 export const groupService = {
-  async getMetaOfGroup (id: number): Promise<Result<GroupMeta, Diagnostic>> {
+  async getMetaOfGroup(id: number): Promise<Result<GroupMeta, Diagnostic>> {
     if (!groupMetaCache.has(id)) {
       const res = await $fetch('/api/groups', {
         method: 'get',
@@ -25,5 +25,18 @@ export const groupService = {
     }
     const { ok: { data } } = res;
     return new Ok({ name: data.name, id: data.id, createdAt: data.createdAt });
+  },
+  async getGroupByOwner(owner: string): Promise<Result<GroupMeta[], Diagnostic>> {
+    const res = await $fetch('/api/groups', {
+      method: 'get',
+      query: {
+        owner,
+      },
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    const { ok: { data } } = res;
+    return new Ok(data);
   },
 };

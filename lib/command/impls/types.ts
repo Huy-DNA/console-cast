@@ -18,4 +18,5 @@ export enum Command {
   ALIAS = 'alias',
   UNALIAS = 'unalias',
   DU = 'du',
+  GROUPS = 'groups',
 }

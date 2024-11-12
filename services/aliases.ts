@@ -54,7 +54,7 @@ export const aliasService = {
     }
     if (!allAliases) await init();
     const index = allAliases!.findIndex(({ name: entryName }) => entryName === name);
-    if (index) allAliases!.splice(index, 1);
+    if (index !== undefined) allAliases!.splice(index, 1);
     return new Ok(null);
   },
 };

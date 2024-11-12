@@ -25,6 +25,52 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: aliases; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.aliases (
+    id integer NOT NULL,
+    name character varying(256) NOT NULL,
+    command character varying(1024) NOT NULL,
+    owner_id integer NOT NULL
+);
+
+
+--
+-- Name: aliases_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+ALTER TABLE public.aliases ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.aliases_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: aliases_owner_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.aliases_owner_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: aliases_owner_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.aliases_owner_id_seq OWNED BY public.aliases.owner_id;
+
+
+--
 -- Name: files; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -198,6 +244,13 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
+-- Name: aliases owner_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.aliases ALTER COLUMN owner_id SET DEFAULT nextval('public.aliases_owner_id_seq'::regclass);
+
+
+--
 -- Name: files id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -237,6 +290,14 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN group_id SET DEFAULT nextval('public.users_group_id_seq'::regclass);
+
+
+--
+-- Name: aliases aliases_name_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.aliases
+    ADD CONSTRAINT aliases_name_key UNIQUE (name);
 
 
 --
@@ -294,6 +355,14 @@ CREATE INDEX idx_users_group_id ON public.users USING hash (group_id);
 
 
 --
+-- Name: aliases fk_aliases_users; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.aliases
+    ADD CONSTRAINT fk_aliases_users FOREIGN KEY (owner_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
 -- Name: files fk_files_groups; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -329,4 +398,5 @@ ALTER TABLE ONLY public.users
 INSERT INTO public.schema_migrations (version) VALUES
     ('20241011165712'),
     ('20241012044018'),
-    ('20241012080636');
+    ('20241012080636'),
+    ('20241112130907');

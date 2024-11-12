@@ -1,8 +1,8 @@
 import { formatArg } from '../utils';
-import type { CommandFunc } from './types';
+import type { AsyncCommandFunc } from './types';
 import { userService } from '~/services/users';
 
-export const useradd: CommandFunc = async function(...args) {
+export const useradd: AsyncCommandFunc = async function(...args) {
   // discard `useradd`
   args.shift();
   // discard first space

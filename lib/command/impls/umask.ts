@@ -1,7 +1,7 @@
 import { formatArg } from '../utils';
-import type { CommandFunc } from './types';
+import type { AsyncCommandFunc } from './types';
 
-export const umask: CommandFunc = async function(...args) {
+export const umask: AsyncCommandFunc = async function(...args) {
   // discard `umask`
   args.shift();
   // discard first space

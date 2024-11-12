@@ -1,10 +1,10 @@
 import { userService } from '~/services/users';
 import { formatArg } from '../utils';
-import type { CommandFunc } from './types';
+import type { AsyncCommandFunc } from './types';
 import { fileService } from '~/services/files';
 import { groupService } from '~/services/groups';
 
-export const ls: CommandFunc = async function(...args) {
+export const ls: AsyncCommandFunc = async function(...args) {
   // discard `ls`
   args.shift();
   // discard first space

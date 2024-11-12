@@ -1,8 +1,8 @@
 import { fileService } from '~/services';
 import { formatArg } from '../utils';
-import type { CommandFunc } from './types';
+import type { AsyncCommandFunc } from './types';
 
-export const touch: CommandFunc = async function(...args) {
+export const touch: AsyncCommandFunc = async function(...args) {
   // discard `touch`
   args.shift();
   // discard first space

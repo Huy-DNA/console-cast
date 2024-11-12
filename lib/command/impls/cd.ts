@@ -1,8 +1,8 @@
 import { fileService } from '~/services';
 import { formatArg } from '../utils';
-import type { CommandFunc } from './types';
+import type { AsyncCommandFunc } from './types';
 
-export const cd: CommandFunc = async function(...args) {
+export const cd: AsyncCommandFunc = async function(...args) {
   // discard `cd`
   args.shift();
   // discard first space

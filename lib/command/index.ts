@@ -23,7 +23,7 @@ export async function execute(command: string): Promise<ColoredContent> {
   if (!args.length) {
     return [[{ content: ' ', color: Color.WHITE }]];
   }
-  const output = await commandDispatch(args); 
+  const output = await commandDispatch(args);
   return interpretAnsiEscapeColor(output);
 }
 

@@ -105,6 +105,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['<pathname>?'] },
     ],
   },
+  [Command.GROUPS]: {
+    description: 'Get groups that a user belongs to',
+    usages: [
+      { args: ['<username>?'] },
+    ],
+  },
 };
 
 function getDescription (commandName: string): string[] {

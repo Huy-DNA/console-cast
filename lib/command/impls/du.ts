@@ -13,6 +13,13 @@ export const du: AsyncCommandFunc = async function(...args) {
   }
 
   const pathname = formatArg(args[0]) || '.';
-
-  return [];
+  const res = await fileService.getFileSize(pathname);
+  if (res.isOk()) {
+    return [
+      `${pathname}   ${res.unwrap()}B`,
+    ];
+  }
+  return [
+    res.error()!.message,
+  ];
 };

@@ -1,8 +1,8 @@
-import { groupService, userService } from '~/services';
+import { groupService } from '~/services';
 import { formatArg } from '../utils';
 import type { AsyncCommandFunc } from './types';
 
-export const groups: AsyncCommandFunc = async function(...args) {
+export const groups: AsyncCommandFunc = async function (...args) {
   // discard `groups`
   args.shift();
 

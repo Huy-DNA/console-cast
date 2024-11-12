@@ -23,47 +23,47 @@ export async function execute(command: string): Promise<ColoredContent> {
   if (!args.length) {
     return [[{ content: ' ', color: Color.WHITE }]];
   }
-  let res;
+  let output;
   switch (args[0] as Command) {
   case Command.ECHO:
-    res = echo(...(args as any));
+    output = echo(...(args as any));
     break;
   case Command.HELP:
-    res = help(...args as any);
+    output = help(...args as any);
     break;
   case Command.CD:
-    res = await cd(...args as any);
+    output = await cd(...args as any);
     break;
   case Command.SU:
-    res = await su(...args as any);
+    output = await su(...args as any);
     break;
   case Command.LS:
-    res = await ls(...args as any);
+    output = await ls(...args as any);
     break;
   case Command.USERADD:
-    res = await useradd(...args as any);
+    output = await useradd(...args as any);
     break;
   case Command.TOUCH:
-    res = await touch(...args as any);
+    output = await touch(...args as any);
     break;
   case Command.MKDIR:
-    res = await mkdir(...args as any);
+    output = await mkdir(...args as any);
     break;
   case Command.UMASK:
-    res = await umask(...args as any);
+    output = await umask(...args as any);
     break;
   case Command.CP:
-    res = await cp(...args as any);
+    output = await cp(...args as any);
     break;
   case Command.MV:
-    res = await mv(...args as any);
+    output = await mv(...args as any);
     break;
   case Command.RM:
-    res = await rm(...args as any);
+    output = await rm(...args as any);
     break;
   default:
-    res = echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);
+    output = echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);
     break;
   }
-  return interpretAnsiEscapeColor(res);
+  return interpretAnsiEscapeColor(output);
 }

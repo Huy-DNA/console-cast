@@ -83,7 +83,7 @@ function extractShellRedirection (...args: string[]): Result<{
       const mode = arg === '>' ? RedirectionMode.Output : RedirectionMode.Append;
       const pathname = args[i + 1];
       if (pathname === undefined) return new Err([`Parse error: no pathname found after '${arg}'`]);
-      redirections.push({ mode, name: pathname });
+      redirections.unshift({ mode, name: pathname });
       args.splice(i, 2);
     }
   }

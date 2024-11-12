@@ -6,7 +6,7 @@ export const mkdir: AsyncCommandFunc = async function (...args) {
   // discard `mkdir`
   args.shift();
 
-  if (args.length !== 0) {
+  if (args.length !== 1) {
     return ['Invalid use of mkdir. Run \'help mkdir\''];
   }
 

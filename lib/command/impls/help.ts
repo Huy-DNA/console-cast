@@ -122,7 +122,6 @@ function getDescription (commandName: string): string[] {
 
 export const help: CommandFunc = function (...args) {
   args.shift();
-  args.shift();
 
   if (args.length === 0 || !args[0].trim()) {
     return [

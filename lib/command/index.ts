@@ -15,6 +15,7 @@ import { rm } from './impls/rm';
 import { cp } from './impls/cp';
 import { mv } from './impls/mv';
 import { Err, fileService, Ok, type Result } from '~/services';
+import { cat } from './impls/cat';
 
 export async function execute (command: string): Promise<ColoredContent> {
   const shellDirRes = extractShellRedirection(...parse(command).filter((arg) => arg.trim()));
@@ -61,6 +62,8 @@ async function commandDispatch (...args: string[]): Promise<string[]> {
     return await mv(...args);
   case Command.RM:
     return await rm(...args);
+  case Command.CAT:
+    return await cat(...args);
   default:
     return echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);
   }

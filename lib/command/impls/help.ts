@@ -87,6 +87,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['<filename>'] },
     ],
   },
+  [Command.ALIAS]: {
+    description: 'Alias a command',
+    usages: [
+      { args: ['<alias>=<command>'] },
+    ],
+  },
 };
 
 function getDescription (commandName: string): string[] {

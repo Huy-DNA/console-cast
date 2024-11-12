@@ -16,6 +16,7 @@ import { cp } from './impls/cp';
 import { mv } from './impls/mv';
 import { aliasService, Err, fileService, Ok, type Result } from '~/services';
 import { cat } from './impls/cat';
+import { alias } from './impls/alias';
 
 export async function execute (command: string): Promise<ColoredContent> {
   const commandTokens = parse(command).filter((arg) => arg.trim());
@@ -66,6 +67,8 @@ async function commandDispatch (...args: string[]): Promise<string[]> {
     return await rm(...args);
   case Command.CAT:
     return await cat(...args);
+  case Command.ALIAS:
+    return await alias(...args);
   default:
     return echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);
   }

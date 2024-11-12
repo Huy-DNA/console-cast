@@ -9,7 +9,7 @@ export interface GroupMeta {
 const groupMetaCache = new Map<number, unknown>();
 
 export const groupService = {
-  async getMetaOfGroup(id: number): Promise<Result<GroupMeta, Diagnostic>> {
+  async getMetaOfGroup (id: number): Promise<Result<GroupMeta, Diagnostic>> {
     if (!groupMetaCache.has(id)) {
       const res = await $fetch('/api/groups', {
         method: 'get',

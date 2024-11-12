@@ -4,7 +4,7 @@ import type { AsyncCommandFunc } from './types';
 import { fileService } from '~/services/files';
 import { groupService } from '~/services/groups';
 
-export const ls: AsyncCommandFunc = async function(...args) {
+export const ls: AsyncCommandFunc = async function (...args) {
   // discard `ls`
   args.shift();
   // discard first space
@@ -38,7 +38,7 @@ export const ls: AsyncCommandFunc = async function(...args) {
   ];
 };
 
-function formatFileType(fileType: string): string {
+function formatFileType (fileType: string): string {
   switch (fileType) {
   case 'file': return '-';
   case 'directory': return 'd';
@@ -47,7 +47,7 @@ function formatFileType(fileType: string): string {
   }
 }
 
-function formatPermissionBits(permissionBits: string): string {
+function formatPermissionBits (permissionBits: string): string {
   const ownerRead = Number.parseInt(permissionBits[3]);
   const ownerWrite = Number.parseInt(permissionBits[4]);
   const ownerExecute = Number.parseInt(permissionBits[5]);

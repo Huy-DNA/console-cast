@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
 });
 
 
-async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, newFileName: string) {
+async function handleNameChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, newFileName: string) {
   const { name } = getQuery(event);
   const oldFilepath = VirtualPath.create(trimQuote(name as string));
   const oldContainerPath = oldFilepath.parent();
@@ -99,7 +99,7 @@ async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnCli
   }
 }
 
-async function handleOwnerChange<T extends db.IsolationLevel>(dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, ownerId: number) {
+async function handleOwnerChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, ownerId: number) {
   const { name } = getQuery(event);
   const filepath = VirtualPath.create(trimQuote(name as string));
 
@@ -118,7 +118,7 @@ async function handleOwnerChange<T extends db.IsolationLevel>(dbClient: db.TxnCl
   await db.update('files', { owner_id: ownerId }, { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbClient);
 }
 
-async function handlePermissionChange<T extends db.IsolationLevel>(dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, permissionBits: string) {
+async function handlePermissionChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, permissionBits: string) {
   const { name } = getQuery(event);
   const filepath = VirtualPath.create(trimQuote(name as string));
 

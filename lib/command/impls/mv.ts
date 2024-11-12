@@ -2,7 +2,7 @@ import { fileService } from '~/services';
 import { formatArg } from '../utils';
 import type { AsyncCommandFunc } from './types';
 
-export const mv: AsyncCommandFunc = async function(...args) {
+export const mv: AsyncCommandFunc = async function (...args) {
   // discard `mv`
   args.shift();
   // discard first space

@@ -17,7 +17,7 @@ export const useUserStore = createGlobalState(() => {
   const userId = ref(null);
   const groupId = ref(null);
   const createdAt = ref(null);
-  function switchUser(name: string) {
+  function switchUser (name: string) {
     username.value = name;
     localStorage.setItem('username', name);
     clearUmask();

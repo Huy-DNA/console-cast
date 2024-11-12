@@ -1,7 +1,7 @@
 import { formatArg } from '../utils';
 import type { CommandFunc } from './types';
 
-export const echo: CommandFunc = function(...args) {
+export const echo: CommandFunc = function (...args) {
   // discard `echo`
   args.shift();
   // discard first space

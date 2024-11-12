@@ -10,7 +10,7 @@ export interface UserMeta {
 const userMetaCache = new Map<number, unknown>();
 
 export const userService = {
-  async getMetaOfUser(id: number): Promise<Result<UserMeta, Diagnostic>> {
+  async getMetaOfUser (id: number): Promise<Result<UserMeta, Diagnostic>> {
     if (!userMetaCache.has(id)) {
       const res = await $fetch('/api/users', {
         method: 'get',
@@ -28,9 +28,9 @@ export const userService = {
     const { ok: { data } } = res;
     return new Ok({ name: data.name, userId: data.userId, groupId: data.groupId, createdAt: data.createdAt });
   },
-  async getHomeDirectory(id: number): Promise<Result<string, Diagnostic>> {
+  async getHomeDirectory (id: number): Promise<Result<string, Diagnostic>> {
   },
-  async switchUser(name: string, password: string | undefined): Promise<Result<UserMeta, Diagnostic>> {
+  async switchUser (name: string, password: string | undefined): Promise<Result<UserMeta, Diagnostic>> {
     const res = await $fetch('/api/auth/login', {
       method: 'post',
       body: {
@@ -47,7 +47,7 @@ export const userService = {
     switchUser(data.username);
     return new Ok({ name: data.username, userId: data.userId, groupId: data.groupId, createdAt: data.createdAt });
   },
-  async addUser(name: string, password: string | undefined): Promise<Result<null, Diagnostic>> {
+  async addUser (name: string, password: string | undefined): Promise<Result<null, Diagnostic>> {
     const res = await $fetch('/api/auth/register', {
       method: 'post',
       body: {

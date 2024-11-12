@@ -15,7 +15,7 @@ import { rm } from './impls/rm';
 import { cp } from './impls/cp';
 import { mv } from './impls/mv';
 
-export async function execute(command: string): Promise<ColoredContent> {
+export async function execute (command: string): Promise<ColoredContent> {
   const args = parse(command);
   if (!args[0]?.trim()) {
     args.shift();
@@ -27,7 +27,7 @@ export async function execute(command: string): Promise<ColoredContent> {
   return interpretAnsiEscapeColor(output);
 }
 
-async function commandDispatch(args: string[]): Promise<string[]> {
+async function commandDispatch (args: string[]): Promise<string[]> {
   switch (args[0] as Command) {
   case Command.ECHO:
     return echo(...args);
@@ -57,3 +57,10 @@ async function commandDispatch(args: string[]): Promise<string[]> {
     return echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);
   }
 }
+
+enum ShellRedirection {
+  Output,
+  Append,
+}
+
+function extractShellRedirection()

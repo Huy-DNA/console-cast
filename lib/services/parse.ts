@@ -60,14 +60,14 @@ function getNextToken (command: string): { token: string, remaining: string } | 
         i += 1;
         const nextChar = command[i];
         switch (nextChar) {
-          case '\'':
-            token += '\'';
-            break;
-          case '"':
-            token += '"';
-            break;
-          default:
-            token += nextChar;
+        case '\'':
+          token += '\'';
+          break;
+        case '"':
+          token += '"';
+          break;
+        default:
+          token += nextChar;
         }
       }
       break;

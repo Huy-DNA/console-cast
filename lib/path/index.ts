@@ -3,7 +3,7 @@ import path from 'path-browserify';
 export class VirtualPath {
   private path: string;
 
-  private constructor(path: string) {
+  private constructor (path: string) {
     if (path[path.length - 1] === '/') {
       this.path = path.slice(0, path.length - 1);
     } else {
@@ -11,45 +11,45 @@ export class VirtualPath {
     }
   }
 
-  static create(path: string): VirtualPath {
+  static create (path: string): VirtualPath {
     return new VirtualPath(path);
   }
 
-  static createAndCheck(path: string): VirtualPath {
+  static createAndCheck (path: string): VirtualPath {
     if (path.match(/^[a-zA-Z \-0-9._/]+$/g) === null) {
       throw new Error('Invalid path pattern');
     }
     return new VirtualPath(path);
   }
 
-  isValid(): boolean {
+  isValid (): boolean {
     return this.path.match(/^[a-zA-Z \-0-9._/]+$/g) !== null;
   }
 
-  parent(): VirtualPath {
+  parent (): VirtualPath {
     if (this.isRoot()) {
       return this;
     }
     return VirtualPath.create(path.dirname(this.path));
   }
 
-  isRoot(): boolean {
+  isRoot (): boolean {
     return this.path === '';
   }
 
-  isHome(username: string): boolean {
+  isHome (username: string): boolean {
     return this.equals(VirtualPath.homeDir(username));
   }
 
-  equals(other: VirtualPath): boolean {
+  equals (other: VirtualPath): boolean {
     return this.path === other.path;
   }
 
-  toString(): string {
+  toString (): string {
     return this.path;
   }
 
-  toFormattedString(username: string): string {
+  toFormattedString (username: string): string {
     const homeDir = VirtualPath.homeDir(username);
     if (this.path === '') {
       return '/';
@@ -60,7 +60,7 @@ export class VirtualPath {
     return this.path;
   }
 
-  resolve(newDir: string): VirtualPath {
+  resolve (newDir: string): VirtualPath {
     if (path.isAbsolute(newDir)) {
       return VirtualPath.create(newDir);
     }
@@ -71,11 +71,11 @@ export class VirtualPath {
     return VirtualPath.create(path.resolve(this.path, newDir));
   }
 
-  basename(): string {
+  basename (): string {
     return path.basename(this.path);
   }
 
-  static homeDir(username: string): VirtualPath {
+  static homeDir (username: string): VirtualPath {
     return VirtualPath.create(`/home/${username}`);
   }
 }

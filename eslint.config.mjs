@@ -7,5 +7,6 @@ export default withNuxt({
     indent: ['error', 2],
     quotes: ['error', 'single'],
     '@typescript-eslint/no-explicit-any': 'warn',
+    'space-before-function-paren': ['error', 'always'],
   },
 });

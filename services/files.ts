@@ -35,13 +35,13 @@ export interface FileMeta {
 }
 
 export const fileService = {
-  async getMetaOfFile(filename: string): Promise<Result<FileMeta, Diagnostic>> {
+  async getMetaOfFile (filename: string): Promise<Result<FileMeta, Diagnostic>> {
   },
-  async getFileContent(filename: string): Promise<Result<Uint8Array, Diagnostic>> {
+  async getFileContent (filename: string): Promise<Result<Uint8Array, Diagnostic>> {
   },
-  async updateFileContent(filename: string, content: Uint8Array): Promise<Result<null, Diagnostic>> {
+  async updateFileContent (filename: string, content: Uint8Array): Promise<Result<null, Diagnostic>> {
   },
-  async getFolderContent(filename: string): Promise<Result<FileMeta[], Diagnostic>> {
+  async getFolderContent (filename: string): Promise<Result<FileMeta[], Diagnostic>> {
     const { cwd } = useCwdStore();
     const meta = await $fetch('/api/files/ls', {
       method: 'get',
@@ -65,7 +65,7 @@ export const fileService = {
       fileType: file.fileType,
     })));
   },
-  async removeFile(filename: string): Promise<Result<null, Diagnostic>> {
+  async removeFile (filename: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files', {
       method: 'delete',
@@ -78,7 +78,7 @@ export const fileService = {
     return new Ok(null);
 
   },
-  async createFile(filename: string, content: string, permissionBits: string): Promise<Result<null, Diagnostic>> {
+  async createFile (filename: string, content: string, permissionBits: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files', {
       method: 'post',
@@ -94,7 +94,7 @@ export const fileService = {
     }
     return new Ok(null);
   },
-  async createFolder(filename: string, permissionBits: string): Promise<Result<null, Diagnostic>> {
+  async createFolder (filename: string, permissionBits: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files', {
       method: 'post',
@@ -109,7 +109,7 @@ export const fileService = {
     }
     return new Ok(null);
   },
-  async changeDirectory(filename: string): Promise<Result<null, Diagnostic>> {
+  async changeDirectory (filename: string): Promise<Result<null, Diagnostic>> {
     try {
       const { cwd, switchCwd } = useCwdStore();
       const meta = await $fetch('/api/files', {
@@ -132,7 +132,7 @@ export const fileService = {
       return new Err({ code: 500, message: 'Network connection error' });
     }
   },
-  async moveFile(src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
+  async moveFile (src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files/mv', {
       method: 'post',
@@ -149,7 +149,7 @@ export const fileService = {
     return new Ok(null);
 
   },
-  async copyFile(src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
+  async copyFile (src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files/cp', {
       method: 'post',

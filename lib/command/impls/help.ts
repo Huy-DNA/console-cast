@@ -83,7 +83,7 @@ const commandDescriptions: Record<Command, CommandDescription> = {
   },
 };
 
-function getDescription(commandName: string): string[] {
+function getDescription (commandName: string): string[] {
   const commandDescription = commandDescriptions[commandName as Command];
   if (commandDescription !== undefined) {
     return [
@@ -96,7 +96,7 @@ function getDescription(commandName: string): string[] {
   }
 }
 
-export const help: CommandFunc = function(...args) {
+export const help: CommandFunc = function (...args) {
   args.shift();
   args.shift();
 

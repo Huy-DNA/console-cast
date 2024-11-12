@@ -5,15 +5,12 @@ import { userService } from '~/services/users';
 export const su: AsyncCommandFunc = async function (...args) {
   // discard `su`
   args.shift();
-  // discard first space
-  args.shift();
 
   let username;
   let password;
 
   while (args.length) {
     const opt = args.shift();
-    args.shift();
     if (args.length === 0) return ['Invalid use of su. Run \'help su\''];
     switch (opt) {
     case '-u':
@@ -25,7 +22,6 @@ export const su: AsyncCommandFunc = async function (...args) {
     default:
       return ['Invalid use of su. Run \'help su\''];
     }
-    args.shift();
   }
 
   if (username === undefined) {

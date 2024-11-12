@@ -7,8 +7,6 @@ import { groupService } from '~/services/groups';
 export const ls: AsyncCommandFunc = async function (...args) {
   // discard `ls`
   args.shift();
-  // discard first space
-  args.shift();
 
   if (args.length > 1) {
     return ['Expect an optional dirname as argument.'];

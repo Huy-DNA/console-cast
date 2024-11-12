@@ -6,8 +6,6 @@ import type { AsyncCommandFunc } from './types';
 export const rm: AsyncCommandFunc = async function (...args) {
   // discard `rm`
   args.shift();
-  // discard first space
-  args.shift();
 
   const { cwd } = useCwdStore();
   const filenames = uniq(args.filter((arg) => arg.trim()).map((arg) => cwd.value.resolve(formatArg(arg)!).toString()));

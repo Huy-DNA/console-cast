@@ -5,8 +5,6 @@ import type { AsyncCommandFunc } from './types';
 export const cd: AsyncCommandFunc = async function (...args) {
   // discard `cd`
   args.shift();
-  // discard first space
-  args.shift();
 
   if (args.length !== 1 || !args[0].trim()) {
     return [

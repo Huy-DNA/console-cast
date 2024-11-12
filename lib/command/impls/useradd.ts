@@ -5,15 +5,12 @@ import { userService } from '~/services/users';
 export const useradd: AsyncCommandFunc = async function (...args) {
   // discard `useradd`
   args.shift();
-  // discard first space
-  args.shift();
 
   let username;
   let password;
 
   while (args.length) {
     const opt = args.shift();
-    args.shift();
     if (args.length === 0) return ['Invalid use of useradd. Run \'help useradd\''];
     switch (opt) {
     case '-u':
@@ -25,7 +22,6 @@ export const useradd: AsyncCommandFunc = async function (...args) {
     default:
       return ['Invalid use of useradd. Run \'help useradd\''];
     }
-    args.shift();
   }
 
   if (username === undefined) {

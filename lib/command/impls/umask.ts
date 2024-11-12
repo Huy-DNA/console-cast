@@ -4,8 +4,6 @@ import type { AsyncCommandFunc } from './types';
 export const umask: AsyncCommandFunc = async function (...args) {
   // discard `umask`
   args.shift();
-  // discard first space
-  args.shift();
 
   if (args.length === 0) {
     const { umask } = useUmaskStore();
@@ -23,7 +21,7 @@ export const umask: AsyncCommandFunc = async function (...args) {
     return ['Invalid umask'];
   }
   const { changeUmask } = useUmaskStore();
-  changeUmask(umaskFromOct(umask as any));
+  changeUmask(umaskFromOct(umask as any) as any);
   return [
     'Change umask successfully',
   ];

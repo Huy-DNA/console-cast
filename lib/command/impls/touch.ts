@@ -5,10 +5,8 @@ import type { AsyncCommandFunc } from './types';
 export const touch: AsyncCommandFunc = async function (...args) {
   // discard `touch`
   args.shift();
-  // discard first space
-  args.shift();
 
-  if (args.length > 1 || args.length === 0) {
+  if (args.length !== 1) {
     return ['Invalid use of touch. Run \'help touch\''];
   }
 

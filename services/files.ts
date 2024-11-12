@@ -1,6 +1,7 @@
 import path from 'path-browserify';
 import { Err, Ok, type Diagnostic, type Result } from './types';
 import { FilePostErrorCode } from '~/lib';
+import type { VirtualPath } from '~/lib/path';
 
 export enum UserKind {
   OWNER = 'owner',
@@ -118,9 +119,13 @@ export const fileService = {
   },
   async removeFile (filename: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
+    const resolvedPath = cwd.value.resolve(filename);
+    if (resolvedPath.isAncestor(cwd.value as VirtualPath)) {
+      return new Err({ code: 1, message: 'Cannot move ancestor folder' });
+    }
     const res = await $fetch('/api/files', {
       method: 'delete',
-      query: { name: cwd.value.resolve(filename).toString() },
+      query: { name: resolvedPath.toString() },
       credentials: 'include',
     });
     if (res.error) {
@@ -185,10 +190,14 @@ export const fileService = {
   },
   async moveFile (src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
+    const resolvedSrc = cwd.value.resolve(src);
+    if (resolvedSrc.isAncestor(cwd.value as VirtualPath)) {
+      return new Err({ code: 1, message: 'Cannot move ancestor folder' });
+    }
     const res = await $fetch('/api/files/mv', {
       method: 'post',
       body: {
-        src: cwd.value.resolve(src).toString(),
+        src: resolvedSrc.toString(),
         dest: cwd.value.resolve(dest).toString(),
         permission_bits: umask,
       },

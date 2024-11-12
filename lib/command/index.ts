@@ -14,7 +14,7 @@ import { umask } from './impls/umask';
 import { rm } from './impls/rm';
 import { cp } from './impls/cp';
 import { mv } from './impls/mv';
-import { Err, fileService, Ok, type Result } from '~/services';
+import { aliasService, Err, fileService, Ok, type Result } from '~/services';
 import { cat } from './impls/cat';
 
 export async function execute (command: string): Promise<ColoredContent> {
@@ -65,6 +65,7 @@ async function commandDispatch (...args: string[]): Promise<string[]> {
   case Command.CAT:
     return await cat(...args);
   default:
+    const aliasedCommand = await aliasService.getAlias(args[0]);
     return echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);
   }
 }

@@ -15,6 +15,9 @@
 ### Setup
 
 ```
+git config diff.lockb.textconv bun
+git config diff.lockb.binary true
+
 bun install
 bun db:create
 bun db:migrate

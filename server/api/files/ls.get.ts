@@ -1,13 +1,8 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
+import { FileLsErrorCode } from '~/lib';
 import { VirtualPath } from '~/lib/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
-
-export enum FileLsErrorCode {
-  INVALID_PARAM = 1000,
-  NOT_ENOUGH_PRIVILEGE = 2000,
-  FILE_NOT_FOUND = 3000,
-}
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);

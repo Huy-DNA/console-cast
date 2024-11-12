@@ -1,16 +1,8 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
+import { FileCpErrorCode } from '~/lib';
 import { VirtualPath } from '~/lib/path';
 import { FileType, AccessType, canAccess } from '~/server/utils';
-
-export enum FileCpErrorCode {
-  INVALID_PARAM = 1000,
-  INVALID_BODY = 1001,
-  NOT_ENOUGH_PRIVILEGE = 2000,
-  SRC_NOT_FOUND = 3000,
-  DEST_NOT_FOUND = 3001,
-  INVALID_COPY_FOLDER_TO_FILE = 3002,
-}
 
 export default defineEventHandler(async (event) => {
   if (!event.context.auth) {

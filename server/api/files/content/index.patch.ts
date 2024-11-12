@@ -1,14 +1,8 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
+import { FileContentPatchErrorCode } from '~/lib';
 import { VirtualPath } from '~/lib/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
-
-export enum FileContentPatchErrorCode {
-  INVALID_PARAM = 1000,
-  INVALID_BODY = 1001,
-  NOT_ENOUGH_PRIVILEGE = 2000,
-  FILE_NOT_FOUND = 3000,
-}
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);

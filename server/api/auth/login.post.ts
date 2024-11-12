@@ -3,12 +3,7 @@ import jwt from 'jsonwebtoken';
 import { defineEventHandler } from 'h3';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-
-export enum LoginErrorCode {
-  INVALID_BODY = 1000,
-  INVALID_CRED = 1001,
-  UNKNOWN_ERROR = 2000,
-}
+import { LoginErrorCode } from '~/lib';
 
 export default defineEventHandler(async (event) => {
   const isProduction = process.env.NODE_ENV === 'production';

@@ -1,13 +1,8 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
+import { FileDeleteErrorCode } from '~/lib';
 import { VirtualPath } from '~/lib/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
-
-export enum FileDeleteErrorCode {
-  INVALID_PARAM = 1000,
-  NOT_ENOUGH_PRIVILEGE = 2000,
-  FILE_NOT_FOUND = 3000,
-}
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);
@@ -33,7 +28,7 @@ export default defineEventHandler(async (event) => {
     ) {
       return { error: { code: FileDeleteErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
     }
-    
+
     if (!(await db.selectOne('files', { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbPool))) {
       return { error: { code: FileDeleteErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
     }

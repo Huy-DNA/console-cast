@@ -1,17 +1,9 @@
 import type { EventHandlerRequest, H3Event } from 'h3';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
+import { FileMetaPatchErrorCode } from '~/lib';
 import { VirtualPath } from '~/lib/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
-
-export enum FileMetaPatchErrorCode {
-  INVALID_PARAM = 1000,
-  INVALID_BODY = 1001,
-  NOT_ENOUGH_PRIVILEGE = 2000,
-  FILE_NOT_FOUND = 3000,
-  DESTINATION_NOT_EXIST = 3001,
-  SOURCE_NOT_EXIST = 3002,
-}
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);

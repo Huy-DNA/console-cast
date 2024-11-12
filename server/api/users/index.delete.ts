@@ -1,12 +1,7 @@
 import { formatArg } from '~/lib/command/utils';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-
-export enum UserDeleteErrorCode {
-  INVALID_PARAM = 1000,
-  NOT_ENOUGH_PRIVILEGE = 2000,
-  UNDELETABLE_USER = 2001,
-}
+import { UserDeleteErrorCode } from '~/lib';
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);
@@ -16,7 +11,7 @@ export default defineEventHandler(async (event) => {
   if (!event.context.auth) {
     return { error: { code: UserDeleteErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
-  const formattedName = formatArg(name);
+  const formattedName = formatArg(name)!;
   // Only allow a user to remove itself currently
   if (formattedName !== event.context.auth.username) {
     return { error: { code: UserDeleteErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
@@ -27,6 +22,6 @@ export default defineEventHandler(async (event) => {
   }
 
   await db.update('users', { name: formattedName }, { deleted_at: new Date(Date.now()) }).run(dbPool);
-  
+
   return { ok: { message: 'Delete user successfully' } };
 });

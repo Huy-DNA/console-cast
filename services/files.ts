@@ -50,7 +50,7 @@ export const fileService = {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files/content', {
       method: 'patch',
-      query: { name: cwd.value.resolve(filename) },
+      query: { name: cwd.value.resolve(filename).toString() },
       body: {
         content,
         shouldAppend: false,
@@ -72,7 +72,7 @@ export const fileService = {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files/content', {
       method: 'patch',
-      query: { name: cwd.value.resolve(filename) },
+      query: { name: cwd.value.resolve(filename).toString() },
       body: {
         content,
         shouldAppend: true,

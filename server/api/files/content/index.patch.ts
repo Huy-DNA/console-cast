@@ -33,7 +33,8 @@ export default defineEventHandler(async (event) => {
     await db.update('files', { content: newContent }, { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbPool);
 
     return { ok: { message: 'Update file content successfully' } };
-  } catch {
+  } catch (e) {
+    console.log(e);
     return { error: { code: FileContentPatchErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
   }
 });

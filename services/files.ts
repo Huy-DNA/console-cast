@@ -121,7 +121,7 @@ export const fileService = {
     const { cwd } = useCwdStore();
     const resolvedPath = cwd.value.resolve(filename);
     if (resolvedPath.isAncestor(cwd.value as VirtualPath)) {
-      return new Err({ code: 1, message: 'Cannot move ancestor folder' });
+      return new Err({ code: 1, message: 'Cannot remove ancestor folder' });
     }
     const res = await $fetch('/api/files', {
       method: 'delete',
@@ -191,14 +191,18 @@ export const fileService = {
   async moveFile (src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
     const resolvedSrc = cwd.value.resolve(src);
+    const resolvedDest = cwd.value.resolve(dest);
     if (resolvedSrc.isAncestor(cwd.value as VirtualPath)) {
       return new Err({ code: 1, message: 'Cannot move ancestor folder' });
+    }
+    if (resolvedSrc.isAncestor(resolvedDest)) {
+      return new Err({ code: 1, message: 'Cannot move a folder to its descendant' });
     }
     const res = await $fetch('/api/files/mv', {
       method: 'post',
       body: {
         src: resolvedSrc.toString(),
-        dest: cwd.value.resolve(dest).toString(),
+        dest: resolvedDest.toString(),
         permission_bits: umask,
       },
       credentials: 'include',
@@ -211,11 +215,16 @@ export const fileService = {
   },
   async copyFile (src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
+    const resolvedSrc = cwd.value.resolve(src);
+    const resolvedDest = cwd.value.resolve(dest);
+    if (resolvedSrc.isAncestor(resolvedDest)) {
+      return new Err({ code: 1, message: 'Cannot copy a folder to its descendant' });
+    }
     const res = await $fetch('/api/files/cp', {
       method: 'post',
       body: {
-        src: cwd.value.resolve(src).toString(),
-        dest: cwd.value.resolve(dest).toString(),
+        src: resolvedSrc.toString(),
+        dest: resolvedDest.toString(),
         permission_bits: umask,
       },
       credentials: 'include',

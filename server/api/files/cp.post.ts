@@ -26,6 +26,9 @@ export default defineEventHandler(async (event) => {
   if (!dest.isValid()) {
     return { error: { code: FileCpErrorCode.INVALID_BODY, message: 'Expect the "dest" param to be valid path' } };
   }
+  if (src.isAncestor(dest)) {
+    return { error: { code: FileCpErrorCode.CP_TO_DESCENDANT, message: 'Cannot copy a folder to it descendant' } };
+  }
 
   try {
     await db.serializable(dbPool, async (dbClient) => {

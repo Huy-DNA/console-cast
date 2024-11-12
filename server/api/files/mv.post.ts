@@ -25,6 +25,9 @@ export default defineEventHandler(async (event) => {
   if (!dest.isValid()) {
     return { error: { code: FileMvErrorCode.INVALID_BODY, message: 'Expect the "dest" param to be valid path' } };
   }
+  if (src.isAncestor(dest)) {
+    return { error: { code: FileMvErrorCode.MV_TO_DESCENDANT, message: 'Cannot move a folder to it descendant' } };
+  }
 
   try {
     await db.serializable(dbPool, async (dbClient) => {

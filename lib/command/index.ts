@@ -14,7 +14,7 @@ import { umask } from './impls/umask';
 import { rm } from './impls/rm';
 import { cp } from './impls/cp';
 import { mv } from './impls/mv';
-import { Err, Ok, type Result } from '~/services';
+import { Err, fileService, Ok, type Result } from '~/services';
 
 export async function execute (command: string): Promise<ColoredContent> {
   const shellDirRes = extractShellRedirection(...parse(command).filter((arg) => arg.trim()));
@@ -91,5 +91,16 @@ function extractShellRedirection (...args: string[]): Result<{
 }
 
 async function redirectOutput (output: string[], { mode, name }: { mode: RedirectionMode, name: string }): Promise<string[]> {
-  return [];
+  const aggOutput = output.join('\n') + '\n';
+  let res;
+  switch (mode) {
+  case RedirectionMode.Append:
+    res = await fileService.appendFileContent(name, aggOutput);
+    break;
+  case RedirectionMode.Output:
+    res = await fileService.writeFileContent(name, aggOutput);
+    break;
+  }
+  if (res.isOk()) return [];
+  return [res.error()!.message];
 }

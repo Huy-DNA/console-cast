@@ -41,4 +41,20 @@ export const aliasService = {
     }
     return new Ok(null);
   },
+  async deleteAlias (name: string): Promise<Result<null, Diagnostic>> {
+    const res = await $fetch('/api/aliases', {
+      method: 'delete',
+      body: {
+        name,
+      },
+      credentials: 'include',
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    if (!allAliases) await init();
+    const index = allAliases!.findIndex(({ name: entryName }) => entryName === name);
+    if (index) allAliases!.splice(index, 1);
+    return new Ok(null);
+  },
 };

@@ -1,16 +1,8 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
+import { FileMvErrorCode } from '~/lib';
 import { VirtualPath } from '~/lib/path';
 import { FileType, AccessType, canAccess } from '~/server/utils';
-
-export enum FileMvErrorCode {
-  INVALID_PARAM = 1000,
-  INVALID_BODY = 1001,
-  NOT_ENOUGH_PRIVILEGE = 2000,
-  SRC_NOT_FOUND = 3000,
-  DEST_NOT_FOUND = 3001,
-  INVALID_MV_FOLDER_TO_FILE = 3002,
-}
 
 export default defineEventHandler(async (event) => {
   if (!event.context.auth) {
@@ -26,7 +18,13 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FileMvErrorCode.INVALID_BODY, message: 'Invalid body. Expected "src" and "dest" to be strings and permission_bits to be a bit string.' } };
   }
   const src = VirtualPath.create(body.src);
+  if (!src.isValid()) {
+    return { error: { code: FileMvErrorCode.INVALID_BODY, message: 'Expect the "src" param to be valid path' } };
+  }
   const dest = VirtualPath.create(body.dest);
+  if (!dest.isValid()) {
+    return { error: { code: FileMvErrorCode.INVALID_BODY, message: 'Expect the "dest" param to be valid path' } };
+  }
 
   try {
     await db.serializable(dbPool, async (dbClient) => {

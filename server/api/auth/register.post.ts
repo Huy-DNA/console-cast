@@ -2,14 +2,7 @@ import bcrypt from 'bcrypt';
 import { defineEventHandler } from 'h3';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-
-export enum RegisterErrorCode {
-  INVALID_BODY = 1000,
-  USER_ALREADY_EXISTS = 1001,
-  PASSWORD_TOO_SHORT = 1002,
-  INVALID_USER_NAME = 1003,
-  UNKNOWN_ERROR = 2000,
-}
+import { RegisterErrorCode } from '~/lib';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

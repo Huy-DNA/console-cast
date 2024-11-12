@@ -1,4 +1,5 @@
-export type CommandFunc = (...args: string[]) => Promise<string[]> | string[];
+export type CommandFunc = (...args: string[]) => string[];
+export type AsyncCommandFunc = (...args: string[]) => Promise<string[]>;
 
 export enum Command {
   ECHO = 'echo',

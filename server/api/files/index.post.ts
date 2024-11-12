@@ -1,15 +1,8 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
+import { FilePostErrorCode } from '~/lib';
 import { VirtualPath } from '~/lib/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
-
-export enum FilePostErrorCode {
-  INVALID_PARAM = 1000,
-  INVALID_BODY = 1001,
-  NOT_ENOUGH_PRIVILEGE = 2000,
-  INVALID_FOLDER = 3000,
-  FILE_ALREADY_EXISTS = 3001,
-}
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);
@@ -25,6 +18,9 @@ export default defineEventHandler(async (event) => {
   }
   const { content, permission_bits } = body;
   const filepath = VirtualPath.create(trimQuote(name));
+  if (!filepath.isValid()) {
+    return { error: { code: FilePostErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
+  }
   const containerPath = filepath.parent();
   try {
     const { permission_bits: containerDirPermissionBits, owner_id: containerDirOwnerId, group_id: containerDirGroupId } = await db.selectExactlyOne('files', { name: containerPath.toString(), file_type: 'directory', deleted_at: db.conditions.isNull }).run(dbPool);

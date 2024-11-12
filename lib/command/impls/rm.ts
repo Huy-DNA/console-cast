@@ -1,12 +1,10 @@
 import { uniq } from 'lodash-es';
 import { fileService } from '~/services';
 import { formatArg } from '../utils';
-import type { CommandFunc } from './types';
+import type { AsyncCommandFunc } from './types';
 
-export const rm: CommandFunc = async function(...args) {
+export const rm: AsyncCommandFunc = async function (...args) {
   // discard `rm`
-  args.shift();
-  // discard first space
   args.shift();
 
   const { cwd } = useCwdStore();

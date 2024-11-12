@@ -1,13 +1,8 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
+import { FileMetaGetErrorCode } from '~/lib';
 import { VirtualPath } from '~/lib/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
-
-export enum FileMetaGetErrorCode {
-  INVALID_PARAM = 1000,
-  NOT_ENOUGH_PRIVILEGE = 2000,
-  FILE_NOT_FOUND = 3000,
-}
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);
@@ -18,6 +13,9 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FileMetaGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
   const filepath = VirtualPath.create(trimQuote(name));
+  if (!filepath.isValid()) {
+    return { error: { code: FileMetaGetErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
+  }
   const containerPath = filepath.parent();
   try {
     const { permission_bits: containerDirPermissionBits, owner_id: containerDirOwnerId, group_id: containerDirGroupId } = await db.selectExactlyOne('files', { name: containerPath.toString(), file_type: 'directory', deleted_at: db.conditions.isNull }).run(dbPool);

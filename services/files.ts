@@ -1,5 +1,6 @@
 import path from 'path-browserify';
 import { Err, Ok, type Diagnostic, type Result } from './types';
+import { FilePostErrorCode } from '~/lib';
 
 export enum UserKind {
   OWNER = 'owner',
@@ -35,13 +36,55 @@ export interface FileMeta {
 }
 
 export const fileService = {
-  async getMetaOfFile(filename: string): Promise<Result<FileMeta, Diagnostic>> {
+  async getMetaOfFile (filename: string): Promise<Result<FileMeta, Diagnostic>> {
   },
-  async getFileContent(filename: string): Promise<Result<Uint8Array, Diagnostic>> {
+  async getFileContent (filename: string): Promise<Result<string, Diagnostic>> {
   },
-  async updateFileContent(filename: string, content: Uint8Array): Promise<Result<null, Diagnostic>> {
+  // FIXME: Possible race condition if multiple modifications happen on a file
+  async writeFileContent (filename: string, content: string): Promise<Result<null, Diagnostic>> {
+    const { umask } = useUmaskStore();
+    const createRes = await fileService.createFile(filename, '', umask.value);
+    if (!createRes.isOk() && createRes.error()!.code === FilePostErrorCode.INVALID_FOLDER) {
+      return createRes;
+    }
+    const { cwd } = useCwdStore();
+    const res = await $fetch('/api/files/content', {
+      method: 'patch',
+      query: { name: cwd.value.resolve(filename).toString() },
+      body: {
+        content,
+        shouldAppend: false,
+      },
+      credentials: 'include',
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    return new Ok(null);
   },
-  async getFolderContent(filename: string): Promise<Result<FileMeta[], Diagnostic>> {
+  // FIXME: Possible race condition if multiple modifications happen on a file
+  async appendFileContent (filename: string, content: string): Promise<Result<null, Diagnostic>> {
+    const { umask } = useUmaskStore();
+    const createRes = await fileService.createFile(filename, '', umask.value);
+    if (!createRes.isOk() && createRes.error()!.code === FilePostErrorCode.INVALID_FOLDER) {
+      return createRes;
+    }
+    const { cwd } = useCwdStore();
+    const res = await $fetch('/api/files/content', {
+      method: 'patch',
+      query: { name: cwd.value.resolve(filename).toString() },
+      body: {
+        content,
+        shouldAppend: true,
+      },
+      credentials: 'include',
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    return new Ok(null);
+  },
+  async getFolderContent (filename: string): Promise<Result<FileMeta[], Diagnostic>> {
     const { cwd } = useCwdStore();
     const meta = await $fetch('/api/files/ls', {
       method: 'get',
@@ -65,7 +108,7 @@ export const fileService = {
       fileType: file.fileType,
     })));
   },
-  async removeFile(filename: string): Promise<Result<null, Diagnostic>> {
+  async removeFile (filename: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files', {
       method: 'delete',
@@ -78,7 +121,7 @@ export const fileService = {
     return new Ok(null);
 
   },
-  async createFile(filename: string, content: string, permissionBits: string): Promise<Result<null, Diagnostic>> {
+  async createFile (filename: string, content: string, permissionBits: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files', {
       method: 'post',
@@ -94,7 +137,7 @@ export const fileService = {
     }
     return new Ok(null);
   },
-  async createFolder(filename: string, permissionBits: string): Promise<Result<null, Diagnostic>> {
+  async createFolder (filename: string, permissionBits: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files', {
       method: 'post',
@@ -109,7 +152,7 @@ export const fileService = {
     }
     return new Ok(null);
   },
-  async changeDirectory(filename: string): Promise<Result<null, Diagnostic>> {
+  async changeDirectory (filename: string): Promise<Result<null, Diagnostic>> {
     try {
       const { cwd, switchCwd } = useCwdStore();
       const meta = await $fetch('/api/files', {
@@ -132,7 +175,7 @@ export const fileService = {
       return new Err({ code: 500, message: 'Network connection error' });
     }
   },
-  async moveFile(src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
+  async moveFile (src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files/mv', {
       method: 'post',
@@ -149,7 +192,7 @@ export const fileService = {
     return new Ok(null);
 
   },
-  async copyFile(src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
+  async copyFile (src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files/cp', {
       method: 'post',

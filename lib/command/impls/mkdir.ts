@@ -1,14 +1,12 @@
 import { fileService } from '~/services';
 import { formatArg } from '../utils';
-import type { CommandFunc } from './types';
+import type { AsyncCommandFunc } from './types';
 
-export const mkdir: CommandFunc = async function(...args) {
+export const mkdir: AsyncCommandFunc = async function (...args) {
   // discard `mkdir`
   args.shift();
-  // discard first space
-  args.shift();
 
-  if (args.length > 1 || args.length === 0) {
+  if (args.length !== 0) {
     return ['Invalid use of mkdir. Run \'help mkdir\''];
   }
 

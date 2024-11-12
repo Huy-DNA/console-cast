@@ -1,17 +1,9 @@
 import type { EventHandlerRequest, H3Event } from 'h3';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
+import { FileMetaPatchErrorCode } from '~/lib';
 import { VirtualPath } from '~/lib/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
-
-export enum FileMetaPatchErrorCode {
-  INVALID_PARAM = 1000,
-  INVALID_BODY = 1001,
-  NOT_ENOUGH_PRIVILEGE = 2000,
-  FILE_NOT_FOUND = 3000,
-  DESTINATION_NOT_EXIST = 3001,
-  SOURCE_NOT_EXIST = 3002,
-}
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);
@@ -46,7 +38,7 @@ export default defineEventHandler(async (event) => {
 });
 
 
-async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, newFileName: string) {
+async function handleNameChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, newFileName: string) {
   const { name } = getQuery(event);
   const oldFilepath = VirtualPath.create(trimQuote(name as string));
   const oldContainerPath = oldFilepath.parent();
@@ -99,9 +91,12 @@ async function handleNameChange<T extends db.IsolationLevel>(dbClient: db.TxnCli
   }
 }
 
-async function handleOwnerChange<T extends db.IsolationLevel>(dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, ownerId: number) {
+async function handleOwnerChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, ownerId: number) {
   const { name } = getQuery(event);
   const filepath = VirtualPath.create(trimQuote(name as string));
+  if (!filepath.isValid()) {
+    throw { error: { code: FileMetaPatchErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
+  }
 
   let oldOwnerId;
   try {
@@ -118,9 +113,12 @@ async function handleOwnerChange<T extends db.IsolationLevel>(dbClient: db.TxnCl
   await db.update('files', { owner_id: ownerId }, { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbClient);
 }
 
-async function handlePermissionChange<T extends db.IsolationLevel>(dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, permissionBits: string) {
+async function handlePermissionChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, permissionBits: string) {
   const { name } = getQuery(event);
   const filepath = VirtualPath.create(trimQuote(name as string));
+  if (!filepath.isValid()) {
+    throw { error: { code: FileMetaPatchErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
+  }
 
   let ownerId;
   try {

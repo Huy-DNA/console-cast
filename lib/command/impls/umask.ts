@@ -1,10 +1,8 @@
 import { formatArg } from '../utils';
-import type { CommandFunc } from './types';
+import type { AsyncCommandFunc } from './types';
 
-export const umask: CommandFunc = async function(...args) {
+export const umask: AsyncCommandFunc = async function (...args) {
   // discard `umask`
-  args.shift();
-  // discard first space
   args.shift();
 
   if (args.length === 0) {
@@ -23,18 +21,18 @@ export const umask: CommandFunc = async function(...args) {
     return ['Invalid umask'];
   }
   const { changeUmask } = useUmaskStore();
-  changeUmask(umaskFromOct(umask as any));
+  changeUmask(umaskFromOct(umask as any) as any);
   return [
     'Change umask successfully',
   ];
 };
 
-function isOctDigit(c: string): boolean {
+function isOctDigit (c: string): boolean {
   const n = Number.parseInt(c);
   return c.length === 1 && 0 <= n && n <= 7;
 }
 
-function umaskToOct(umask: string): string {
+function umaskToOct (umask: string): string {
   const ownerRead = Number.parseInt(umask[3]);
   const ownerWrite = Number.parseInt(umask[4]);
   const ownerExecute = Number.parseInt(umask[5]);
@@ -50,7 +48,7 @@ function umaskToOct(umask: string): string {
   return `${ownerOct}${groupOct}${otherOct}`;
 }
 
-function umaskFromOct(octs: string): string {
+function umaskFromOct (octs: string): string {
   const ownerOct = Number.parseInt(octs[0]);
   const groupOct = Number.parseInt(octs[1]);
   const otherOct = Number.parseInt(octs[2]);

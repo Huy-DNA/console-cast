@@ -1,13 +1,8 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
+import { FileLsErrorCode } from '~/lib';
 import { VirtualPath } from '~/lib/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
-
-export enum FileLsErrorCode {
-  INVALID_PARAM = 1000,
-  NOT_ENOUGH_PRIVILEGE = 2000,
-  FILE_NOT_FOUND = 3000,
-}
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);
@@ -18,6 +13,9 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FileLsErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
   const filepath = VirtualPath.create(trimQuote(name));
+  if (!filepath.isValid()) {
+    return { error: { code: FileLsErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
+  }
   try {
     const { permission_bits: filePermissionBits, owner_id: fileOwnerId, group_id: fileGroupId, file_type: fileType, created_at: createdAt, updated_at: updatedAt } = await db.selectExactlyOne('files', { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbPool);
     if (

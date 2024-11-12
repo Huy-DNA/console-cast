@@ -40,6 +40,7 @@ function getCharPosition (offset: number): { top: number, left: number } {
   let characterCount = 0;
   const walker = document.createTreeWalker(inputBox.value, NodeFilter.SHOW_TEXT, null, false);
   let node: Node | null = null;
+  // eslint-disable-next-line
   while (node = walker.nextNode()) {
     const textLength = node.textContent!.length;
     if (characterCount + textLength > offset) {
@@ -106,7 +107,7 @@ async function onKeydown (e: KeyboardEvent) {
   }
 }
 
-async function handleControlKey(key: string) {
+async function handleControlKey (key: string) {
   const { content } = props;
   switch (key) {
   case 'v':

@@ -1,11 +1,9 @@
 import { formatArg } from '../utils';
-import type { CommandFunc } from './types';
+import type { AsyncCommandFunc } from './types';
 import { userService } from '~/services/users';
 
-export const su: CommandFunc = async function(...args) {
+export const su: AsyncCommandFunc = async function (...args) {
   // discard `su`
-  args.shift();
-  // discard first space
   args.shift();
 
   let username;
@@ -13,7 +11,6 @@ export const su: CommandFunc = async function(...args) {
 
   while (args.length) {
     const opt = args.shift();
-    args.shift();
     if (args.length === 0) return ['Invalid use of su. Run \'help su\''];
     switch (opt) {
     case '-u':
@@ -25,7 +22,6 @@ export const su: CommandFunc = async function(...args) {
     default:
       return ['Invalid use of su. Run \'help su\''];
     }
-    args.shift();
   }
 
   if (username === undefined) {

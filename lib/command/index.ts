@@ -1,4 +1,4 @@
-import { type ColoredContent, Color } from '~/lib';
+import type { ColoredContent } from '~/lib';
 import { echo } from './impls/echo';
 import { help } from './impls/help';
 import { Command } from './impls/types';
@@ -14,56 +14,93 @@ import { umask } from './impls/umask';
 import { rm } from './impls/rm';
 import { cp } from './impls/cp';
 import { mv } from './impls/mv';
+import { Err, fileService, Ok, type Result } from '~/services';
 
-export async function execute(command: string): Promise<ColoredContent> {
-  const args = parse(command);
-  if (!args[0]?.trim()) {
-    args.shift();
+export async function execute (command: string): Promise<ColoredContent> {
+  const shellDirRes = extractShellRedirection(...parse(command).filter((arg) => arg.trim()));
+  if (!shellDirRes.isOk()) {
+    return interpretAnsiEscapeColor(shellDirRes.error()!);
   }
-  if (!args.length) {
-    return [[{ content: ' ', color: Color.WHITE }]];
+  const shellDir = shellDirRes.unwrap();
+  const { args, redirections } = shellDir;
+  const output = args.length ? await commandDispatch(...args) : [];
+  if (redirections.length > 0) {
+    const redirectionOutput = (await Promise.all(
+      redirections.map(
+        (redirection) => redirectOutput(output, redirection),
+      ),
+    )).flatMap((arg) => arg);
+    return interpretAnsiEscapeColor(redirectionOutput);
   }
-  let res;
+  return interpretAnsiEscapeColor(output);
+}
+
+async function commandDispatch (...args: string[]): Promise<string[]> {
   switch (args[0] as Command) {
   case Command.ECHO:
-    res = echo(...(args as any));
-    break;
+    return echo(...args);
   case Command.HELP:
-    res = help(...args as any);
-    break;
+    return help(...args);
   case Command.CD:
-    res = await cd(...args as any);
-    break;
+    return await cd(...args);
   case Command.SU:
-    res = await su(...args as any);
-    break;
+    return await su(...args);
   case Command.LS:
-    res = await ls(...args as any);
-    break;
+    return await ls(...args);
   case Command.USERADD:
-    res = await useradd(...args as any);
-    break;
+    return await useradd(...args);
   case Command.TOUCH:
-    res = await touch(...args as any);
-    break;
+    return await touch(...args);
   case Command.MKDIR:
-    res = await mkdir(...args as any);
-    break;
+    return await mkdir(...args);
   case Command.UMASK:
-    res = await umask(...args as any);
-    break;
+    return await umask(...args);
   case Command.CP:
-    res = await cp(...args as any);
-    break;
+    return await cp(...args);
   case Command.MV:
-    res = await mv(...args as any);
-    break;
+    return await mv(...args);
   case Command.RM:
-    res = await rm(...args as any);
-    break;
+    return await rm(...args);
   default:
-    res = echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);
+    return echo('echo', ' ', `Unknown command:\\u001b[31m ${args[0]}`);
+  }
+}
+
+enum RedirectionMode {
+  Output,
+  Append,
+}
+
+function extractShellRedirection (...args: string[]): Result<{
+  redirections: { mode: RedirectionMode; name: string }[];
+  args: string[];
+}, string[]> {
+  const redirections = [];
+
+  for (let i = args.length - 1; i > 0; --i) {
+    const arg = args[i];
+    if (['>', '>>'].includes(arg)) {
+      const mode = arg === '>' ? RedirectionMode.Output : RedirectionMode.Append;
+      const pathname = args[i + 1];
+      if (pathname === undefined) return new Err([`Parse error: no pathname found after '${arg}'`]);
+      redirections.unshift({ mode, name: pathname });
+      args.splice(i, 2);
+    }
+  }
+  return new Ok({ redirections, args });
+}
+
+async function redirectOutput (output: string[], { mode, name }: { mode: RedirectionMode, name: string }): Promise<string[]> {
+  const aggOutput = output.join('\n') + '\n';
+  let res;
+  switch (mode) {
+  case RedirectionMode.Append:
+    res = await fileService.appendFileContent(name, aggOutput);
+    break;
+  case RedirectionMode.Output:
+    res = await fileService.writeFileContent(name, aggOutput);
     break;
   }
-  return interpretAnsiEscapeColor(res);
+  if (res.isOk()) return [];
+  return [res.error()!.message];
 }

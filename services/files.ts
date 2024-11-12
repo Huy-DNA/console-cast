@@ -36,8 +36,6 @@ export interface FileMeta {
 }
 
 export const fileService = {
-  async getMetaOfFile (filename: string): Promise<Result<FileMeta, Diagnostic>> {
-  },
   async getFileContent (filename: string): Promise<Result<string, Diagnostic>> {
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files/content', {

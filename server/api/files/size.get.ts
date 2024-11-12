@@ -27,10 +27,10 @@ export default defineEventHandler(async (event) => {
   ) {
     return { error: { code: FileMetaGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
-  const [sizeRecord] = await db.sql`
-    SELECT sum(pg_column_size(f.*)) as filesize
-    FROM ${'files'} AS f
-    WHERE ${'name'} LIKE ${db.conditions.like(`${filepath.toString()}/%`)} OR ${'name'} = ${db.param(filepath.toString())}
+  const [{ size }] = await db.sql`
+    SELECT SUM(pg_column_size(${'files'}.*)) as size
+    FROM ${'files'}
+    WHERE ${'name'} LIKE ${db.param(`${filepath.toString()}/%`)} OR ${'name'} = ${db.param(filepath.toString())}
   `.run(dbPool);
-  return { ok: { message: 'Fetch file size successfully', data: { size: sizeRecord.filesize } } };
+  return { ok: { message: 'Fetch file size successfully', data: { size: Number.parseInt(size) } } };
 });

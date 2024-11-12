@@ -14,4 +14,5 @@ export enum Command {
   RM = 'rm',
   CP = 'cp',
   MV = 'mv',
+  CAT = 'cat',
 }

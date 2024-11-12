@@ -81,6 +81,12 @@ const commandDescriptions: Record<Command, CommandDescription> = {
       { args: ['<src>', '<dest>'] },
     ],
   },
+  [Command.CAT]: {
+    description: 'Read the content of a file',
+    usages: [
+      { args: ['<filename>'] },
+    ],
+  },
 };
 
 function getDescription (commandName: string): string[] {

@@ -1,14 +1,18 @@
+import { AliasGetErrorCode } from '~/lib';
 import { Err, Ok, type Diagnostic, type Result } from './types';
 
+const allAliases: { name: string; command: string }[] = (await $fetch('/api/aliases')).ok.data.commands;
+
 export const aliasService = {
-  async getAlias (name: string): Promise<Result<string, Diagnostic>> {
-    const res = await $fetch('/api/aliases', {
-      method: 'get',
-      query: { name },
-    });
-    if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+  getAlias (name: string): Result<string, Diagnostic> {
+    const alias = allAliases.find(({ name: entryName }) => entryName === name);
+    if (alias === undefined) {
+      return new Err({ code: AliasGetErrorCode.ALIAS_NOT_FOUND, message: 'Alias not found' });
     }
-    return new Ok(res.ok.data.command);
+    return new Ok(alias.command);
   },
+  hasAlias (name: string): boolean {
+    const alias = allAliases.find(({ name: entryName }) => entryName === name);
+    return alias !== undefined;
+  }
 };

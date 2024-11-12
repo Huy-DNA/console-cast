@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   if (!filepath.isValid()) {
     return { error: { code: FileMetaGetErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
   }
-  const fileRecord = await db.selectOne('files', { name: filepath.toString() }).run(dbPool);
+  const fileRecord = await db.selectOne('files', { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbPool);
   if (!fileRecord) return { error: { code: FileMetaGetErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
   if (
     !canAccess(
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
   const [{ size }] = await db.sql`
     SELECT SUM(pg_column_size(${'files'}.*)) as size
     FROM ${'files'}
-    WHERE ${'name'} LIKE ${db.param(`${filepath.toString()}/%`)} OR ${'name'} = ${db.param(filepath.toString())}
+    WHERE (${'name'} LIKE ${db.param(`${filepath.toString()}/%`)} OR ${'name'} = ${db.param(filepath.toString())}) AND ${'deleted_at'} IS NULL
   `.run(dbPool);
   return { ok: { message: 'Fetch file size successfully', data: { size: Number.parseInt(size) } } };
 });

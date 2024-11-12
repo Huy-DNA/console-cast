@@ -1,4 +1,4 @@
-import { type ColoredContent, Color } from '~/lib';
+import type { ColoredContent } from '~/lib';
 import { echo } from './impls/echo';
 import { help } from './impls/help';
 import { Command } from './impls/types';
@@ -22,8 +22,16 @@ export async function execute (command: string): Promise<ColoredContent> {
     return interpretAnsiEscapeColor(shellDirRes.error()!);
   }
   const shellDir = shellDirRes.unwrap();
-  const { args, redirections } = shellDir; 
+  const { args, redirections } = shellDir;
   const output = args.length ? await commandDispatch(...args) : [];
+  if (redirections.length > 0) {
+    const redirectionOutput = (await Promise.all(
+      redirections.map(
+        (redirection) => redirectOutput(output, redirection),
+      ),
+    )).flatMap((arg) => arg);
+    return interpretAnsiEscapeColor(redirectionOutput);
+  }
   return interpretAnsiEscapeColor(output);
 }
 
@@ -58,13 +66,13 @@ async function commandDispatch (...args: string[]): Promise<string[]> {
   }
 }
 
-enum ShellRedirection {
+enum RedirectionMode {
   Output,
   Append,
 }
 
 function extractShellRedirection (...args: string[]): Result<{
-  redirections: { mode: ShellRedirection; name: string }[];
+  redirections: { mode: RedirectionMode; name: string }[];
   args: string[];
 }, string[]> {
   const redirections = [];
@@ -72,7 +80,7 @@ function extractShellRedirection (...args: string[]): Result<{
   for (let i = args.length - 1; i > 0; --i) {
     const arg = args[i];
     if (['>', '>>'].includes(arg)) {
-      const mode = arg === '>' ? ShellRedirection.Output : ShellRedirection.Append;
+      const mode = arg === '>' ? RedirectionMode.Output : RedirectionMode.Append;
       const pathname = args[i + 1];
       if (pathname === undefined) return new Err([`Parse error: no pathname found after '${arg}'`]);
       redirections.push({ mode, name: pathname });
@@ -80,4 +88,8 @@ function extractShellRedirection (...args: string[]): Result<{
     }
   }
   return new Ok({ redirections, args });
+}
+
+async function redirectOutput (output: string[], { mode, name }: { mode: RedirectionMode, name: string }): Promise<string[]> {
+  return [];
 }

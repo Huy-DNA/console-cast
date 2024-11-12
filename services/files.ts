@@ -63,7 +63,7 @@ export const fileService = {
     return new Ok(null);
   },
   // FIXME: Possible race condition if multiple modifications happen on a file
-  async appendFileContent (filename: string, content: string): Promise<Result<null, Diagnostics>> {
+  async appendFileContent (filename: string, content: string): Promise<Result<null, Diagnostic>> {
     const { umask } = useUmaskStore();
     const createRes = await fileService.createFile(filename, '', umask.value);
     if (!createRes.isOk() && createRes.error()!.code === FilePostErrorCode.INVALID_FOLDER) {

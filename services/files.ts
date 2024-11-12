@@ -39,6 +39,16 @@ export const fileService = {
   async getMetaOfFile (filename: string): Promise<Result<FileMeta, Diagnostic>> {
   },
   async getFileContent (filename: string): Promise<Result<string, Diagnostic>> {
+    const { cwd } = useCwdStore();
+    const res = await $fetch('/api/files/content', {
+      method: 'get',
+      query: { name: cwd.value.resolve(filename).toString() },
+    });
+    if (res.error) {
+      return new Err({ code: res.error.code, message: res.error.message });
+    }
+    const { ok: { data } } = res;
+    return new Ok(data.content);
   },
   // FIXME: Possible race condition if multiple modifications happen on a file
   async writeFileContent (filename: string, content: string): Promise<Result<null, Diagnostic>> {

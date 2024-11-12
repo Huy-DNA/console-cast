@@ -11,5 +11,8 @@ export const cat: AsyncCommandFunc = async function (...args) {
       'Expected an absolute or relative file name',
     ];
   }
+
+  const filename = formatArg(args[0])!;
+  const res = await fileService.getFileContent(filename);
   return [];
 };

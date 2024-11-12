@@ -39,5 +39,6 @@ export const aliasService = {
     } else {
       allAliases!.push({ name, command });
     }
+    return new Ok(null);
   },
 };

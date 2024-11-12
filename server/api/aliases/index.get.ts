@@ -19,6 +19,6 @@ export default defineEventHandler(async (event) => {
     }
   } else {
     const commands = await db.select('aliases', { owner_id: Number.parseInt(event.context.auth.userId) }).run(dbPool);
-    return { ok: { message: 'Fetch aliases successfully', data: { commands } } };
+    return { ok: { message: 'Fetch aliases successfully', data: { commands: commands.map(({ name, command }) => ({ name, command })) } } };
   }
 });

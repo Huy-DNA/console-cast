@@ -37,6 +37,10 @@ export class VirtualPath {
     return this.path === '';
   }
 
+  isAncestor (other: VirtualPath): boolean {
+    return other.path.startsWith(this.path + '/');
+  }
+
   isHome (username: string): boolean {
     return this.equals(VirtualPath.homeDir(username));
   }

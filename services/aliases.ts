@@ -3,7 +3,11 @@ import { Err, Ok, type Diagnostic, type Result } from './types';
 
 let allAliases: { name: string; command: string }[] | undefined = undefined;
 async function init () {
-  allAliases = (await $fetch('/api/aliases')).ok.data.commands;
+  try {
+    allAliases = (await $fetch('/api/aliases')).ok.data.commands;
+  } catch {
+    allAliases = [];
+  }
 }
 
 export const aliasService = {

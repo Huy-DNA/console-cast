@@ -88,8 +88,8 @@ export default defineEventHandler(async (event) => {
           FROM ${'files'}
           WHERE ${'deleted_at'} is NULL AND ${'name'} LIKE ${db.param(src.toString() + '/%')}
         `.run(dbClient);
-      } else if (destExist) {
-        await db.update('files', { content: srcContent, updated_at: new Date(Date.now()) }, { name: destFilename, deleted_at: db.conditions.isNull }).run(dbClient);
+      } else if (destExist && destFileType === 'file') {
+        await db.update('files', { content: srcContent, updated_at: new Date(Date.now()), file_type: 'file' }, { name: destFilename, deleted_at: db.conditions.isNull }).run(dbClient);
       } else {
         await db.insert('files', {
           name: destFilename,

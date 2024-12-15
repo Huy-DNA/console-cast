@@ -26,7 +26,7 @@ async function getGroupByOwner (owner: string) {
     SELECT ${'name'}, ${'id'}, ${'created_at'}
     FROM ${'groups'}
     WHERE ${'deleted_at'} IS NULL AND ${'id'} IN (
-      SELECT ${'id'}
+      SELECT ${'group_id'}
       FROM ${'users'}
       WHERE ${'users'}.${'name'} = ${db.param(owner)}
     )

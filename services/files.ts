@@ -30,7 +30,9 @@ export interface FileMeta {
   fullName: string;
   permission: FilePermission;
   ownerId: number;
+  ownerName: string;
   groupId: number;
+  groupName: string;
   createdAt: Date;
   updatedAt: Date;
   fileType: string;
@@ -115,6 +117,8 @@ export const fileService = {
       createdAt: file.createdAt,
       updatedAt: file.updatedAt,
       fileType: file.fileType,
+      ownerName: file.ownerName,
+      groupName: file.groupName,
     })));
   },
   async removeFile (filename: string): Promise<Result<null, Diagnostic>> {

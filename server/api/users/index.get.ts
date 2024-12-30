@@ -4,14 +4,13 @@ import { dbPool } from '~/db/connection';
 import { UserGetErrorCode } from '~/lib';
 
 export default defineEventHandler(async (event) => {
-  const { id } = getQuery(event);
-  if (typeof id !== 'string') {
-    return { error: { code: UserGetErrorCode.INVALID_PARAM, message: 'Expect the "id" query param to be string' } };
-  }
+  const { id, name: queryName } = getQuery(event);
   const formattedId = Number.parseInt(formatArg(id)!);
+  const formattedName = formatArg(queryName);
 
   try {
-    const { name: username, created_at, id, group_id } = await db.selectExactlyOne('users', { id: formattedId, deleted_at: db.conditions.isNull }).run(dbPool);
+    const condition = Number.isInteger(formattedId) ? { id: formattedId } : { name: formattedName };
+    const { name: username, created_at, id, group_id } = await db.selectExactlyOne('users', { ...condition, deleted_at: db.conditions.isNull }).run(dbPool);
     return { ok: { data: { name: username, userId: id, groupId: group_id, createdAt: created_at }, message: 'Get user successfully' } };
   } catch {
     return { error: { code: UserGetErrorCode.USER_NOT_FOUND, message: 'User not found' } };

@@ -1,5 +1,5 @@
 import { fileService } from '~/services';
-import { formatArg } from '../utils';
+import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 
 export const cd: AsyncCommandFunc = async function (...args) {
@@ -12,7 +12,7 @@ export const cd: AsyncCommandFunc = async function (...args) {
     ];
   }
 
-  const dirname = formatArg(args[0])!;
+  const dirname = stripQuotes(args[0])!;
   const res = await fileService.changeDirectory(dirname);
   if (res.isOk()) {
     return [];

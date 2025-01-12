@@ -1,5 +1,5 @@
 import { fileService } from '~/services';
-import { formatArg } from '../utils';
+import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 
 export const du: AsyncCommandFunc = async function (...args) {
@@ -12,7 +12,7 @@ export const du: AsyncCommandFunc = async function (...args) {
     ];
   }
 
-  const pathname = formatArg(args[0]) || '.';
+  const pathname = stripQuotes(args[0]) || '.';
   const res = await fileService.getFileSize(pathname);
   if (res.isOk()) {
     return [

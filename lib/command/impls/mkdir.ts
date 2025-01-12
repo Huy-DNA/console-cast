@@ -1,5 +1,5 @@
 import { fileService } from '~/services';
-import { formatArg } from '../utils';
+import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 
 export const mkdir: AsyncCommandFunc = async function (...args) {
@@ -10,7 +10,7 @@ export const mkdir: AsyncCommandFunc = async function (...args) {
     return ['Invalid use of mkdir. Run \'help mkdir\''];
   }
 
-  const filename = formatArg(args[0])!;
+  const filename = stripQuotes(args[0])!;
   
   const { umask } = useUmaskStore();
   const res = await fileService.createFolder(filename, umask.value);

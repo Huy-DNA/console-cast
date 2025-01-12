@@ -1,5 +1,5 @@
 import { fileService } from '~/services';
-import { formatArg } from '../utils';
+import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 
 export const cat: AsyncCommandFunc = async function (...args) {
@@ -12,7 +12,7 @@ export const cat: AsyncCommandFunc = async function (...args) {
     ];
   }
 
-  const filename = formatArg(args[0])!;
+  const filename = stripQuotes(args[0])!;
   const res = await fileService.getFileContent(filename);
   if (res.isOk()) {
     return [res.unwrap()];

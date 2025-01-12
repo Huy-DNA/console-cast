@@ -1,12 +1,12 @@
-import { formatArg } from '~/lib/command/utils';
+import { stripQuotes } from '~/lib/command/utils';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
 import { UserGetErrorCode } from '~/lib';
 
 export default defineEventHandler(async (event) => {
   const { id, name: queryName } = getQuery(event);
-  const formattedId = Number.parseInt(formatArg(id)!);
-  const formattedName = formatArg(queryName);
+  const formattedId = Number.parseInt(stripQuotes(id as string)!);
+  const formattedName = stripQuotes(queryName as string);
 
   try {
     const condition = Number.isInteger(formattedId) ? { id: formattedId } : { name: formattedName };

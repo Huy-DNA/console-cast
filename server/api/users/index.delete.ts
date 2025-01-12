@@ -1,4 +1,4 @@
-import { formatArg } from '~/lib/command/utils';
+import { stripQuotes } from '~/lib/command/utils';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
 import { UserDeleteErrorCode } from '~/lib';
@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   if (!event.context.auth) {
     return { error: { code: UserDeleteErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
-  const formattedName = formatArg(name)!;
+  const formattedName = stripQuotes(name)!;
   // Only allow a user to remove itself currently
   if (formattedName !== event.context.auth.username) {
     return { error: { code: UserDeleteErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };

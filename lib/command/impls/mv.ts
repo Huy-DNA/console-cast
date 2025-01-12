@@ -1,13 +1,13 @@
 import { fileService } from '~/services';
-import { formatArg } from '../utils';
+import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 
 export const mv: AsyncCommandFunc = async function (...args) {
   // discard `mv`
   args.shift();
 
-  const src = formatArg(args.shift());
-  const dest = formatArg(args.shift());
+  const src = stripQuotes(args.shift());
+  const dest = stripQuotes(args.shift());
   if (args.length > 0 || !src || !dest) {
     return [
       'Invalid use of mv. Run \'help mv\'',

@@ -1,5 +1,5 @@
 import { aliasService } from '~/services';
-import { formatArg } from '../utils';
+import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 
 export const alias: AsyncCommandFunc = async function (...args) {
@@ -12,15 +12,15 @@ export const alias: AsyncCommandFunc = async function (...args) {
     ];
   }
 
-  const aliasExpr = formatArg(args[0])!;
+  const aliasExpr = stripQuotes(args[0])!;
   const aliasTokens = aliasExpr.split('=');
   if (aliasTokens.length <= 1) {
     return [
       'Invalid alias expression, expected: <alias>=<command>',
     ];
   }
-  const alias = formatArg(aliasTokens.shift()!.trim())!;
-  const command = formatArg(aliasTokens.join('=').trim())!;
+  const alias = stripQuotes(aliasTokens.shift()!.trim())!;
+  const command = stripQuotes(aliasTokens.join('=').trim())!;
   const res = await aliasService.setAlias(alias, command);
   if (res.isOk()) {
     return [];

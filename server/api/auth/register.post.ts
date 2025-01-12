@@ -36,9 +36,9 @@ export default defineEventHandler(async (event) => {
       ({ id: userId } = await db.insert('users', { name, password: hashedPassword, created_at: new Date(Date.now()), deleted_at: null, group_id: groupId }).run(txnClient));
       await db.insert('files', { name: `/home/${name}`, created_at: new Date(Date.now()), deleted_at: null, owner_id: userId, group_id: groupId, file_type: 'directory', content: null, updated_at: new Date(Date.now()), permission_bits: '000111111001' }).run(txnClient);
     });
-      const { JWT_SECRET } = useRuntimeConfig();
-      const token = jwt.sign({ username: name, userId, groupId }, JWT_SECRET);
-      setHeader(event, 'Set-Cookie', `jwt=${token}; HttpOnly; Path=/; SameSite=Strict`);
+    const { JWT_SECRET } = useRuntimeConfig();
+    const token = jwt.sign({ username: name, userId, groupId }, JWT_SECRET);
+    setHeader(event, 'Set-Cookie', `jwt=${token}; HttpOnly; Path=/; SameSite=Strict`);
 
     return { ok: { message: 'Register successfully' } };
   } catch {

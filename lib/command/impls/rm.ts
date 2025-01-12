@@ -1,6 +1,6 @@
 import { uniq } from 'lodash-es';
 import { fileService } from '~/services';
-import { formatArg } from '../utils';
+import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 
 export const rm: AsyncCommandFunc = async function (...args) {
@@ -8,7 +8,7 @@ export const rm: AsyncCommandFunc = async function (...args) {
   args.shift();
 
   const { cwd } = useCwdStore();
-  const filenames = uniq(args.filter((arg) => arg.trim()).map((arg) => cwd.value.resolve(formatArg(arg)!).toString()));
+  const filenames = uniq(args.filter((arg) => arg.trim()).map((arg) => cwd.value.resolve(stripQuotes(arg)!).toString()));
 
   const lines = [];
   for (const filename of filenames) {

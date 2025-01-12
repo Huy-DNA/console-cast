@@ -1,17 +1,17 @@
 import { Color, type ColoredContent } from '~/lib/types';
 
-export function formatArg (arg: string | undefined): string | undefined {
+export function stripQuotes (arg: string | undefined): string | undefined {
   if (arg === undefined) {
     return undefined;
   }
-  if (arg[0] === '\'') {
+  if (arg.startsWith('\'')) {
     arg = arg.slice(1);
-    if (arg[arg.length - 1] === '\'') {
+    if (arg.endsWith('\'')) {
       arg = arg.slice(0, arg.length - 1);
     }
-  } else if (arg[0] === '"') {
+  } else if (arg.startsWith('"')) {
     arg = arg.slice(1);
-    if (arg[arg.length - 1] === '"') {
+    if (arg.endsWith('"')) {
       arg = arg.slice(0, arg.length - 1);
     }
   }

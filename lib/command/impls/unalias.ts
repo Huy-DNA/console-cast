@@ -1,5 +1,5 @@
 import { aliasService } from '~/services';
-import { formatArg } from '../utils';
+import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 
 export const unalias: AsyncCommandFunc = async function (...args) {
@@ -11,7 +11,7 @@ export const unalias: AsyncCommandFunc = async function (...args) {
       'Invalid use of unlias. Run \'help unalias\'',
     ];
   }
-  const alias = formatArg(args[0])!;
+  const alias = stripQuotes(args[0])!;
   const res = await aliasService.deleteAlias(alias);
   if (res.isOk()) {
     return [];

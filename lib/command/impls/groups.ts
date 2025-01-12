@@ -1,5 +1,5 @@
 import { groupService } from '~/services';
-import { formatArg } from '../utils';
+import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 
 export const groups: AsyncCommandFunc = async function (...args) {
@@ -13,7 +13,7 @@ export const groups: AsyncCommandFunc = async function (...args) {
   }
 
   const { username } = useUserStore();
-  const owner = formatArg(args[0]) || username.value;
+  const owner = stripQuotes(args[0]) || username.value;
   const res = await groupService.getGroupByOwner(owner);
   if (res.isOk()) {
     const groups = res.unwrap();

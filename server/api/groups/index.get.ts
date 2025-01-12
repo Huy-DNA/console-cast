@@ -1,4 +1,4 @@
-import { formatArg } from '~/lib/command/utils';
+import { stripQuotes } from '~/lib/command/utils';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
 import { GroupGetErrorCode } from '~/lib';
@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   if (typeof id !== 'string' && typeof owner !== 'string') {
     return { error: { code: GroupGetErrorCode.INVALID_PARAM, message: 'Expect either the "id" or the "owner" query param to be string' } };
   }
-  if (id) return getGroupById(Number.parseInt(formatArg(id as string)!));
+  if (id) return getGroupById(Number.parseInt(stripQuotes(id as string)!));
   if (owner) return await getGroupByOwner(owner as string);
 });
 

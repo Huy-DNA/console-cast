@@ -1,4 +1,4 @@
-import { formatArg } from '../utils';
+import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 
 export const umask: AsyncCommandFunc = async function (...args) {
@@ -16,7 +16,7 @@ export const umask: AsyncCommandFunc = async function (...args) {
     ];
   }
 
-  const umask = formatArg(args[0])!;
+  const umask = stripQuotes(args[0])!;
   if (umask.length !== 3 || !isOctDigit(umask[0]) || !isOctDigit(umask[1]) || !isOctDigit(umask[2])) {
     return ['Invalid umask'];
   }

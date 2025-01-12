@@ -1,5 +1,5 @@
 import { Command, type CommandFunc } from './types';
-import { formatArg } from '../utils';
+import { stripQuotes } from '../utils';
 type CommandUsage = {
   args: string[],
 }
@@ -136,6 +136,6 @@ export const help: CommandFunc = function (...args) {
     ];
   }
 
-  const commandName = formatArg(args[0])!;
+  const commandName = stripQuotes(args[0])!;
   return getDescription(commandName);
 };

@@ -15,7 +15,7 @@ pkgs.mkShell {
     initdb
     pg_ctl start
     createdb
-    echo "To start, run `bun db:create` and then `bun db:migrate`"
+    echo "To start, run \`bun db:create\` and then \`bun db:migrate\`"
     alias vim=nvim
   '';
 }

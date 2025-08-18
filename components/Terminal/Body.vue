@@ -78,6 +78,7 @@ async function printWelcome () {
 onMounted(async () => {
   await printWelcome();
   await printPrompt();
+  editableLine.value?.focus();
 });
 </script>
 

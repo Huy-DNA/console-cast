@@ -1,5 +1,5 @@
 import { Color, type ColoredLine } from '~/utils';
-import { Command } from '../command/impls/types';
+import { Command } from './command/impls/types';
 import { parse } from './parse';
 
 export function highlight (command: string): ColoredLine {

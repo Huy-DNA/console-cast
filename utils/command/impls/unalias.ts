@@ -1,4 +1,4 @@
-import { aliasService } from '~/services';
+import { aliasService } from '../../services';
 import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 

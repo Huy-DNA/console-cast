@@ -1,6 +1,6 @@
 import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
-import { userService } from '~/services/users';
+import { userService } from '../../services';
 
 export const su: AsyncCommandFunc = async function (...args) {
   // discard `su`

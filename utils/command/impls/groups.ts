@@ -1,4 +1,4 @@
-import { groupService } from '~/services';
+import { groupService } from '../../services';
 import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 

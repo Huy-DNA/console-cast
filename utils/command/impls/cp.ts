@@ -1,4 +1,3 @@
-import { fileService } from '~/services';
 import { stripQuotes } from '../utils';
 import type { AsyncCommandFunc } from './types';
 

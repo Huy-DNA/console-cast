@@ -1,11 +1,11 @@
 export function parse (command: string): string[] {
   const tokens = [];
   while (true) {
-    const tokenRes = getNextToken(command);
-    if (tokenRes === undefined) {
+    const tokenResult = getNextToken(command);
+    if (tokenResult === undefined) {
       break;
     }
-    const { token, remaining } = tokenRes;
+    const { token, remaining } = tokenResult;
     tokens.push(token);
     command = remaining;
   }

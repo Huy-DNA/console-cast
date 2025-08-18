@@ -1,4 +1,4 @@
-# Web Console
+# Console Cat
 
 <img width="1392" alt="image" src="https://github.com/user-attachments/assets/fc62361e-98af-425b-ae12-8aee50f18db5">
 

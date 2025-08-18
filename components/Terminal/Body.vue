@@ -65,7 +65,7 @@ async function printWelcome () {
   const output = [
     ...await execute('echo Theme inspired by \\u001b[33mcatppuccin\\u001b[38m...'),
     ...await execute('echo " "'),
-    ...await execute('echo \\u001b[32m " ／l" "\\u001b[31m              guest@web-console"'),
+    ...await execute('echo \\u001b[32m " ／l" "\\u001b[31m              guest@console-cat"'),
     ...await execute('echo \\u001b[32m（ ゜､ ｡７ "\\u001b[30m７７\\u001b[34m       js" "\\u001b[38m        Nuxt 3"'),
     ...await execute('echo \\u001b[32m " l   ~ヽ" "\\u001b[30m７７\\u001b[34m       css" "\\u001b[38m       Tailwind"'),
     ...await execute('echo \\u001b[32m " じしf_,)ノ" "\\u001b[34m        dbms" "\\u001b[38m      PostgreSQL 17 + Zapatos"'),

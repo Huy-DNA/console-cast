@@ -8,10 +8,10 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-  submit: [ColoredLine],
-  'update-content': [string],
-  'line-up': [],
-  'line-down': [],
+  enter: [ColoredLine],
+  'input': [string],
+  'arrow-up': [],
+  'arrow-down': [],
 }>();
 
 const cursorPosition = ref(0);
@@ -23,13 +23,16 @@ const coloredWords = computed(() => {
   return highlight(props.content);
 });
 
+function scrollIntoView () {
+  inputBoxWrapper.value?.scrollIntoView();
+}
+
 // auto-focus input box 
 onMounted(() => inputBox.value.focus());
 
 watch(cursorPosition, updateCursor, { deep: true });
-async function updateCursor (shouldScrollIntoView = true) {
+async function updateCursor () {
   await nextTick();
-  if (shouldScrollIntoView) inputBoxWrapper.value.scrollIntoView();
   const offset = cursorPosition.value;
   const position = getCharPosition(offset);
   const cursor = document.getElementById('cursor');
@@ -60,7 +63,7 @@ async function onKeydown (e: KeyboardEvent) {
   e.stopImmediatePropagation();
   if (e.key === 'Enter') {
     cursorPosition.value = 0;
-    emits('submit', props.content === '' ? [{ content: '', color: Color.WHITE }] : coloredWords.value);
+    emits('enter', props.content === '' ? [{ content: '', color: Color.WHITE }] : coloredWords.value);
     return;
   }
   if (e.ctrlKey) {
@@ -80,29 +83,29 @@ async function onKeydown (e: KeyboardEvent) {
     setTimeout(() => inputBox.value.focus(), 50);
     return;
   case 'ArrowUp':
-    emits('line-up');
+    emits('arrow-up');
     await nextTick();
     cursorPosition.value = props.content.length;
     setTimeout(() => inputBox.value.focus(), 50);
     return;
   case 'ArrowDown':
-    emits('line-down');
+    emits('arrow-down');
     await nextTick();
     cursorPosition.value = props.content.length;
     setTimeout(() => inputBox.value.focus(), 50);
     return;
   case 'Backspace':
     if (offset === 0) return;
-    emits('update-content', content.slice(0, offset - 1) + content.slice(offset));
+    emits('input', content.slice(0, offset - 1) + content.slice(offset));
     cursorPosition.value -= 1;
     return;
   case 'Delete':
     if (offset === content.value.length) return;
-    emits('update-content', content.slice(0, offset) + content.slice(offset + 1));
+    emits('input', content.slice(0, offset) + content.slice(offset + 1));
     return;
   default:
     if (e.key.length !== 1) return;
-    emits('update-content', content.slice(0, offset) + e.key + content.slice(offset));
+    emits('input', content.slice(0, offset) + e.key + content.slice(offset));
     cursorPosition.value += 1;
   }
 }
@@ -112,7 +115,7 @@ async function handleControlKey (key: string) {
   switch (key) {
   case 'v': {
     const text = await navigator.clipboard.readText();
-    await emits('update-content', content.slice(0, cursorPosition.value) + text + content.slice(cursorPosition.value));
+    await emits('input', content.slice(0, cursorPosition.value) + text + content.slice(cursorPosition.value));
     cursorPosition.value += text.length;
     return;
   }
@@ -140,6 +143,7 @@ function onClick (e: MouseEvent) {
 defineExpose({
   root: inputBox,
   updateCursor,
+  scrollIntoView,
 });
 </script>
 

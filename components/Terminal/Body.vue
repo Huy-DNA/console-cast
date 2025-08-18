@@ -1,56 +1,63 @@
 <script setup lang="ts">
-import type { ColoredContent, ColoredLine} from '~/lib';
+import type { ColoredContent, ColoredLine } from '~/lib';
 import { Color, execute } from '~/lib';
 
 const { username } = useUserStore();
 const { cwd } = useCwdStore();
-const historyCommands: Ref<ColoredContent> = ref([]);
+
+// previous lines = previous commands + previous outputs
 const previousLines: Ref<ColoredContent> = ref([]);
 const currentLine = ref('');
-const curCommandIndex = ref(0);
-const commandCount = computed(() => historyCommands.value.length + 1);
 
-const editableLine = ref(null);
+const previousCommands: Ref<ColoredContent> = ref([]);
+const currentCommandIndex = ref(0);
+const totalCommands = computed(() => previousCommands.value.length + 1); // previous commands + current command
+
+const editableLine = useTemplateRef('editable-line');
 
 function onClick () {
   const selection = window.getSelection();
-  if (selection?.type !== 'Range') editableLine.value.root.focus();
+  if (selection?.type !== 'Range') {
+    editableLine.value?.root?.focus();
+  }
 }
 
-async function onSubmit (line: ColoredLine) {
-  if (line.length > 1 || line[0].content.trim()) historyCommands.value.push(line);
+async function onEnter (line: ColoredLine) {
+  if (line.length > 1 || line[0].content.trim()) {
+    previousCommands.value.push(line);
+  }
   previousLines.value.push(line);
-  const executeResult = await execute(currentLine.value);
-  previousLines.value.push(...executeResult);
+  const executeOutput = await execute(currentLine.value);
+  previousLines.value.push(...executeOutput);
   currentLine.value = '';
-  curCommandIndex.value = commandCount.value - 1;
+  currentCommandIndex.value = totalCommands.value - 1;
   await nextTick();
   await printPrompt();
-  editableLine.value.updateCursor();
+  editableLine.value?.updateCursor();
 }
 
 function onScroll () {
-  editableLine.value.updateCursor(false);
+  editableLine.value?.updateCursor();
 }
 
-function onUpdateContent (newContent: string) {
+function onInput (newContent: string) {
   currentLine.value = newContent;
 }
 
-function onLineUp () {
-  if (curCommandIndex.value <= 0) return;
-  curCommandIndex.value -= 1;
-  currentLine.value = historyCommands.value[curCommandIndex.value].map(({ content }) => content).join('');
+function onArrowUp () {
+  if (currentCommandIndex.value <= 0) return;
+  currentCommandIndex.value -= 1;
+  currentLine.value = previousCommands.value[currentCommandIndex.value].map(({ content }) => content).join('');
 }
 
-function onLineDown () { 
-  if (curCommandIndex.value > commandCount.value - 2) return;
-  if (curCommandIndex.value === commandCount.value - 2) {
+function onArrowDown () { 
+  if (currentCommandIndex.value > totalCommands.value - 2) return;
+  if (currentCommandIndex.value === totalCommands.value - 2) {
     currentLine.value = '';
-    curCommandIndex.value += 1;
+    currentCommandIndex.value += 1;
   } else {
-    currentLine.value = historyCommands.value[curCommandIndex.value].map(({ content }) => content).join('');
-    curCommandIndex.value += 1;
+    currentLine.value = previousCommands.value[currentCommandIndex.value].map(({ content }) => content).join('');
+    currentCommandIndex.value += 1;
   }
 }
 
@@ -60,7 +67,7 @@ async function printPrompt () {
 }
 
 async function printWelcome () {
-  const executeResult = [
+  const output = [
     ...await execute('echo Theme inspired by \\u001b[33mcatppuccin\\u001b[38m...'),
     ...await execute('echo " "'),
     ...await execute('echo \\u001b[32m " ／l" "\\u001b[31m              guest@web-console"'),
@@ -70,7 +77,7 @@ async function printWelcome () {
     ...await execute('echo "\\u001b[34m                    runtime" "\\u001b[38m   bun"'),
     ...await execute('echo " "'),
   ];
-  previousLines.value.push(...executeResult); 
+  previousLines.value.push(...output); 
 }
 
 onMounted(async () => {
@@ -92,7 +99,7 @@ onMounted(async () => {
       :line="line"
     />
     <TerminalEditableLine
-      ref="editableLine"
+      ref="editable-line"
       :content="currentLine"
       :prefix="[
         { content: '└', color: Color.WHITE },
@@ -100,10 +107,10 @@ onMounted(async () => {
         { content: '$', color: Color.EMERALD },
         { content: ' ', color: Color.WHITE },
       ]"
-      @submit="onSubmit"
-      @update-content="onUpdateContent"
-      @line-up="onLineUp"
-      @line-down="onLineDown"
+      @enter="onEnter"
+      @input="onInput"
+      @arrow-up="onArrowUp"
+      @arrow-down="onArrowDown"
     />
   </div>
 </template>

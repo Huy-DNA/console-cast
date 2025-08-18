@@ -18,7 +18,7 @@ const editableLine = useTemplateRef('editable-line');
 function onClick () {
   const selection = window.getSelection();
   if (selection?.type !== 'Range') {
-    editableLine.value?.root?.focus();
+    editableLine.value?.focus();
   }
 }
 
@@ -32,12 +32,7 @@ async function onEnter (line: ColoredLine) {
   currentLine.value = '';
   currentCommandIndex.value = totalCommands.value - 1;
   await nextTick();
-  await printPrompt();
-  editableLine.value?.updateCursor();
-}
-
-function onScroll () {
-  editableLine.value?.updateCursor();
+  editableLine.value?.focus();
 }
 
 function onInput (newContent: string) {
@@ -90,7 +85,6 @@ onMounted(async () => {
   <div
     class="pl-2 caret-transparent h-[85vh] overflow-auto"
     @click="onClick"
-    @scroll="onScroll"
   > 
     <TerminalLine
       v-for="(line, index) in previousLines"

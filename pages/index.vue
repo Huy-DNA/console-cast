@@ -2,5 +2,5 @@
 </script>
 
 <template>
-  <XTerminal />
+  <TerminalView />
 </template>

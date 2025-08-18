@@ -2,17 +2,10 @@
 import type { ColoredLine } from '~/lib';
 
 const props = defineProps<{ line: ColoredLine }>();
-
-const root = useTemplateRef('root');
-
-defineExpose({
-  root,
-});
 </script>
 
 <template>
   <p
-    ref="root"
     role="text"
     class="flex justify-start gap-0 w-[100%]"
     tabindex="0"

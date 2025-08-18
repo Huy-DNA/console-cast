@@ -57,11 +57,6 @@ function onArrowDown () {
   }
 }
 
-async function printPrompt () {
-  const executeResult = await execute(`echo ┌ \\u001b[35m${cwd.value.toFormattedString(username.value)} \\u001b[38mas \\u001b[34m${username.value}`);
-  previousLines.value.push(...executeResult);
-}
-
 async function printWelcome () {
   const output = [
     ...await execute('echo Theme inspired by \\u001b[33mcatppuccin\\u001b[38m...'),
@@ -78,7 +73,6 @@ async function printWelcome () {
 
 onMounted(async () => {
   await printWelcome();
-  await printPrompt();
   editableLine.value?.focus();
 });
 </script>
@@ -97,10 +91,18 @@ onMounted(async () => {
       ref="editable-line"
       :content="currentLine"
       :prefix="[
-        { content: '└', color: Color.WHITE },
-        { content: ' ', color: Color.WHITE },
-        { content: '$', color: Color.EMERALD },
-        { content: ' ', color: Color.WHITE },
+        [
+          { content: '┌ ', color: Color.WHITE },
+          { content: `${cwd.toFormattedString(username)}`, color: Color.PURPLE },
+          { content: ' as ', color: Color.WHITE },
+          { content: `${username}`, color: Color.BLUE },
+        ],
+        [
+          { content: '└', color: Color.WHITE },
+          { content: ' ', color: Color.WHITE },
+          { content: '$', color: Color.EMERALD },
+          { content: ' ', color: Color.WHITE },
+        ]
       ]"
       @enter="onEnter"
       @input="onInput"

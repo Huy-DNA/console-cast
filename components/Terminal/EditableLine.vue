@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import type { ColoredWord } from '~/utils';
 
 const props = defineProps<{
   content: string,
-  prefix: ColoredWord[],
+  prefix: ColoredLine[],
 }>();
 
 const words = computed(() => {
@@ -93,7 +92,10 @@ defineExpose({
 
 <template>
   <div ref="input-box-wrapper" class="m-0 p-0" tabindex="0">
-    <TerminalWord v-for="(word, index) in props.prefix" :key="index" :word="word" />
+    <p v-for="(sentence, sIndex) in props.prefix.slice(0, -1)" :key="sIndex">
+      <TerminalWord v-for="(word, wIndex) in sentence" :key="wIndex" :word="word" />
+    </p>
+    <TerminalWord v-for="(word, wIndex) in props.prefix[props.prefix.length - 1]" :key="wIndex" :word="word" />
     <p
 ref="input-box" role="text" class="inline-flex justify-start gap-0 w-[90%] outline-none relative" tabindex="0"
       @keydown="onKeydown" @click="onClick">

@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   if (!event.context.auth) {
     return { error: { code: FileContentGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
   }
-  const filepath = VirtualPath.create(trimQuote(name));
+  const filepath = VirtualPath.createUnchecked(trimQuote(name));
   if (!filepath.isValid()) {
     return { error: { code: FileContentGetErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
   }

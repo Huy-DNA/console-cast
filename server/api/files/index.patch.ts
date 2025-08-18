@@ -40,9 +40,9 @@ export default defineEventHandler(async (event) => {
 
 async function handleNameChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, newFileName: string) {
   const { name } = getQuery(event);
-  const oldFilepath = VirtualPath.create(trimQuote(name as string));
+  const oldFilepath = VirtualPath.createUnchecked(trimQuote(name as string));
   const oldContainerPath = oldFilepath.parent();
-  const newContainerPath = VirtualPath.create(trimQuote(newFileName)).parent();
+  const newContainerPath = VirtualPath.createUnchecked(trimQuote(newFileName)).parent();
 
   let oldContainerDirPermissionBits, oldContainerDirOwnerId, oldContainerDirGroupId;
   try {
@@ -93,7 +93,7 @@ async function handleNameChange<T extends db.IsolationLevel> (dbClient: db.TxnCl
 
 async function handleOwnerChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, ownerId: number) {
   const { name } = getQuery(event);
-  const filepath = VirtualPath.create(trimQuote(name as string));
+  const filepath = VirtualPath.createUnchecked(trimQuote(name as string));
   if (!filepath.isValid()) {
     throw { error: { code: FileMetaPatchErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
   }
@@ -115,7 +115,7 @@ async function handleOwnerChange<T extends db.IsolationLevel> (dbClient: db.TxnC
 
 async function handlePermissionChange<T extends db.IsolationLevel> (dbClient: db.TxnClient<T>, event: H3Event<EventHandlerRequest>, permissionBits: string) {
   const { name } = getQuery(event);
-  const filepath = VirtualPath.create(trimQuote(name as string));
+  const filepath = VirtualPath.createUnchecked(trimQuote(name as string));
   if (!filepath.isValid()) {
     throw { error: { code: FileMetaPatchErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
   }

@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FilePostErrorCode.INVALID_BODY, message: 'Invalid body. Expected "content" to be an optional string and "permission_bits" to be a bit string.' } };
   }
   const { content, permission_bits } = body;
-  const filepath = VirtualPath.create(trimQuote(name));
+  const filepath = VirtualPath.createUnchecked(trimQuote(name));
   if (!filepath.isValid()) {
     return { error: { code: FilePostErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
   }

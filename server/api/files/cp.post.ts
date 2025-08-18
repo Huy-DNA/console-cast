@@ -17,11 +17,11 @@ export default defineEventHandler(async (event) => {
     return { error: { code: FileCpErrorCode.INVALID_BODY, message: 'Invalid body. Expected "src" and "dest" to be strings and permission_bits to be a bit string.' } };
   }
 
-  const src = VirtualPath.create(body.src);
+  const src = VirtualPath.createUnchecked(body.src);
   if (!src.isValid()) {
     return { error: { code: FileCpErrorCode.INVALID_BODY, message: 'Expect the "src" param to be valid path' } };
   }
-  const dest = VirtualPath.create(body.dest);
+  const dest = VirtualPath.createUnchecked(body.dest);
   if (!dest.isValid()) {
     return { error: { code: FileCpErrorCode.INVALID_BODY, message: 'Expect the "dest" param to be valid path' } };
   }

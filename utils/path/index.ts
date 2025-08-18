@@ -11,11 +11,11 @@ export class VirtualPath {
     }
   }
 
-  static create (path: string): VirtualPath {
+  static createUnchecked (path: string): VirtualPath {
     return new VirtualPath(path);
   }
 
-  static createAndCheck (path: string): VirtualPath {
+  static create (path: string): VirtualPath {
     if (path.match(/^[a-zA-Z \-0-9._/]+$/g) === null) {
       throw new Error('Invalid path pattern');
     }
@@ -30,7 +30,7 @@ export class VirtualPath {
     if (this.isRoot()) {
       return this;
     }
-    return VirtualPath.create(path.dirname(this.path));
+    return VirtualPath.createUnchecked(path.dirname(this.path));
   }
 
   isRoot (): boolean {
@@ -66,13 +66,13 @@ export class VirtualPath {
 
   resolve (newDir: string): VirtualPath {
     if (path.isAbsolute(newDir)) {
-      return VirtualPath.create(newDir);
+      return VirtualPath.createUnchecked(newDir);
     }
     if (this.isRoot()) {
       if (['.', '..'].includes(newDir)) return this;
-      return VirtualPath.create(`/${newDir}`);
+      return VirtualPath.createUnchecked(`/${newDir}`);
     }
-    return VirtualPath.create(path.resolve(this.path, newDir));
+    return VirtualPath.createUnchecked(path.resolve(this.path, newDir));
   }
 
   basename (): string {
@@ -80,6 +80,6 @@ export class VirtualPath {
   }
 
   static homeDir (username: string): VirtualPath {
-    return VirtualPath.create(`/home/${username}`);
+    return VirtualPath.createUnchecked(`/home/${username}`);
   }
 }

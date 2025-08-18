@@ -104,7 +104,6 @@ export default defineEventHandler(async (event) => {
       };
     }
 
-    // Handle directory case
     const files = await db.sql`
       SELECT permission_bits, ${'files'}.${'name'}, owner_id, ${'users'}.${'name'} AS owner_name, ${'files'}.${'group_id'}, ${'groups'}.${'name'} AS group_name, file_type, ${'files'}.created_at, ${'files'}.updated_at
       FROM ${'files'}

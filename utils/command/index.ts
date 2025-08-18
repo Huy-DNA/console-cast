@@ -1,4 +1,4 @@
-import type { ColoredContent } from '~/lib';
+import type { ColoredContent } from '~/utils';
 import { echo } from './impls/echo';
 import { help } from './impls/help';
 import { Command } from './impls/types';

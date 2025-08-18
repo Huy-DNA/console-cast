@@ -1,7 +1,7 @@
 import path from 'path-browserify';
 import { Err, Ok, type Diagnostic, type Result } from './types';
-import { FilePostErrorCode } from '~/lib';
-import type { VirtualPath } from '~/lib/path';
+import { FilePostErrorCode } from '~/utils';
+import type { VirtualPath } from '~/utils/path';
 
 export enum UserKind {
   OWNER = 'owner',

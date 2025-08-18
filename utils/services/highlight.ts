@@ -1,4 +1,4 @@
-import { Color, type ColoredLine } from '~/lib';
+import { Color, type ColoredLine } from '~/utils';
 import { Command } from '../command/impls/types';
 import { parse } from './parse';
 

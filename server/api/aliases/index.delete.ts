@@ -1,4 +1,4 @@
-import { AliasDeleteErrorCode } from '~/lib';
+import { AliasDeleteErrorCode } from '~/utils';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
 

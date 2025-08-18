@@ -1,7 +1,7 @@
-import { stripQuotes } from '~/lib/command/utils';
+import { stripQuotes } from '~/utils/command/utils';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { GroupGetErrorCode } from '~/lib';
+import { GroupGetErrorCode } from '~/utils';
 
 export default defineEventHandler(async (event) => {
   const { id, owner } = getQuery(event);

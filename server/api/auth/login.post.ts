@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { defineEventHandler } from 'h3';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { LoginErrorCode } from '~/lib';
+import { LoginErrorCode } from '~/utils';
 
 export default defineEventHandler(async (event) => {
   const isProduction = process.env.NODE_ENV === 'production';

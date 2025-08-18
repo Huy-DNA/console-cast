@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ColoredContent, ColoredLine } from '~/lib';
-import { Color, execute } from '~/lib';
+import type { ColoredContent, ColoredLine } from '~/utils';
+import { Color, execute } from '~/utils';
 
 const { username } = useUserStore();
 const { cwd } = useCwdStore();

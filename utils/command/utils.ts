@@ -1,4 +1,4 @@
-import { Color, type ColoredContent } from '~/lib/types';
+import { Color, type ColoredContent } from '~/utils/types';
 
 export function stripQuotes (arg: string | undefined): string | undefined {
   if (arg === undefined) {

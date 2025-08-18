@@ -1,4 +1,4 @@
-import { AliasGetErrorCode } from '~/lib';
+import { AliasGetErrorCode } from '~/utils';
 import { Err, Ok, type Diagnostic, type Result } from './types';
 
 let allAliases: { name: string; command: string }[] | undefined = undefined;

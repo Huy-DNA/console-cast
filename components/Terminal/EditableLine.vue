@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ColoredLine, ColoredWord } from '~/lib';
-import { highlight, Color } from '~/lib';
+import type { ColoredLine, ColoredWord } from '~/utils';
+import { highlight, Color } from '~/utils';
 
 const props = defineProps<{
   content: string,

@@ -1,8 +1,8 @@
 import type { EventHandlerRequest, H3Event } from 'h3';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { FileMetaPatchErrorCode } from '~/lib';
-import { VirtualPath } from '~/lib/path';
+import { FileMetaPatchErrorCode } from '~/utils';
+import { VirtualPath } from '~/utils/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
 
 export default defineEventHandler(async (event) => {

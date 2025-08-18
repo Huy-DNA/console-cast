@@ -1,4 +1,4 @@
-import { AliasGetErrorCode } from '~/lib';
+import { AliasGetErrorCode } from '~/utils';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
 

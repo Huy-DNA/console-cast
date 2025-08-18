@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ColoredLine } from '~/lib';
+import type { ColoredLine } from '~/utils';
 
 const props = defineProps<{ line: ColoredLine }>();
 </script>

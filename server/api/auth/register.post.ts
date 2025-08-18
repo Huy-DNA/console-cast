@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { defineEventHandler } from 'h3';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { RegisterErrorCode } from '~/lib';
+import { RegisterErrorCode } from '~/utils';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

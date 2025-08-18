@@ -1,7 +1,6 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { FileCpErrorCode } from '~/lib';
-import { VirtualPath } from '~/lib/path';
+import { VirtualPath } from '~/utils/path';
 import { FileType, AccessType, canAccess } from '~/server/utils';
 
 export default defineEventHandler(async (event) => {

@@ -49,6 +49,5 @@ export class Err<E> {
 }
 
 export interface Diagnostic {
-  code: number;
   message: string;
 }

@@ -23,7 +23,7 @@ export const userService = {
     }
     const res = userMetaCache.get(id) as any;
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     const { ok: { data } } = res;
     return new Ok({ name: data.name, userId: data.userId, groupId: data.groupId, createdAt: data.createdAt });
@@ -38,7 +38,7 @@ export const userService = {
       credentials: 'include',
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     const { ok: { data } } = res;
     const { switchUser } = useUserStore();
@@ -54,7 +54,7 @@ export const userService = {
       },
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     const { switchUser } = useUserStore();
     switchUser(name);

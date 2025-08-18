@@ -1,4 +1,3 @@
-import { AliasGetErrorCode } from '~/utils';
 import { Err, Ok, type Diagnostic, type Result } from './types';
 
 let allAliases: { name: string; command: string }[] | undefined = undefined;
@@ -15,7 +14,7 @@ export const aliasService = {
     if (!allAliases) await init();
     const alias = allAliases!.find(({ name: entryName }) => entryName === name);
     if (alias === undefined) {
-      return new Err({ code: AliasGetErrorCode.ALIAS_NOT_FOUND, message: 'Alias not found' });
+      return new Err({ message: 'Alias not found' });
     }
     return new Ok(alias.command);
   },
@@ -34,7 +33,7 @@ export const aliasService = {
       credentials: 'include',
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     if (!allAliases) await init();
     const alias = allAliases!.find(({ name: entryName }) => entryName === name);
@@ -54,7 +53,7 @@ export const aliasService = {
       credentials: 'include',
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     if (!allAliases) await init();
     const index = allAliases!.findIndex(({ name: entryName }) => entryName === name);

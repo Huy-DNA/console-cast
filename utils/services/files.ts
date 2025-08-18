@@ -1,6 +1,5 @@
 import path from 'path-browserify';
 import { Err, Ok, type Diagnostic, type Result } from './types';
-import { FilePostErrorCode } from '~/utils';
 import type { VirtualPath } from '~/utils/path';
 
 export enum UserKind {
@@ -46,7 +45,7 @@ export const fileService = {
       query: { name: cwd.value.resolve(filename).toString() },
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     const { ok: { data } } = res;
     return new Ok(data.content);
@@ -54,9 +53,9 @@ export const fileService = {
   // FIXME: Possible race condition if multiple modifications happen on a file
   async writeFileContent (filename: string, content: string): Promise<Result<null, Diagnostic>> {
     const { umask } = useUmaskStore();
-    const createRes = await fileService.createFile(filename, '', umask.value);
-    if (!createRes.isOk() && createRes.error()!.code === FilePostErrorCode.INVALID_FOLDER) {
-      return createRes;
+    const createResult = await fileService.createFile(filename, '', umask.value);
+    if (!createResult.isOk()) {
+      return createResult;
     }
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files/content', {
@@ -69,16 +68,16 @@ export const fileService = {
       credentials: 'include',
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     return new Ok(null);
   },
   // FIXME: Possible race condition if multiple modifications happen on a file
   async appendFileContent (filename: string, content: string): Promise<Result<null, Diagnostic>> {
     const { umask } = useUmaskStore();
-    const createRes = await fileService.createFile(filename, '', umask.value);
-    if (!createRes.isOk() && createRes.error()!.code === FilePostErrorCode.INVALID_FOLDER) {
-      return createRes;
+    const createResult = await fileService.createFile(filename, '', umask.value);
+    if (!createResult.isOk()) {
+      return createResult;
     }
     const { cwd } = useCwdStore();
     const res = await $fetch('/api/files/content', {
@@ -91,7 +90,7 @@ export const fileService = {
       credentials: 'include',
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     return new Ok(null);
   },
@@ -105,7 +104,7 @@ export const fileService = {
       credentials: 'include',
     });
     if (meta.error) {
-      return new Err({ code: meta.error.code, message: meta.error.message });
+      return new Err({ message: meta.error.message });
     }
     const { ok: { data } } = meta;
     return new Ok(data.files.map((file) => ({
@@ -125,7 +124,7 @@ export const fileService = {
     const { cwd } = useCwdStore();
     const resolvedPath = cwd.value.resolve(filename);
     if (resolvedPath.isAncestor(cwd.value as VirtualPath)) {
-      return new Err({ code: 1, message: 'Cannot remove ancestor folder' });
+      return new Err({ message: 'Cannot remove ancestor folder' });
     }
     const res = await $fetch('/api/files', {
       method: 'delete',
@@ -133,7 +132,7 @@ export const fileService = {
       credentials: 'include',
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     return new Ok(null);
 
@@ -150,7 +149,7 @@ export const fileService = {
       credentials: 'include',
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     return new Ok(null);
   },
@@ -165,7 +164,7 @@ export const fileService = {
       credentials: 'include',
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     return new Ok(null);
   },
@@ -180,16 +179,16 @@ export const fileService = {
         credentials: 'include',
       });
       if (meta.error) {
-        return new Err({ code: meta.error.code, message: meta.error.message });
+        return new Err({ message: meta.error.message });
       }
       const { ok: { data } } = meta;
       if (data.fileType !== 'directory') {
-        return new Err({ code: 1, message: 'Expected a directory' });
+        return new Err({ message: 'Expected a directory' });
       }
       switchCwd(filename);
       return new Ok(null);
     } catch {
-      return new Err({ code: 500, message: 'Network connection error' });
+      return new Err({ message: 'Network connection error' });
     }
   },
   async moveFile (src: string, dest: string, umask: string): Promise<Result<null, Diagnostic>> {
@@ -197,10 +196,10 @@ export const fileService = {
     const resolvedSrc = cwd.value.resolve(src);
     const resolvedDest = cwd.value.resolve(dest);
     if (resolvedSrc.isAncestor(cwd.value as VirtualPath)) {
-      return new Err({ code: 1, message: 'Cannot move ancestor folder' });
+      return new Err({ message: 'Cannot move ancestor folder' });
     }
     if (resolvedSrc.isAncestor(resolvedDest)) {
-      return new Err({ code: 1, message: 'Cannot move a folder to its descendant' });
+      return new Err({ message: 'Cannot move a folder to its descendant' });
     }
     const res = await $fetch('/api/files/mv', {
       method: 'post',
@@ -212,7 +211,7 @@ export const fileService = {
       credentials: 'include',
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     return new Ok(null);
 
@@ -222,7 +221,7 @@ export const fileService = {
     const resolvedSrc = cwd.value.resolve(src);
     const resolvedDest = cwd.value.resolve(dest);
     if (resolvedSrc.isAncestor(resolvedDest)) {
-      return new Err({ code: 1, message: 'Cannot copy a folder to its descendant' });
+      return new Err({ message: 'Cannot copy a folder to its descendant' });
     }
     const res = await $fetch('/api/files/cp', {
       method: 'post',
@@ -234,7 +233,7 @@ export const fileService = {
       credentials: 'include',
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     return new Ok(null);
   },
@@ -246,7 +245,7 @@ export const fileService = {
       credentials: 'include',
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     return new Ok(res.ok.data.size);
   }

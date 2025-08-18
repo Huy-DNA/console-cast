@@ -21,7 +21,7 @@ export const groupService = {
     }
     const res = groupMetaCache.get(id) as any;
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     const { ok: { data } } = res;
     return new Ok({ name: data.name, id: data.id, createdAt: data.createdAt });
@@ -34,7 +34,7 @@ export const groupService = {
       },
     });
     if (res.error) {
-      return new Err({ code: res.error.code, message: res.error.message });
+      return new Err({ message: res.error.message });
     }
     const { ok: { data } } = res;
     return new Ok(data);

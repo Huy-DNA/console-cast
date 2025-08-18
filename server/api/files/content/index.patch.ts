@@ -1,24 +1,27 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { FileContentPatchErrorCode } from '~/utils';
 import { VirtualPath } from '~/utils/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);
   if (typeof name !== 'string') {
-    return { error: { code: FileContentPatchErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be string' } };
+    setResponseStatus(event, 400);
+    return { error: { message: 'Expect the "name" query param to be string' } };
   }
   const body = await readBody(event);
   if (typeof body !== 'object' || typeof body.content !== 'string' || typeof body.shouldAppend !== 'boolean') {
-    return { error: { code: FileContentPatchErrorCode.INVALID_BODY, message: 'Invalid body. Expected "content" to be a string and "shouldAppend" to be a boolean.' } };
+    setResponseStatus(event, 400);
+    return { error: { message: 'Invalid body. Expected "content" to be a string and "shouldAppend" to be a boolean.' } };
   }
   if (!event.context.auth) {
-    return { error: { code: FileContentPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+    setResponseStatus(event, 403);
+    return { error: { message: 'Should be logged in as a user with enough privilege' } };
   }
   const filepath = VirtualPath.createUnchecked(trimQuote(name));
   if (!filepath.isValid()) {
-    return { error: { code: FileContentPatchErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
+    setResponseStatus(event, 400);
+    return { error: { message: 'Expect the "name" query param to be valid path' } };
   }
   try {
     const { permission_bits: filePermissionBits, owner_id: fileOwnerId, group_id: fileGroupId, content } = await db.selectExactlyOne('files', { name: filepath.toString(), file_type: 'file', deleted_at: db.conditions.isNull }).run(dbPool);
@@ -29,7 +32,8 @@ export default defineEventHandler(async (event) => {
         AccessType.WRITE,
       )
     ) {
-      return { error: { code: FileContentPatchErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+      setResponseStatus(event, 403);
+      return { error: { message: 'Should be logged in as a user with enough privilege' } };
     }
 
     const newContent = body.shouldAppend ? content + body.content : body.content;
@@ -37,6 +41,7 @@ export default defineEventHandler(async (event) => {
 
     return { ok: { message: 'Update file content successfully' } };
   } catch {
-    return { error: { code: FileContentPatchErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
+    setResponseStatus(event, 404);
+    return { error: { message: 'File not found' } };
   }
 });

@@ -1,20 +1,22 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { FileMetaGetErrorCode } from '~/utils';
 import { VirtualPath } from '~/utils/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);
   if (typeof name !== 'string') {
-    return { error: { code: FileMetaGetErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be string' } };
+    setResponseStatus(event, 400);
+    return { error: { message: 'Expect the "name" query param to be string' } };
   }
   if (!event.context.auth) {
-    return { error: { code: FileMetaGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+    setResponseStatus(event, 403);
+    return { error: { message: 'Should be logged in as a user with enough privilege' } };
   }
   const filepath = VirtualPath.createUnchecked(trimQuote(name));
   if (!filepath.isValid()) {
-    return { error: { code: FileMetaGetErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
+    setResponseStatus(event, 400);
+    return { error: { message: 'Expect the "name" query param to be valid path' } };
   }
   const containerPath = filepath.parent();
   try {
@@ -26,13 +28,15 @@ export default defineEventHandler(async (event) => {
         AccessType.READ,
       )
     ) {
-      return { error: { code: FileMetaGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+      setResponseStatus(event, 403);
+      return { error: { message: 'Should be logged in as a user with enough privilege' } };
     }
 
     const { permission_bits, owner_id, group_id, file_type } = await db.selectExactlyOne('files', { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbPool);
 
     return { ok: { message: 'Fetch file information successfully', data: { permission: permission_bits, ownerId: owner_id, groupId: group_id, fileName: filepath.toString(), fileType: file_type } } };
   } catch {
-    return { error: { code: FileMetaGetErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
+    setResponseStatus(event, 404);
+    return { error: { message: 'File not found' } };
   }
 });

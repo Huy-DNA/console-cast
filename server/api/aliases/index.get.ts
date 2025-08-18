@@ -1,24 +1,80 @@
-import { AliasGetErrorCode } from '~/utils';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
+import Joi from 'joi';
+
+const querySchema = Joi.object({
+  name: Joi.string().optional()
+});
+
+const authSchema = Joi.object({
+  userId: Joi.string().required()
+});
 
 export default defineEventHandler(async (event) => {
-  const { name } = getQuery(event);
-  if (!['string', 'undefined'].includes(typeof name)) {
-    return { error: { code: AliasGetErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be an optional string' } };
+  const { error: queryError, value: query } = querySchema.validate(getQuery(event), { 
+    abortEarly: false,
+    stripUnknown: true 
+  });
+
+  if (queryError) {
+    setResponseStatus(event, 400);
+    return { 
+      error: { 
+        message: 'Invalid query parameters', 
+        details: queryError.details.map(detail => detail.message)
+      } 
+    };
   }
+
   if (!event.context.auth) {
-    return { error: { code: AliasGetErrorCode.NOT_LOGIN, message: 'Should be logged in as a user with enough privilege' } };
+    setResponseStatus(event, 401);
+    return { error: { message: 'Authentication required' } };
   }
-  if (name) {
+
+  const { error: authError, value: auth } = authSchema.validate(event.context.auth, {
+    abortEarly: false,
+    stripUnknown: true
+  });
+
+  if (authError) {
+    setResponseStatus(event, 401);
+    return { 
+      error: { 
+        message: 'Invalid authentication context',
+        details: authError.details.map(detail => detail.message)
+      } 
+    };
+  }
+
+  if (query.name) {
     try {
-      const { command } = await db.selectExactlyOne('aliases', { name: name as string, owner_id: Number.parseInt(event.context.auth.userId) }).run(dbPool);
-      return { ok: { message: 'Fetch alias successfully', data: { command } } };
+      const { command } = await db.selectExactlyOne('aliases', { 
+        name: query.name, 
+        owner_id: Number.parseInt(auth.userId) 
+      }).run(dbPool);
+      
+      return { 
+        ok: { 
+          message: 'Fetch alias successfully', 
+          data: { command } 
+        } 
+      };
     } catch {
-      return { error: { code: AliasGetErrorCode.ALIAS_NOT_FOUND, message: 'Alias not found' } };
+      setResponseStatus(event, 400);
+      return { error: { message: 'Alias not found' } };
     }
   } else {
-    const commands = await db.select('aliases', { owner_id: Number.parseInt(event.context.auth.userId) }).run(dbPool);
-    return { ok: { message: 'Fetch aliases successfully', data: { commands: commands.map(({ name, command }) => ({ name, command })) } } };
+    const commands = await db.select('aliases', { 
+      owner_id: Number.parseInt(auth.userId) 
+    }).run(dbPool);
+    
+    return { 
+      ok: { 
+        message: 'Fetch aliases successfully', 
+        data: { 
+          commands: commands.map(({ name, command }) => ({ name, command })) 
+        } 
+      } 
+    };
   }
 });

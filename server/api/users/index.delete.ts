@@ -1,27 +1,72 @@
-import { stripQuotes } from '~/utils/command/utils';
+import Joi from 'joi';
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { UserDeleteErrorCode } from '~/utils';
+
+const querySchema = Joi.object({
+  name: Joi.string()
+    .trim()
+    .min(1)
+    .required()
+    .messages({
+      'string.base': 'Expect the "name" query param to be string',
+      'string.empty': 'Name cannot be empty',
+      'any.required': 'Name parameter is required'
+    })
+});
+
+const authSchema = Joi.object({
+  username: Joi.string().required(),
+}).unknown(true);
+
+const PROTECTED_USERS = ['root', 'guest'];
 
 export default defineEventHandler(async (event) => {
-  const { name } = getQuery(event);
-  if (typeof name !== 'string') {
-    return { error: { code: UserDeleteErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be string' } };
+  const { error: queryError, value: queryValue } = querySchema.validate(getQuery(event));
+  
+  if (queryError) {
+    setResponseStatus(event, 400);
+    return { 
+      error: { 
+        message: queryError.details[0].message 
+      } 
+    };
   }
+  
   if (!event.context.auth) {
-    return { error: { code: UserDeleteErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+    setResponseStatus(event, 401);
+    return { error: { message: 'Should be logged in as a user with enough privilege' } };
   }
-  const formattedName = stripQuotes(name)!;
-  // Only allow a user to remove itself currently
-  if (formattedName !== event.context.auth.username) {
-    return { error: { code: UserDeleteErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+  
+  const { error: authError, value: authValue } = authSchema.validate(event.context.auth);
+  
+  if (authError) {
+    setResponseStatus(event, 401);
+    return { error: { message: 'Invalid authentication context' } };
   }
-  // root and guest can be deleted
-  if (['root', 'guest'].includes(formattedName)) {
-    return { error: { code: UserDeleteErrorCode.UNDELETABLE_USER, message: `User "${formattedName}" cannot be delete` } };
+  
+  const { name } = queryValue;
+  const { username } = authValue;
+  
+  if (name !== username) {
+    setResponseStatus(event, 403);
+    return { error: { message: 'Should be logged in as a user with enough privilege' } };
   }
-
-  await db.update('users', { name: formattedName }, { deleted_at: new Date(Date.now()) }).run(dbPool);
-
-  return { ok: { message: 'Delete user successfully' } };
+  
+  if (PROTECTED_USERS.includes(name)) {
+    setResponseStatus(event, 400);
+    return { error: { message: `User "${name}" cannot be deleted` } };
+  }
+  
+  try {
+    await db.update(
+      'users', 
+      { name }, 
+      { deleted_at: new Date() }
+    ).run(dbPool);
+    
+    return { ok: { message: 'Delete user successfully' } };
+  } catch {
+    setResponseStatus(event, 500);
+    return { error: { message: 'Failed to delete user' } };
+  }
 });

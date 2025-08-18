@@ -1,20 +1,22 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { FileContentGetErrorCode } from '~/utils';
 import { VirtualPath } from '~/utils/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);
   if (typeof name !== 'string') {
-    return { error: { code: FileContentGetErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be string' } };
+    setResponseStatus(event, 400);
+    return { error: { message: 'Expect the "name" query param to be string' } };
   }
   if (!event.context.auth) {
-    return { error: { code: FileContentGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+    setResponseStatus(event, 403);
+    return { error: { message: 'Should be logged in as a user with enough privilege' } };
   }
   const filepath = VirtualPath.createUnchecked(trimQuote(name));
   if (!filepath.isValid()) {
-    return { error: { code: FileContentGetErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
+    setResponseStatus(event, 400);
+    return { error: { message: 'Expect the "name" query param to be valid path' } };
   }
   try {
     const { permission_bits: filePermissionBits, owner_id: fileOwnerId, group_id: fileGroupId, content } = await db.selectExactlyOne('files', { name: filepath.toString(), file_type: 'file', deleted_at: db.conditions.isNull }).run(dbPool);
@@ -25,11 +27,13 @@ export default defineEventHandler(async (event) => {
         AccessType.READ,
       )
     ) {
-      return { error: { code: FileContentGetErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+      setResponseStatus(event, 403);
+      return { error: { message: 'Should be logged in as a user with enough privilege' } };
     }
 
     return { ok: { message: 'Fetch file content successfully', data: { content } } };
   } catch {
-    return { error: { code: FileContentGetErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
+    setResponseStatus(event, 404);
+    return { error: { message: 'File not found' } };
   }
 });

@@ -1,20 +1,22 @@
 import * as db from 'zapatos/db';
 import { dbPool } from '~/db/connection';
-import { FileDeleteErrorCode } from '~/utils';
 import { VirtualPath } from '~/utils/path';
 import { AccessType, canAccess, FileType, trimQuote } from '~/server/utils';
 
 export default defineEventHandler(async (event) => {
   const { name } = getQuery(event);
   if (typeof name !== 'string') {
-    return { error: { code: FileDeleteErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be string' } };
+    setResponseStatus(event, 400);
+    return { error: { message: 'Expect the "name" query param to be string' } };
   }
   if (!event.context.auth) {
-    return { error: { code: FileDeleteErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+    setResponseStatus(event, 403);
+    return { error: { message: 'Should be logged in as a user with enough privilege' } };
   }
   const filepath = VirtualPath.createUnchecked(trimQuote(name));
   if (!filepath.isValid()) {
-    return { error: { code: FileDeleteErrorCode.INVALID_PARAM, message: 'Expect the "name" query param to be valid path' } };
+    setResponseStatus(event, 400);
+    return { error: { message: 'Expect the "name" query param to be valid path' } };
   }
   const containerPath = filepath.parent();
   try {
@@ -26,11 +28,13 @@ export default defineEventHandler(async (event) => {
         AccessType.WRITE,
       )
     ) {
-      return { error: { code: FileDeleteErrorCode.NOT_ENOUGH_PRIVILEGE, message: 'Should be logged in as a user with enough privilege' } };
+      setResponseStatus(event, 403);
+      return { error: { message: 'Should be logged in as a user with enough privilege' } };
     }
 
     if (!(await db.selectOne('files', { name: filepath.toString(), deleted_at: db.conditions.isNull }).run(dbPool))) {
-      return { error: { code: FileDeleteErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
+      setResponseStatus(event, 404);
+      return { error: { message: 'File not found' } };
     }
 
     await db.readCommitted(dbPool, async (dbClient) => {
@@ -40,6 +44,7 @@ export default defineEventHandler(async (event) => {
 
     return { ok: { message: 'Delete file successfully' } };
   } catch {
-    return { error: { code: FileDeleteErrorCode.FILE_NOT_FOUND, message: 'File not found' } };
+    setResponseStatus(event, 404);
+    return { error: { message: 'File not found' } };
   }
 });

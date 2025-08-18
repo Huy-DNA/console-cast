@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ColoredContent, ColoredLine } from '~/utils';
+import type { ColoredContent } from '~/utils';
 import { Color, execute } from '~/utils';
 
 const { username } = useUserStore();
@@ -22,7 +22,8 @@ function onClick () {
   }
 }
 
-async function onEnter (line: ColoredLine) {
+async function onEnter () {
+  const line = highlight(currentLine.value);
   if (line.length > 1 || line[0].content.trim()) {
     previousCommands.value.push(line);
   }

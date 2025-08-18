@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { ColoredLine, ColoredWord } from '~/utils';
-import { highlight, Color } from '~/utils';
+import type { ColoredWord } from '~/utils';
 
 const props = defineProps<{
   content: string,
@@ -12,7 +11,7 @@ const words = computed(() => {
 });
 
 const emits = defineEmits<{
-  enter: [ColoredLine],
+  enter: [],
   input: [string],
   'arrow-up': [],
   'arrow-down': [],
@@ -35,7 +34,7 @@ watch(cursorOffset, function () {
 async function onKeydown (e: KeyboardEvent) {
   if (e.key === 'Enter') {
     cursorOffset.value = 0;
-    emits('enter', props.content === '' ? [{ content: '', color: Color.WHITE }] : words.value);
+    emits('enter');
     return;
   }
   const offset = cursorOffset.value;

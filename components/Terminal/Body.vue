@@ -89,7 +89,6 @@ onMounted(async () => {
     <TerminalLine
       v-for="(line, index) in previousLines"
       :key="index"
-      ref="nonEditableLines"
       :line="line"
     />
     <TerminalEditableLine

@@ -1,5 +1,7 @@
 # Console Cat
 
+![Status](https://img.shields.io/badge/status-complete-brightgreen) ![Status](https://img.shields.io/badge/status-archived-lightgrey)
+
 <img width="1392" alt="image" src="https://github.com/user-attachments/assets/fc62361e-98af-425b-ae12-8aee50f18db5">
 
 ## Techstack
